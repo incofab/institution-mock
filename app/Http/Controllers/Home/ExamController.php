@@ -91,10 +91,11 @@ class ExamController extends Controller
       return back()->with('error', $res->message);
     }
 
-    return view(
-      'home.dummy',
-      collect($res->toArray())->only('exam', 'exam_track')->toArray(),
-    );
+    return view('exams.react-exam-page', [
+      ...collect($res->toArray())->only('exam', 'exam_track')->toArray(),
+      'timeRemaining' => 100,
+      'baseUrl' => url('/'),
+    ]);
   }
   /*
     function pauseExam(Request $request)

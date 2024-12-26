@@ -1,7 +1,3 @@
-// import { WebForm } from '@/hooks/use-web-form';
-// import { Exam } from '@/types/models';
-// import { ExamAttempt } from '@/types/types';
-
 import { Exam } from '../../types/models';
 import { WebForm } from '../../hooks/use-web-form';
 import { ExamAttempt, ExamUrl } from '../../types/types';
@@ -51,7 +47,7 @@ class TabManager {
   public tabs: {
     [tabIndex: number]: ExamTab;
   } = {};
-  public currentTabIndex: number = 0;
+  public currentTabIndex = 0;
 
   setCurrentTabIndex(tabIndex: number) {
     this.currentTabIndex = tabIndex;
@@ -72,7 +68,7 @@ class TabManager {
   setCurrentQuestion(currentQuestionIndex: number) {
     const tab = this.tabs[this.currentTabIndex];
     if (!tab) {
-      console.log(`Tab of ${this.currentTabIndex} index, has not been set`);
+      // console.log(`Tab of ${this.currentTabIndex} index, has not been set`);
       return;
     }
     this.tabs[this.currentTabIndex] = {
@@ -105,7 +101,7 @@ class AttemptManager {
     private reRender: () => void
   ) {
     this.attempts = existingAttempts;
-    console.log('existing attempts', existingAttempts);
+    // console.log('existing attempts', existingAttempts);
   }
   setAttempt(questionId: number, attempt: string) {
     this.attempts[questionId] = attempt;

@@ -1,8 +1,8 @@
 class ExamTimer {
-  private intervalId: number = 0;
-  private duration: number = 0;
-  private timeElapsed: number = 0;
-  private timeRemaining: number = 0;
+  private intervalId: any;
+  private duration = 0;
+  private timeElapsed = 0;
+  private timeRemaining = 0;
   private readonly PING_INTERVAL = 5;
   private pingCounter = 0;
 

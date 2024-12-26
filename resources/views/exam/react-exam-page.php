@@ -1,25 +1,28 @@
 <?php
 
-$reactFolder = 'build'; //config('app.debug') ? 'public' : 'build';
+$reactFolder = 'build';
 
-$htmlFilename = "../public/examiner/$reactFolder/index.html";
+// $htmlFilename = "../public/examiner/$reactFolder/index.html";
+$htmlFilename = public_path("driller/$reactFolder/index.html");
 
 $dom = new \DOMDocument();
 $dom->loadHTMLFile($htmlFilename);
 
 $scriptNode = $dom->createElement('script');
 $scriptNode->appendChild(
-    new \DOMText(
-        'window.dev = ' .
-            json_encode(config('app.debug')) .
-            '; ' .
-            'window.event_id = ' .
-            json_encode($eventId) .
-            '; ' .
-            'window.mainContent = ' .
-            json_encode($examData) .
-            '; ',
-    ),
+  new \DOMText(
+    'window.dev = ' .
+      json_encode(config('app.debug')) .
+      '; ' .
+      'window.exam = ' .
+      json_encode($exam) .
+      '; ' .
+      'window.exam_track = ' .
+      json_encode($exam_track) .
+      '; ',
+    'window.timeRemaining = ' . json_encode($timeRemaining) . '; ',
+    'window.baseUrl = ' . json_encode($baseUrl) . '; ',
+  ),
 );
 
 //     $body = $dom->getElementsByTagName('body')->item(0);

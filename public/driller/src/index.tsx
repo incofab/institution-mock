@@ -5,21 +5,14 @@ import { Exam } from './types/models';
 import { ExamTrack } from './types/types';
 
 // Access the global examData variable
-// declare global {
-//   interface Window {
-//     exam: Exam;
-//     exam_track: ExamTrack;
-//     timeRemaining: number;
-//     baseUrl: string;
-//   }
-// }
-
-// document.addEventListener('DOMContentLoaded', () => {
-//   const root = document.getElementById('exam-root');
-//   if (root) {
-//     ReactDOM.render(<ExamPage {...window.examData} />, root);
-//   }
-// });
+declare global {
+  interface Window {
+    exam: Exam;
+    exam_track: ExamTrack;
+    timeRemaining: number;
+    baseUrl: string;
+  }
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   const rootElement = document.getElementById('exam-root');

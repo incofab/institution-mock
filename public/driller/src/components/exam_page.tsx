@@ -49,7 +49,7 @@ export default function ExamPage({
       .setCurrentQuestion(examUtil.getExamNavManager().getGoNextIndex());
   }
 
-  async function submitExam(showConfirmDialog: boolean = true) {
+  async function submitExam(showConfirmDialog = true) {
     if (
       showConfirmDialog &&
       !window.confirm('Do you want to submit your exam?')
@@ -66,8 +66,8 @@ export default function ExamPage({
   }
 
   function keyListener(e: KeyboardEvent) {
-    console.log('Keylistener', e, e.key);
-    let keyUpperCase = e.key.toUpperCase();
+    // console.log('Keylistener', e, e.key);
+    const keyUpperCase = e.key.toUpperCase();
     switch (keyUpperCase) {
       case 'A':
       case 'B':
@@ -90,7 +90,7 @@ export default function ExamPage({
         submitExam();
         break;
       case 'R':
-        console.log('R clicked');
+        // console.log('R clicked');
         break;
       default:
         break;
@@ -98,7 +98,7 @@ export default function ExamPage({
   }
 
   return (
-    <>
+    <div key={key}>
       <PageHeader
         exam={exam}
         examUtil={examUtil}
@@ -120,7 +120,7 @@ export default function ExamPage({
         />
         {showCalculator && <Calculator setShowCalculator={setShowCalculator} />}
       </div>
-    </>
+    </div>
   );
 }
 // export default ExamPage;
@@ -147,6 +147,7 @@ function ExamContent({
               examCourse={examCourse}
               index={index}
               examUtil={examUtil}
+              key={examCourse.id}
             />
           ))}
         </ul>
@@ -162,6 +163,7 @@ function ExamContent({
           examCourse={examCourse}
           index={index}
           examUtil={examUtil}
+          key={examCourse.id}
         />
       ))}
       <FooterNav
@@ -186,7 +188,7 @@ function _ExamTab({
   return (
     <li className="nav-item" key={'exam-tab-' + index}>
       <div
-        className={`nav-link text-primary cursor-pointer ${currentTabIndex == index ? 'active' : ''}`}
+        className={`nav-link text-primary cursor-pointer ${currentTabIndex === index ? 'active' : ''}`}
         data-tab_index={index}
         data-toggle="tab"
         id={'#nav-' + examCourse.id}
@@ -214,7 +216,7 @@ function ExamCourseComponent({
   const questionIndex = examUtil.getTabManager().getCurrentQuestionIndex();
   const attemptManager = examUtil.getAttemptManager();
 
-  var tiles = examCourse.course_session!.questions!.map((question, index) => {
+  const tiles = examCourse.course_session!.questions!.map((question, index) => {
     return (
       <li
         data-question_no={question.question_no}
@@ -222,7 +224,7 @@ function ExamCourseComponent({
         data-question_index={index}
         className={
           'pointer ' +
-          (questionIndex == index ? 'current' : '') +
+          (questionIndex === index ? 'current' : '') +
           ' ' +
           (attemptManager.isAttempted(question.id) ? 'attempted' : '')
         }
@@ -236,7 +238,7 @@ function ExamCourseComponent({
 
   return (
     <div
-      className={`tab-pane fade show ${currentTabIndex == index ? 'active' : ''}`}
+      className={`tab-pane fade show ${currentTabIndex === index ? 'active' : ''}`}
       id={'nav-' + examCourse.id}
       role="tabpanel"
       key={`question-${index}`}

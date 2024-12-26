@@ -64,7 +64,7 @@ export function setUrlFilterOptions(
   url.searchParams.set(`${option}Label`, optionValue?.label ?? '');
 }
 
-export function generateRandomString(length: number = 10): string {
+export function generateRandomString(length = 10): string {
   const characters =
     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
@@ -82,15 +82,15 @@ export function blurStr(str: string) {
   return convertedString;
 }
 
-export function formatTime(time_in_secs: number) {
-  if (isNaN(time_in_secs) || time_in_secs < 0) {
-    time_in_secs = 0;
+export function formatTime(timeInSecs: number) {
+  if (isNaN(timeInSecs) || timeInSecs < 0) {
+    timeInSecs = 0;
   }
 
-  var total_mins = time_in_secs / 60;
-  var hour: number | string = parseInt(total_mins / 60 + '');
-  var min: number | string = parseInt((total_mins % 60) + '');
-  var sec: number | string = parseInt((time_in_secs % 60) + '');
+  const totalMins = timeInSecs / 60;
+  let hour: number | string = parseInt(totalMins / 60 + '');
+  let min: number | string = parseInt((totalMins % 60) + '');
+  let sec: number | string = parseInt((timeInSecs % 60) + '');
   sec = sec < 10 ? '0' + sec : sec;
 
   if (hour < 1 && min < 1) {

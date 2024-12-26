@@ -21,10 +21,10 @@ export default function DisplayQuestion({
   examCourse: ExamCourse;
   questionIndex: number;
 }) {
-  let questionNo = questionIndex + 1;
-  let courseSession = examCourse.course_session!;
-  let question = courseSession.questions![questionIndex];
-  let questionImageHandler = new QuestionImageHandler(exam, courseSession);
+  const questionNo = questionIndex + 1;
+  const courseSession = examCourse.course_session!;
+  const question = courseSession.questions![questionIndex];
+  const questionImageHandler = new QuestionImageHandler(exam, courseSession);
 
   return (
     <div className="question-main">
@@ -129,7 +129,7 @@ function getInstruction(
   questionNo: number
 ): string {
   const instructions = courseSession.instructions || [];
-  var instructionsStr = '';
+  let instructionsStr = '';
   for (const instruction of instructions) {
     if (hasInstruction(instruction, questionNo)) {
       instructionsStr += `${instruction.instruction}<br>`;
@@ -140,7 +140,7 @@ function getInstruction(
 
 function getPassage(courseSession: CourseSession, questionNo: number): string {
   const passages = courseSession.passages || [];
-  var passagesStr = '';
+  let passagesStr = '';
   for (const passage of passages) {
     if (hasPassage(passage, questionNo)) {
       passagesStr += `${passage.passage}<br>`;

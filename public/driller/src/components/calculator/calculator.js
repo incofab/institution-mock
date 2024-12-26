@@ -16,7 +16,7 @@ export class calculator extends Component {
   }
 
   input(e) {
-    var input = e.target.attributes.getNamedItem('data-input').value;
+    const input = e.target.attributes.getNamedItem('data-input').value;
     this.setState({
       display: this.state.display + input
     });
@@ -24,7 +24,7 @@ export class calculator extends Component {
 
   equal() {
     try {
-      var result = eval(this.state.display);
+      const result = eval(this.state.display);
       this.setState({ display: result });
     } catch (err) {
       this.setState({ display: 'Error' });
@@ -32,7 +32,7 @@ export class calculator extends Component {
   }
 
   operator(e) {
-    var input = e.target.attributes.getNamedItem('data-input').value;
+    const input = e.target.attributes.getNamedItem('data-input').value;
     if (input === '=') {
       this.equal();
       return;

@@ -52,10 +52,10 @@ class QuestionImageHandler {
     if (base64DataIndex > -1) {
       // Handle base64 images here
       lastPart = urlPath.substring(base64DataIndex);
-      let amperSandIndex = lastPart.indexOf('&');
+      const amperSandIndex = lastPart.indexOf('&');
       return lastPart.substring(
         0,
-        amperSandIndex == -1 ? undefined : amperSandIndex
+        amperSandIndex === -1 ? undefined : amperSandIndex
       );
     }
 
@@ -70,7 +70,7 @@ class QuestionImageHandler {
     return this.getUrlLastPath(
       startPoint.substring(
         prefix.length,
-        amperSandIndex == -1 ? undefined : amperSandIndex
+        amperSandIndex === -1 ? undefined : amperSandIndex
       )
     );
   }

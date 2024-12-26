@@ -4,8 +4,8 @@
   "description": "",
   "main": "src/main.tsx",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "react-scripts start --entry-file src/main.tsx",
+    "build": "react-scripts build --entry-file src/main.tsx",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -15,7 +15,7 @@
     "@types/axios": "^0.14.4",
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
-    "react-scripts": "^3.0.1",
+    "react-scripts": "^5.0.1",
     "typescript": "^4.9.5"
   },
   "dependencies": {
@@ -23,5 +23,17 @@
     "immer": "^10.1.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
