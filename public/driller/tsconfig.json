@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "declaration": true, // Generate .d.ts files
+    "outDir": "./build", // Specify the output folder for compiled files
+    "target": "ES5", // Target ECMAScript version
+    "module": "ESNext", // Use ESNext modules
+    "jsx": "react", // JSX syntax
+    "allowJs": true, // Allow JavaScript files
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node",
+    "lib": ["esnext", "dom"]
+  },
+  "include": ["src"]
+}
