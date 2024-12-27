@@ -9,6 +9,7 @@ use App\Http\Controllers\Home\CallbackController;
 use App\Http\Controllers\Home\ComplaintController;
 use App\Http\Controllers\Home\AnnouncementController;
 use App\Http\Controllers\API as Api;
+use App\Http\Controllers\Home as Home;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,6 +43,8 @@ Route::any('/webhook/monnify', [WebhookController::class, 'monnifyWebhook']);
 
 Route::post('/home/cheetahpay/callback', [CallbackController::class, 'cheetahpayCallback'])->name('cheetahpay-callback');
 */
+
+Route::get('/exam/start', [Home\ExamController::class, 'startExam'])->name('exam-start');
 
 Route::group(['middleware' => []], function() {
     

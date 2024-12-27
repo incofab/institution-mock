@@ -26,14 +26,6 @@ class EndExam
 
   function endExam(Exam $exam): Res
   {
-    // $exam = Exam::where('exam_no', $this->examNo)
-    //   ->with('examCourses', 'event', 'student')
-    //   ->first();
-
-    // if (!$exam) {
-    //   return failRes('Exam record not found');
-    // }
-
     $examCourses = $exam->examCourses;
 
     if ($exam->status === ExamStatus::Ended) {
@@ -68,13 +60,7 @@ class EndExam
       $totalNumOfQuestions += $numOfQuestions;
       //   dlog("totalScore = $totalScore");
     }
-    $exam
-      ->fill([
-        'status' => ExamStatus::Ended->value,
-        'score' => $totalScore,
-        'num_of_questions' => $totalNumOfQuestions,
-      ])
-      ->save();
+    ExamHelper::make()->endExam($exam, $totalScore, $totalNumOfQuestions);
     $this->examHandler->syncExamFile($exam);
 
     return successRes('Exam ended');

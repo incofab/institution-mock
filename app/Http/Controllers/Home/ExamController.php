@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Home;
 
-use App\Actions\ExamStartupData;
+use App\Actions\ExamHelper;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -70,11 +70,17 @@ class ExamController extends Controller
         return redirect(route('home.start-exam', $exam['exam_no']));
     }
 */
-  function startExamView()
+  function startExamView(Request $request)
   {
+    if ($request->has('exam_no')) {
+      return view('exam.exam-login');
+    }
     return view('exam.exam-login');
   }
 
+  /**
+   * Starts or resumes an exam
+   */
   function startExam(Request $request)
   {
     $request->validate([
@@ -82,18 +88,21 @@ class ExamController extends Controller
       'student_code' => ['nullable', 'string'],
     ]);
 
-    $res = (new ExamStartupData(
+    $res = ExamHelper::make()->getExamStartupData(
       $request->exam_no,
       $request->student_code,
-    ))->run();
+      true,
+    );
 
     if (!$res->isNotSuccessful()) {
-      return back()->with('error', $res->message);
+      return $this->apiFailRes([], $res->getMessage());
     }
 
-    return view('exams.react-exam-page', [
-      ...collect($res->toArray())->only('exam', 'exam_track')->toArray(),
-      'timeRemaining' => 100,
+    $exam = $res->exam;
+    return $this->apiSuccessRes([
+      'exam_track' => $res->exam_track,
+      'exam' => $exam,
+      'timeRemaining' => $exam->getTimeRemaining(),
       'baseUrl' => url('/'),
     ]);
   }

@@ -76,7 +76,6 @@ Route::group(['middleware' => ['auth', 'admin.user'], 'prefix' => 'admin/', 'as'
 });
 
 Route::get('/exam/login', [Home\ExamController::class, 'startExamView'])->name('exam-login');
-Route::get('/exam/start', [Home\ExamController::class, 'startExam'])->name('exam-start');
 
 Route::get('/rough/{instId?}', function (Request $request) {
     dd('rough');

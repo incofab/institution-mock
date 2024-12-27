@@ -11,79 +11,80 @@ use App\Core\ErrorCodes;
 
 class Controller extends BaseController
 {
-    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+  use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    protected $page = 1;
-    protected $lastIndex = 0;
-    protected $numPerPage = 100;
+  protected $page = 1;
+  protected $lastIndex = 0;
+  protected $numPerPage = 100;
 
-    function __construct()
-    {
-        $this->page = Arr::get($_GET, 'page', 1);
+  function __construct()
+  {
+    $this->page = Arr::get($_GET, 'page', 1);
+  }
+
+  public function view($view, $data = [], $merge = [])
+  {
+    if (!isset($data['page'])) {
+      $data['page'] = $this->page;
     }
 
-    public function view($view, $data = [], $merge = [])
-    {
-        if (!isset($data['page'])) {
-            $data['page'] = $this->page;
-        }
-
-        if (!isset($data['numPerPage'])) {
-            $data['numPerPage'] = $this->numPerPage;
-        }
-
-        return view($view, $data, $merge);
+    if (!isset($data['numPerPage'])) {
+      $data['numPerPage'] = $this->numPerPage;
     }
 
-    function redirect($redirect, $ret)
-    {
-        return $redirect
-            ->with($ret['success'] ? 'error' : 'success', $ret['message'])
-            ->withInput()
-            ->withErrors(Arr::get($ret, 'val'));
-    }
+    return view($view, $data, $merge);
+  }
 
-    function apiRes(
-        bool $success,
-        string $message,
-        $data = [],
-        $httpStatusCode = 200,
-    ) {
-        $arr = [
-            'success' => $success,
-            'message' => $message,
-            'data' => $data,
-        ];
+  function redirect($redirect, $ret)
+  {
+    return $redirect
+      ->with($ret['success'] ? 'error' : 'success', $ret['message'])
+      ->withInput()
+      ->withErrors(Arr::get($ret, 'val'));
+  }
 
-        return response()->json($arr, $httpStatusCode);
-    }
+  function apiRes(
+    bool $success,
+    string $message,
+    $data = [],
+    $httpStatusCode = 200,
+  ) {
+    $arr = [
+      'success' => $success,
+      'message' => $message,
+      'data' => $data,
+    ];
 
-    function apiSuccessRes($data, $message = '', array $extraData = [])
-    {
-        return $this->apiRes(true, $message, [
-            'data' => $data,
-            ...$extraData,
-        ]);
-    }
+    return response()->json($arr, $httpStatusCode);
+  }
 
-    function apiFailRes($data, $message = '', array $extraData = [])
-    {
-        return $this->apiRes(
-            false,
-            $message,
-            ['data' => $data, ...$extraData],
-            401,
-        );
-    }
+  function apiSuccessRes($data, $message = '', array $extraData = [])
+  {
+    return $this->apiRes(true, $message, [
+      'data' => $data,
+      'ok' => true,
+      ...$extraData,
+    ]);
+  }
 
-    // function emitResponseRet(array $ret){
+  function apiFailRes($data, $message = '', array $extraData = [])
+  {
+    return $this->apiRes(
+      false,
+      $message,
+      ['data' => $data, 'ok' => false, ...$extraData],
+      401,
+    );
+  }
 
-    //     $ret['error_code'] = $ret['success'] ? ErrorCodes::OK : ErrorCodes::FAILED;
+  // function emitResponseRet(array $ret){
 
-    //     return response()->json($ret);
-    // }
+  //     $ret['error_code'] = $ret['success'] ? ErrorCodes::OK : ErrorCodes::FAILED;
 
-    // function apiEmitResponse($data){
-    //     return response()->json($data);
-    // }
+  //     return response()->json($ret);
+  // }
+
+  // function apiEmitResponse($data){
+  //     return response()->json($data);
+  // }
 }

@@ -18,6 +18,9 @@ class Exam extends BaseModel
     'num_of_questions' => 'integer',
     'score' => 'integer',
     'status' => ExamStatus::class,
+    'start_time' => 'datetime',
+    'end_time' => 'datetime',
+    'pause_time' => 'datetime',
   ];
 
   static function generateExamNo()
@@ -27,6 +30,16 @@ class Exam extends BaseModel
       $key = date('Y') . rand(10000000, 99999999);
     }
     return $key;
+  }
+
+  function getTimeRemaining()
+  {
+    $benchmarkTime = $this->pause_time ?? $this->start_time;
+    if (empty($benchmarkTime) || empty($this->end_time)) {
+      return 0;
+    }
+    $timeRemaining = $benchmarkTime->diff($this->end_time);
+    return $timeRemaining < 1 ? 0 : $timeRemaining;
   }
 
   function examCourses()
