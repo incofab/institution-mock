@@ -14,57 +14,52 @@ use Laravel\Sanctum\HasApiTokens;
  * @property string $email
  * @property string $password
  * @property string $phone
- * @property string $username
  * @property float $balance
  * @property int $pin_balance
  *
  */
 class User extends Authenticatable
 {
-    use Notifiable, HasApiTokens, HasFactory;
+  use Notifiable, HasApiTokens, HasFactory;
 
-    protected $casts = [
-        'email_verified_at' => 'datetime',
+  protected $casts = [
+    'email_verified_at' => 'datetime',
+  ];
+  protected $guarded = [];
+
+  protected $hidden = ['password', 'remember_token'];
+
+  static function ruleCreate($prefix = '')
+  {
+    return [
+      $prefix . 'name' => ['required', 'string', 'max:255'],
+      $prefix . 'email' => [
+        'required',
+        'string',
+        'email',
+        'max:255',
+        'unique:users',
+      ],
+      $prefix . 'phone' => ['required', 'digits:11'],
+      // 'username' => ['required', 'alpha_dash', 'unique:users', new \App\Rules\NotEntirelyDigits()],
+      $prefix . 'password' => ['required', 'string', 'min:4', 'confirmed'],
     ];
+  }
 
-    protected $hidden = ['password', 'remember_token'];
+  function createLoginToken()
+  {
+    $loginTokenName = 'Login Token';
 
-    static function ruleCreate($prefix = '')
-    {
-        return [
-            $prefix . 'name' => ['required', 'string', 'max:255'],
-            $prefix . 'email' => [
-                'required',
-                'string',
-                'email',
-                'max:255',
-                'unique:users',
-            ],
-            $prefix . 'phone' => ['required', 'digits:11'],
-            // 'username' => ['required', 'alpha_dash', 'unique:users', new \App\Rules\NotEntirelyDigits()],
-            $prefix . 'password' => [
-                'required',
-                'string',
-                'min:4',
-                'confirmed',
-            ],
-        ];
-    }
+    // Delete old tokens, if any
+    //         $this->tokens()->where('name', '=', $loginTokenName)
+    //         ->where('tokenable_id', '=', $this->id)
+    //         ->where('tokenable_type', '=', User::class)->delete();
 
-    function createLoginToken()
-    {
-        $loginTokenName = 'Login Token';
+    return $this->createToken($loginTokenName)->plainTextToken;
+  }
 
-        // Delete old tokens, if any
-        //         $this->tokens()->where('name', '=', $loginTokenName)
-        //         ->where('tokenable_id', '=', $this->id)
-        //         ->where('tokenable_type', '=', User::class)->delete();
-
-        return $this->createToken($loginTokenName)->plainTextToken;
-    }
-
-    function isAdmin()
-    {
-        return $this->email === config('app.admin.email');
-    }
+  function isAdmin()
+  {
+    return $this->email === config('app.admin.email');
+  }
 }

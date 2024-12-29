@@ -49,6 +49,11 @@ export default function PageHeader({
           <div className="pl-1" id="name">
             {exam.student?.firstname} {exam.student?.lastname}
           </div>
+          {/* <div className="float-right py-2">
+            <b>
+              Exam No: <span id="exam-no">{exam.exam_no}</span>
+            </b>
+          </div> */}
         </div>
         <div className="col-5">
           <div className="pr-3 clearfix" style={{ textAlign: 'right' }}>

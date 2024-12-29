@@ -10,22 +10,14 @@ export default function FooterNav({
   submitExam: (showConfirmDialog: boolean) => void;
 }) {
   return (
-    <div className="question-nav text-center clearfix">
+    <div className="question-nav text-center d-flex justify-content-between align-items-center py-2 px-2">
       <button
-        className="btn btn-primary float-left"
+        className="btn btn-primary"
         id="previous-question"
         onClick={previousClicked}
         style={{ width: '100px' }}
       >
-        &laquo; Previous
-      </button>
-      <button
-        className="btn btn-primary float-right"
-        id="next-question"
-        onClick={nextClicked}
-        style={{ width: '100px' }}
-      >
-        Next &raquo;
+        &laquo;&nbsp;Previous
       </button>
       <button
         className="btn btn-primary mx-auto px-3"
@@ -36,6 +28,14 @@ export default function FooterNav({
         title="Submit and end this exam. Cannot be resumed"
       >
         <i className="fa fa-paper-plane"></i> Submit
+      </button>
+      <button
+        className="btn btn-primary"
+        id="next-question"
+        onClick={nextClicked}
+        style={{ width: '100px' }}
+      >
+        Next&nbsp;&raquo;
       </button>
     </div>
   );

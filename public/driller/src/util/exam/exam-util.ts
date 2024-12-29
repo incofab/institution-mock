@@ -4,7 +4,7 @@ import { ExamAttempt, ExamUrl } from '../../types/types';
 
 export interface ExamTab {
   currentQuestionIndex: number;
-  exam_courseable_id: number;
+  exam_course_id: number;
 }
 
 class ExamUtil {
@@ -59,8 +59,8 @@ class TabManager {
   getCurrentTab() {
     return this.tabs[this.currentTabIndex];
   }
-  getTab(tabIndex: number) {
-    return this.tabs[tabIndex] ?? {};
+  getTab(tabIndex: number): ExamTab {
+    return this.tabs[tabIndex] ?? ({} as ExamTab);
   }
   setTab(tabIndex: number, examTab: ExamTab) {
     this.tabs[tabIndex] = examTab;
@@ -73,21 +73,21 @@ class TabManager {
     }
     this.tabs[this.currentTabIndex] = {
       currentQuestionIndex: currentQuestionIndex,
-      exam_courseable_id: tab.exam_courseable_id
+      exam_course_id: tab.exam_course_id
     };
     this.reRender();
   }
   getCurrentQuestion() {
-    return this.getCurrentCourseableQuestions()?.[
+    return this.getCurrentCourseQuestions()?.[
       this.getCurrentTab().currentQuestionIndex
     ];
   }
   getCurrentQuestionIndex() {
     return this.getCurrentTab().currentQuestionIndex;
   }
-  getCurrentCourseableQuestions() {
-    const examCourseable = this.exam.exam_courses![this.currentTabIndex];
-    const questions = examCourseable.course_session!.questions!;
+  getCurrentCourseQuestions() {
+    const examCourse = this.exam.exam_courses![this.currentTabIndex];
+    const questions = examCourse.course_session!.questions!;
     return questions;
   }
 }
@@ -154,7 +154,7 @@ class ExamNavManager {
   private canGoNext(currentQuestionIndex: number) {
     return (
       currentQuestionIndex <
-      this.tabManager.getCurrentCourseableQuestions().length
+      this.tabManager.getCurrentCourseQuestions().length - 1
     );
   }
   private canGoPrevious(currentQuestionIndex: number) {

@@ -1,7 +1,6 @@
 <?php
-
-require_once 'public/exam-route/exam-route-base.php';
-require_once 'app/Helpers/ExamHandler.php';
+require_once 'exam-route-base.php';
+require_once APP_DIR . 'Helpers/ExamHandler.php';
 
 $examHandler = new \App\Helpers\ExamHandler();
 
@@ -10,13 +9,10 @@ $post = json_decode($input, true);
 $eventId = $post['event_id'];
 $examNo = $post['exam_no'];
 
-//     dlog_22($post);
+// dlog($post);
 $allAttempts = $post['attempts'];
-//     dlog_22($allAttempts);
 
 $ret = $examHandler->attemptQuestion($allAttempts, $eventId, $examNo);
-
-//     dlog_22($ret);
 
 if (!$ret['success']) {
   emitResponse($ret);

@@ -8,7 +8,7 @@ export interface ExamTrack extends Exam {
   attempts: ExamAttempt;
 }
 
-export const baseUrl = process.env.REACT_APP_API_URL;
+export const baseUrl = process.env.REACT_APP_BASE_URL;
 
 export const ExamUrl = {
   EndExam: `${baseUrl}exam-route/end-exam.php`,

@@ -23,3 +23,6 @@ yarn-error.log
 
 # Ignore the error log file
 /public/errorlog.txt
+
+_ide_helper_models.php
+_ide_helper.php

@@ -4,8 +4,8 @@
   "description": "",
   "main": "src/main.tsx",
   "scripts": {
-    "start": "react-scripts start --entry-file src/main.tsx",
-    "build": "react-scripts build --entry-file src/main.tsx",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

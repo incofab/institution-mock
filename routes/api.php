@@ -44,7 +44,7 @@ Route::any('/webhook/monnify', [WebhookController::class, 'monnifyWebhook']);
 Route::post('/home/cheetahpay/callback', [CallbackController::class, 'cheetahpayCallback'])->name('cheetahpay-callback');
 */
 
-Route::get('/exam/start', [Home\ExamController::class, 'startExam'])->name('exam-start');
+Route::post('/exam/start', [Home\ExamController::class, 'startExam'])->name('exam-start');
 
 Route::group(['middleware' => []], function() {
     

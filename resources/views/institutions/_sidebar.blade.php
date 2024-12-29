@@ -81,20 +81,20 @@
 				</li>
 			</ul>
 		</li>
-		<li class="treeview"><a class="app-menu__item" href="#"
+		{{-- <li class="treeview"><a class="app-menu__item" href="#"
 			data-toggle="treeview"><i class="app-menu__icon fa fa-edit"></i><span
 				class="app-menu__label">Exams</span><i
 				class="treeview-indicator fa fa-angle-right"></i></a>
 			<ul class="treeview-menu">
-				{{-- <li><a class="treeview-item" href="{{instRoute('exams.index')}}"><i
+				<li><a class="treeview-item" href="{{instRoute('exams.index')}}"><i
 						class="icon fa fa-circle-o"></i> View Exams</a>
 				</li> 
 				<li><a class="treeview-item" href="{{instRoute('exams.create')}}"><i
 					class="icon fa fa-circle-o"></i> Register Exam</a>
 				</li>
-				--}}
+				
 			</ul>
-		</li>
+		</li>--}}
 		{{-- 
 		<li><a class="app-menu__item active" href="{{instRoute('ccd.course.index')}}"><i
 			class="app-menu__icon fa fa-keyboard"></i><span

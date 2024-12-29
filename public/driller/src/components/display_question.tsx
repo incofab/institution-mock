@@ -29,7 +29,7 @@ export default function DisplayQuestion({
   return (
     <div className="question-main">
       <div className="tile text-center p-1 mb-3">
-        <div className="tile-title question-no mb-0 shadow py-1">
+        <div className="tile-title question-no mb-0 py-1">
           Question {questionNo} of {courseSession.questions!.length}
         </div>
       </div>
@@ -39,7 +39,7 @@ export default function DisplayQuestion({
       </div>
       <div className="passage">{getPassage(courseSession, questionNo)}</div>
       <div
-        className="question-text"
+        className="question-text mb-2"
         dangerouslySetInnerHTML={{
           __html: questionImageHandler.handleImages(question.question)
         }}
@@ -96,14 +96,16 @@ function DisplayOption({
 
   return (
     <div
-      className="animated-radio-button option pointer"
+      className="animated-radio-button option pointer mt-3"
       onClick={() =>
         examUtil.getAttemptManager().setAttempt(question.id, optionLetter)
       }
     >
-      <label className="selection">
-        <span className="option-letter">{optionLetter})</span>
-        <input
+      <label className="selection d-flex">
+        <span className="option-letter" style={{ width: 'auto' }}>
+          {optionLetter})
+        </span>
+        {/* <input
           type="radio"
           name="option"
           checked={
@@ -112,13 +114,22 @@ function DisplayOption({
           }
           data-selection={optionLetter}
           onChange={() => {}}
-        />
-        <span className="label-text">
+          className="mx-2"
+        /> */}
+        <div
+          className={`mx-2 check-icon ${
+            examUtil.getAttemptManager().getAttempt(question.id) ===
+            optionLetter
+              ? 'checked'
+              : 'unchecked'
+          }`}
+        ></div>
+        <div className="label-text" style={{ flex: 1 }}>
           <span
             className="option-text"
             dangerouslySetInnerHTML={{ __html: optionText }}
           ></span>
-        </span>
+        </div>
       </label>
     </div>
   );

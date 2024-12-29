@@ -25,7 +25,7 @@ class ExamFactory extends Factory
     ];
   }
 
-  function notStarted(Institution $institution)
+  function notStarted()
   {
     return $this->state(
       fn(array $attr) => [

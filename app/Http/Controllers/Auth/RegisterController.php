@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -14,7 +13,7 @@ use App\Helpers\UserHelper;
 
 class RegisterController extends Controller
 {
-    /*
+  /*
     |--------------------------------------------------------------------------
     | Register Controller
     |--------------------------------------------------------------------------
@@ -25,87 +24,81 @@ class RegisterController extends Controller
     |
     */
 
-    use RegistersUsers;
+  use RegistersUsers;
 
-    /**
-     * Where to redirect users after registration.
-     *
-     * @var string
-     */
-    protected $redirectTo = RouteServiceProvider::HOME;
+  /**
+   * Where to redirect users after registration.
+   *
+   * @var string
+   */
+  protected $redirectTo = RouteServiceProvider::HOME;
 
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('guest');
+  /**
+   * Create a new controller instance.
+   *
+   * @return void
+   */
+  public function __construct()
+  {
+    $this->middleware('guest');
+  }
+
+  /**
+   * Get a validator for an incoming registration request.
+   *
+   * @param  array  $data
+   * @return \Illuminate\Contracts\Validation\Validator
+   */
+  protected function validator(array $data)
+  {
+    return Validator::make($data, [
+      'name' => ['required', 'string', 'max:255'],
+      'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+      'phone' => ['required', 'digits:11'],
+      // 'username' => ['required', 'alpha_dash', 'unique:users', new \App\Rules\NotEntirelyDigits()],
+      'password' => ['required', 'string', 'min:4', 'confirmed'],
+    ]);
+  }
+
+  /**
+   * Create a new user instance after a valid registration.
+   *
+   * @param  array  $data
+   * @return \App\Models\User
+   */
+  protected function create(array $data)
+  {
+    return User::create([
+      ...collect($data)->only('name', 'email', 'phone')->toArray(),
+      'password' => Hash::make($data['password']),
+      // 'name' => $data['name'],
+      // 'email' => $data['email'],
+      // 'phone' => $data['phone'],
+      // 'username' => $data['username'],
+    ]);
+  }
+
+  function apiRegister(Request $request, UserHelper $userHelper)
+  {
+    $val = $this->validator($request->all());
+
+    if ($val->fails()) {
+      $message =
+        'Validation failed: ' . getFirstValue($val->errors()->toArray());
+
+      return $this->apiRes(false, $message, [
+        'errors' => $val->errors()->toArray(),
+      ]);
     }
 
-    /**
-     * Get a validator for an incoming registration request.
-     *
-     * @param  array  $data
-     * @return \Illuminate\Contracts\Validation\Validator
-     */
-    protected function validator(array $data)
-    {
-        return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => [
-                'required',
-                'string',
-                'email',
-                'max:255',
-                'unique:users',
-            ],
-            'phone' => ['required', 'digits:11'],
-            // 'username' => ['required', 'alpha_dash', 'unique:users', new \App\Rules\NotEntirelyDigits()],
-            'password' => ['required', 'string', 'min:4', 'confirmed'],
-        ]);
-    }
+    $user = $this->create($val->validated());
 
-    /**
-     * Create a new user instance after a valid registration.
-     *
-     * @param  array  $data
-     * @return \App\Models\User
-     */
-    protected function create(array $data)
-    {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-            'phone' => $data['phone'],
-            'username' => $data['username'],
-        ]);
-    }
+    $this->guard()->login($user);
 
-    function apiRegister(Request $request, UserHelper $userHelper)
-    {
-        $val = $this->validator($request->all());
+    $userIndex = $userHelper->indexPage($user);
+    $userIndex['user'] = $user;
+    $userIndex['token'] = $user->createLoginToken();
 
-        if ($val->fails()) {
-            $message =
-                'Validation failed: ' .
-                getFirstValue($val->errors()->toArray());
-
-            return $this->apiRes(false, $message, [
-                'errors' => $val->errors()->toArray(),
-            ]);
-        }
-
-        $user = $this->create($request->all());
-
-        $this->guard()->login($user);
-
-        $userIndex = $userHelper->indexPage($user);
-        $userIndex['user'] = $user;
-        $userIndex['token'] = $user->createLoginToken();
-
-        return $this->apiRes(true, 'Registration successful', $userIndex);
-    }
+    return $this->apiRes(true, 'Registration successful', $userIndex);
+  }
 }

@@ -16,7 +16,7 @@
             		<i class="fa fa-lg fa-fw fa-thumbs-up"></i>
 				</div>
 				<div class="text-center">
-					Welcome, {{Auth::user()->name}}
+					Welcome, {{currentUser()->name}}
 				</div>
 			</h3>
         	<br /><br />
@@ -25,6 +25,10 @@
 				<br />
 				<br />
 				You need to to be assigned an institution to be able to access institutional previleges.  
+			</div>
+			<br>
+			<div class="text-center">
+				<a class="btn btn-danger" href="{{route('logout')}}">Logout</a>
 			</div>
 			<br />
 		</form>

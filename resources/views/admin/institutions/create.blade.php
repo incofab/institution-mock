@@ -24,6 +24,7 @@ $edit = isset($edit) ? $edit : null;
 	<div class="tile">
 		<h3 class="tile-title">Register/Update Institution</h3>
 		<form action="{{route('admin.institutions.store')}}" method="post">
+			@include('common.message')
 			@csrf
             @if ($edit)
                 @method('PUT')

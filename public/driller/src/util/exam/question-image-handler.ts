@@ -1,7 +1,8 @@
 import { CourseSession, Exam } from '../../types/models';
+import { baseUrl } from '../../types/types';
 
 class QuestionImageHandler {
-  private readonly IMG_BASE_URL = `${window.baseUrl}exam-route/exam-img.php`; //import.meta.env.VITE_CONTENT_IMAGE_BASE_URL;
+  private readonly IMG_BASE_URL = `${baseUrl}exam-route/exam-img.php`; //import.meta.env.VITE_CONTENT_IMAGE_BASE_URL;
 
   constructor(
     private exam: Exam,

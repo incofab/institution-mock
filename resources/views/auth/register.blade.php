@@ -24,14 +24,14 @@
                     <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
                 @enderror
 			</div>
-			<div class="form-group">
+			{{-- <div class="form-group">
 				<label class="control-label">USERNAME</label> 
 				<input class="form-control" type="text" placeholder="Username" autofocus
 					name="username" value="{{old('username')}}">
 				@error('username')
                     <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
                 @enderror
-			</div>
+			</div> --}}
             <div class="form-group">
 				<label class="control-label">EMAIL</label> 
 				<input class="form-control" type="email" placeholder="Email" autofocus

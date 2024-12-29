@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/static/css/main.b62db11f.css",
-    "main.js": "/static/js/main.ae490094.js",
-    "index.html": "/index.html",
-    "main.b62db11f.css.map": "/static/css/main.b62db11f.css.map",
-    "main.ae490094.js.map": "/static/js/main.ae490094.js.map"
+    "main.css": "http://localhost/driller/build/static/css/main.11ee2548.css",
+    "main.js": "http://localhost/driller/build/static/js/main.f236f054.js",
+    "index.html": "http://localhost/driller/build/index.html",
+    "main.11ee2548.css.map": "http://localhost/driller/build/static/css/main.11ee2548.css.map",
+    "main.f236f054.js.map": "http://localhost/driller/build/static/js/main.f236f054.js.map"
   },
   "entrypoints": [
-    "static/css/main.b62db11f.css",
-    "static/js/main.ae490094.js"
+    "static/css/main.11ee2548.css",
+    "static/js/main.f236f054.js"
   ]
 }

@@ -51,30 +51,21 @@ class Controller extends BaseController
   ) {
     $arr = [
       'success' => $success,
+      'ok' => $success,
       'message' => $message,
       'data' => $data,
     ];
-
     return response()->json($arr, $httpStatusCode);
   }
 
   function apiSuccessRes($data, $message = '', array $extraData = [])
   {
-    return $this->apiRes(true, $message, [
-      'data' => $data,
-      'ok' => true,
-      ...$extraData,
-    ]);
+    return $this->apiRes(true, $message, [...$data, ...$extraData]);
   }
 
   function apiFailRes($data, $message = '', array $extraData = [])
   {
-    return $this->apiRes(
-      false,
-      $message,
-      ['data' => $data, 'ok' => false, ...$extraData],
-      401,
-    );
+    return $this->apiRes(false, $message, [...$data, ...$extraData], 401);
   }
 
   // function emitResponseRet(array $ret){

@@ -48,7 +48,7 @@ function App() {
       const examNo = queryParams.get('exam_no');
       const studentCode = queryParams.get('student_code');
 
-      if (!examNo || !studentCode) {
+      if (!examNo) {
         setError('Exam number is missing in the URL.');
         return;
       }
@@ -61,10 +61,12 @@ function App() {
       });
 
       if (!res || !res.ok) {
+        console.log(res);
         setError(res.message ?? 'Error process request');
         return;
       }
-      setExamProp(res.data);
+      console.log(res.data.data);
+      setExamProp(res.data.data);
     };
 
     fetchExamData();
@@ -72,14 +74,20 @@ function App() {
 
   if (webForm.processing) {
     return (
-      <div>
-        <button disabled>Loading...</button>
+      <div className="message-body">
+        <div>
+          <button disabled>Loading...</button>
+        </div>
       </div>
     );
   }
 
   if (error || !examProp) {
-    return <div>Error: {error}</div>;
+    return (
+      <div className="message-body">
+        <div>{error ?? 'Error processing exam'}</div>
+      </div>
+    );
   }
 
   return (

@@ -61,7 +61,7 @@ class EndExam
       //   dlog("totalScore = $totalScore");
     }
     ExamHelper::make()->endExam($exam, $totalScore, $totalNumOfQuestions);
-    $this->examHandler->syncExamFile($exam);
+    $this->examHandler->syncExamFile($exam, false);
 
     return successRes('Exam ended');
   }

@@ -73,7 +73,7 @@ class ExamController extends Controller
   function startExamView(Request $request)
   {
     if ($request->has('exam_no')) {
-      return view('exam.exam-login');
+      return view('exam.exam-page');
     }
     return view('exam.exam-login');
   }
@@ -87,14 +87,15 @@ class ExamController extends Controller
       'exam_no' => ['required', 'string'],
       'student_code' => ['nullable', 'string'],
     ]);
-
+    // info($request->all());
+    // dd('here');
     $res = ExamHelper::make()->getExamStartupData(
       $request->exam_no,
       $request->student_code,
       true,
     );
 
-    if (!$res->isNotSuccessful()) {
+    if ($res->isNotSuccessful()) {
       return $this->apiFailRes([], $res->getMessage());
     }
 

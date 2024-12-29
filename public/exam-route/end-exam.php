@@ -1,7 +1,6 @@
 <?php
-
-require_once 'public/exam-route/exam-route-base.php';
-require_once 'app/Helpers/ExamHandler.php';
+require_once 'exam-route-base.php';
+require_once APP_DIR . 'Helpers/ExamHandler.php';
 
 $examHandler = new \App\Helpers\ExamHandler();
 
@@ -18,5 +17,5 @@ if (!$ret['success']) {
 
 emitResponse([
   'success' => true,
-  'data' => ['success' => array_values($allAttempts), 'failure' => []],
+  'message' => 'Exam ended successfully',
 ]);

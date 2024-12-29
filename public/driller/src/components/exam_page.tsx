@@ -123,7 +123,6 @@ export default function ExamPage({
     </div>
   );
 }
-// export default ExamPage;
 
 function ExamContent({
   exam,
@@ -138,34 +137,35 @@ function ExamContent({
   previousClicked: () => void;
   submitExam: (showConfirmDialog: boolean) => void;
 }) {
+  const currentTabIndex = examUtil.getTabManager().getCurrentTabIndex();
+  const activeExamCourse = exam.exam_courses![currentTabIndex];
   return (
     <div id="exam-layout">
       <nav id="exam-tabs" className="clearfix">
         <ul className="nav nav-tabs float-left" id="nav-tab" role="tablist">
-          {exam.exam_courses!.map((examCourse, index) => (
-            <_ExamTab
-              examCourse={examCourse}
-              index={index}
-              examUtil={examUtil}
-              key={examCourse.id}
-            />
-          ))}
+          {exam.exam_courses!.map((examCourse, index) => {
+            const tab = examUtil.getTabManager().getTab(index);
+            examUtil.getTabManager().setTab(index, {
+              currentQuestionIndex: tab?.currentQuestionIndex ?? 0,
+              exam_course_id: examCourse.id
+            });
+            return (
+              <_ExamTab
+                examCourse={examCourse}
+                index={index}
+                examUtil={examUtil}
+                key={examCourse.id}
+              />
+            );
+          })}
         </ul>
-        <div className="float-right py-2">
-          <b>
-            Exam No: <span id="exam-no">{exam.exam_no}</span>
-          </b>
-        </div>
       </nav>
-      {exam.exam_courses!.map((examCourse, index) => (
-        <ExamCourseComponent
-          exam={exam}
-          examCourse={examCourse}
-          index={index}
-          examUtil={examUtil}
-          key={examCourse.id}
-        />
-      ))}
+      <ExamCourseComponent
+        exam={exam}
+        examCourse={activeExamCourse}
+        examUtil={examUtil}
+        key={activeExamCourse.id}
+      />
       <FooterNav
         nextClicked={nextClicked}
         previousClicked={previousClicked}
@@ -195,7 +195,7 @@ function _ExamTab({
         role="tab"
         onClick={() => examUtil.getTabManager().setCurrentTabIndex(index)}
       >
-        {examCourse.course_session!.course!.course_title}
+        {examCourse.course_session!.course!.course_code}
       </div>
     </li>
   );
@@ -204,46 +204,38 @@ function _ExamTab({
 function ExamCourseComponent({
   exam,
   examCourse,
-  index,
   examUtil
 }: {
   exam: Exam;
   examCourse: ExamCourse;
-  index: number;
   examUtil: ExamUtil;
 }) {
-  const currentTabIndex = examUtil.getTabManager().getCurrentTabIndex();
   const questionIndex = examUtil.getTabManager().getCurrentQuestionIndex();
   const attemptManager = examUtil.getAttemptManager();
 
   const tiles = examCourse.course_session!.questions!.map((question, index) => {
     return (
-      <li
+      <div
         data-question_no={question.question_no}
         data-question_id={question.id}
         data-question_index={index}
-        className={
-          'pointer ' +
-          (questionIndex === index ? 'current' : '') +
-          ' ' +
-          (attemptManager.isAttempted(question.id) ? 'attempted' : '')
-        }
+        className={`${questionIndex === index ? 'current' : ''} ${attemptManager.isAttempted(question.id) ? 'attempted' : ''} question-tile`}
         key={'tile-' + question.id}
         onClick={() => examUtil.getTabManager().setCurrentQuestion(index)}
       >
         {index + 1}
-      </li>
+      </div>
     );
   });
 
   return (
     <div
-      className={`tab-pane fade show ${currentTabIndex === index ? 'active' : ''}`}
+      // className={`tab-pane fade show ${currentTabIndex === index ? 'active' : ''}`}
       id={'nav-' + examCourse.id}
       role="tabpanel"
-      key={`question-${index}`}
+      key={`question-${examCourse.id}`}
     >
-      <div className="question-main">
+      <div className="question-main px-1 px-md-3">
         <DisplayQuestion
           questionIndex={questionIndex}
           exam={exam}
@@ -251,9 +243,8 @@ function ExamCourseComponent({
           examUtil={examUtil}
         />
       </div>
-      <ul className="question-numbers-tab list-unstyled clearfix text-center">
-        {tiles}
-      </ul>
+      <br />
+      <div className="text-center">{tiles}</div>
     </div>
   );
 }

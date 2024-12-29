@@ -32,13 +32,10 @@ class Exam extends BaseModel
     return $key;
   }
 
+  /** @return int the remaining time in seconds */
   function getTimeRemaining()
   {
-    $benchmarkTime = $this->pause_time ?? $this->start_time;
-    if (empty($benchmarkTime) || empty($this->end_time)) {
-      return 0;
-    }
-    $timeRemaining = $benchmarkTime->diff($this->end_time);
+    $timeRemaining = now()->diffInSeconds($this->end_time);
     return $timeRemaining < 1 ? 0 : $timeRemaining;
   }
 
