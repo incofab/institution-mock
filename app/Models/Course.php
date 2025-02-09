@@ -7,24 +7,29 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Course extends BaseModel
 {
-    use HasFactory, QueryInstitution;
-    protected $casts = [
-        'institution_id' => 'integer',
-        'exam_content_id' => 'integer',
-    ];
+  use HasFactory, QueryInstitution;
+  protected $casts = [
+    'institution_id' => 'integer',
+    'exam_content_id' => 'integer',
+  ];
 
-    public function canDelete()
-    {
-        return $this->sessions()->count();
-    }
+  public function canDelete()
+  {
+    return $this->sessions()->count();
+  }
 
-    function institution()
-    {
-        return $this->belongsTo(Institution::class);
-    }
+  function institution()
+  {
+    return $this->belongsTo(Institution::class);
+  }
 
-    function courseSessions()
-    {
-        return $this->hasMany(CourseSession::class);
-    }
+  function courseSessions()
+  {
+    return $this->hasMany(CourseSession::class);
+  }
+
+  function examContent()
+  {
+    return $this->belongsTo(ExamContent::class);
+  }
 }

@@ -22,7 +22,7 @@ $title = 'Register Event'; ?>
 <div>
 	<div class="tile">
 		<h3 class="tile-title">Create Event</h3>
-		<form action="{{instRoute('events.store')}}" method="post">
+		<form action="{{$edit ? instRoute('events.update', $edit) : instRoute('events.store')}}" method="post">
 			@csrf
             @if ($edit)
                 @method('PUT')
@@ -43,6 +43,25 @@ $title = 'Register Event'; ?>
 					<input type="text" name="duration" value="{{old('duration', $edit?->duration)}}" class="form-control"
 						placeholder="Enter duration in mins" />
 				</div>
+				{{-- <div class="form-check">
+					<input type="checkbox" value="1" id="flexCheckChecked" name="for_external"
+					@checked(old('for_external', $event?->for_external))>
+					<label for="flexCheckChecked">
+						Use system supplied questions
+					</label>
+				</div> --}}
+				@if (!$edit)
+				<div class="form-group">
+					<label class="control-label">Subjects</label>
+					<select name="external_content_id" required="required" class="form-control">
+						<option value="">Select Extent Content</option>
+						@foreach ($externalContents as $externalContent)
+							<option value="{{$externalContent->id}}">{{$externalContent->name}} | From {{$externalContent->source}}</option>
+						@endforeach
+						<div><small>Use this only if you want to use system supplied questions</small></div>
+					</select>
+				</div>
+				@endif
     		</div>
     		<div class="tile-footer">
     			<button class="btn btn-primary" type="submit">

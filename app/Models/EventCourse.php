@@ -6,21 +6,20 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class EventCourse extends BaseModel
 {
-    use HasFactory;
+  use HasFactory;
 
-    protected $casts = [
-        'institution_id' => 'integer',
-        'event_id' => 'integer',
-        'course_id' => 'integer',
-    ];
+  protected $casts = [
+    'event_id' => 'integer',
+    'course_session_id' => 'integer',
+  ];
 
-    function event()
-    {
-        return $this->belongsTo(Event::class);
-    }
+  function event()
+  {
+    return $this->belongsTo(Event::class);
+  }
 
-    function courseSession()
-    {
-        return $this->belongsTo(CourseSession::class);
-    }
+  function courseSession()
+  {
+    return $this->belongsTo(CourseSession::class);
+  }
 }

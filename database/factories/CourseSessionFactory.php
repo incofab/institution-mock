@@ -10,7 +10,7 @@ class CourseSessionFactory extends Factory
 {
   function definition()
   {
-    $sessions = ['2001', '2002', '2003', '2004', '2005', '2006'];
+    $sessions = range(2001, 2025); //['2001', '2002', '2003', '2004', '2005', '2006'];
     return [
       'course_id' => Course::factory(),
       'category' => '',

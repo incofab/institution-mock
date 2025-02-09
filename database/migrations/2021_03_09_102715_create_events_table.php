@@ -5,36 +5,40 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
-    {
-        Schema::create('events', function (Blueprint $table) {
-            $table->id('id');
+  /**
+   * Run the migrations.
+   *
+   * @return void
+   */
+  public function up()
+  {
+    Schema::create('events', function (Blueprint $table) {
+      $table->id('id');
 
-            $table
-                ->foreignId('institution_id')
-                ->references('id')
-                ->on('institutions');
-            $table->string('title');
-            $table->text('description')->nullable(true);
-            $table->unsignedInteger('duration');
-            $table->string('status')->default('active');
+      $table->foreignId('institution_id')->references('id')->on('institutions');
+      $table->string('title');
+      $table->text('description')->nullable(true);
+      $table->unsignedInteger('duration');
+      $table->string('status')->default('active');
+      //   $table->boolean('for_external')->default(false);
+      $table
+        ->foreignId('external_content_id')
+        ->nullable()
+        ->constrained()
+        ->nullOnDelete();
+      $table->json('external_event_courses')->nullable();
 
-            $table->timestamps();
-        });
-    }
+      $table->timestamps();
+    });
+  }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::dropIfExists('events');
-    }
+  /**
+   * Reverse the migrations.
+   *
+   * @return void
+   */
+  public function down()
+  {
+    Schema::dropIfExists('events');
+  }
 };

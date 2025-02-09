@@ -1,4 +1,5 @@
 <?php
+// dd(json_encode($allRecords, JSON_PRETTY_PRINT));
 $title = 'Preview'; ?>
 
 @extends('institutions.layout')
@@ -82,14 +83,17 @@ $title = 'Preview'; ?>
 							</thead>
 							<tbody>
 							@foreach($allRecords as $record)
+							<?php $courseSession = $record->courseSession ?? $record->course_session; ?> 
 								<tr>
-									<td>{{$record->courseSession->course->course_code}} - {{$record->courseSession->session}}</td>
+									<td>{{$courseSession->course->course_code}} - {{$courseSession->session}}</td>
 									<td>{{$record->created_at}}</td>
 									<td>
-										<a class="text-danger" href="{{instRoute('event-courses.destroy', $record)}}"
+										@if ($event->isNotExternal())
+										<a class="text-danger" href="{{instRoute('event-courses.destroy', [1, $record])}}"
 											onclick="return confirm('Delete this event subject?')">
 											<i class="fa fa-trash"></i>
 										</a>
+										@endif
 									</td>
 								</tr>
 							@endforeach

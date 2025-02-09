@@ -33,6 +33,7 @@ $title = 'Register Multi Event Courses'; ?>
 									<tr>
 										<td class="py-0 pt-3">{{$course->course_code}}</td>
 										<td class="py-0 pt-3">
+											<input type="hidden" name="subjects[{{$course->id}}][course_id]" value="{{$course->id}}">
 											<div class="form-group">
 												<select name="subjects[{{$course->id}}][course_session_id]" class="form-control">
 													<option value="">Select subject</option>
