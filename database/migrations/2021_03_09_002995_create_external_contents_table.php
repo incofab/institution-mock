@@ -15,7 +15,7 @@ return new class extends Migration {
     Schema::create('external_contents', function (Blueprint $table) {
       $table->id();
       $table->string('name');
-      $table->string('content_id')->nullable(true);
+      $table->unsignedBigInteger('content_id');
       $table->json('exam_content');
       $table->string('source');
 

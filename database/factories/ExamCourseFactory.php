@@ -17,12 +17,24 @@ class ExamCourseFactory extends Factory
       'score' => $this->faker->numberBetween(0, 100),
       'num_of_questions' => $this->faker->numberBetween(10, 100),
       'status' => 'active',
+      'course_code' => 'English Dummy',
+      'session' => fake()->randomElement(range(2000, 2025)),
     ];
   }
 
   function exam(Exam $exam)
   {
     return $this->state(fn($attr) => ['exam_id' => $exam]);
+  }
+
+  function courseSession()
+  {
+    return $this->afterCreating(function (ExamCourse $model) {
+      $institution = $model->exam->institution;
+      CourseSession::factory()
+        ->when($institution, fn($q) => $q->institution($institution))
+        ->create();
+    });
   }
 
   function questions($count = 10)

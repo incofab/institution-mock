@@ -2,6 +2,8 @@
 namespace Database\Factories;
 
 use App\Models\Event;
+use App\Models\Exam;
+use App\Models\ExamCourse;
 use App\Models\Institution;
 use App\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -36,6 +38,21 @@ class ExamFactory extends Factory
     );
   }
 
+  function event(Event $event)
+  {
+    $institution = $event->institution;
+    if (!$institution) {
+      return $this->state(fn($attr) => []);
+    }
+    return $this->state(
+      fn(array $attr) => [
+        'institution_id' => $institution,
+        'student_id' => Student::factory()->for($institution),
+        'event_id' => $event,
+      ],
+    );
+  }
+
   function institution(Institution $institution)
   {
     return $this->state(
@@ -44,6 +61,16 @@ class ExamFactory extends Factory
         'student_id' => Student::factory()->for($institution),
         'event_id' => Event::factory()->for($institution),
       ],
+    );
+  }
+
+  function examCourses($count = 3)
+  {
+    return $this->afterCreating(
+      fn(Exam $exam) => ExamCourse::factory($count)
+        ->exam($exam)
+        ->courseSession()
+        ->create(),
     );
   }
 }

@@ -4,6 +4,7 @@ namespace Database\Factories;
 use App\Models\Course;
 use App\Models\CourseSession;
 use App\Models\ExamContent;
+use App\Models\Institution;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CourseFactory extends Factory
@@ -20,7 +21,7 @@ class CourseFactory extends Factory
       'Commerce',
       'Government',
       'Social Studies',
-      'Igb',
+      'Igbo',
       'Hausa',
       'Yoruba',
       'IRK',
@@ -43,7 +44,14 @@ class CourseFactory extends Factory
   function courseSessions($sessionCount = 5)
   {
     return $this->afterCreating(
-      fn(Course $course) => CourseSession::factory($sessionCount)->for($course),
+      fn(Course $course) => CourseSession::factory($sessionCount)
+        ->for($course)
+        ->create(),
     );
+  }
+
+  function institution(Institution $institution)
+  {
+    return $this->state(fn($attr) => ['institution_id' => $institution]);
   }
 }

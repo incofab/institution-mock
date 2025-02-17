@@ -89,7 +89,6 @@ class EventController extends Controller
   function show(Institution $institution, Event $event)
   {
     $event->load('eventCourses.courseSession.course');
-    dd('show Event');
     return view('institutions.events.show', [
       'event' => $event,
       'eventCourses' => $event->getEventCourses(),

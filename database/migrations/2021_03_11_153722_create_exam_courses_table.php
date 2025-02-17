@@ -14,7 +14,7 @@ return new class extends Migration {
   {
     Schema::create('exam_courses', function (Blueprint $table) {
       $table->id();
-      $table->foreignId('exam_id')->references('id')->on('exams');
+      $table->foreignId('exam_id')->constrained()->cascadeOnDelete();
       $table
         ->unsignedBigInteger('course_session_id')
         ->comment(

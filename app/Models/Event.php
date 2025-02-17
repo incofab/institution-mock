@@ -3,10 +3,11 @@
 namespace App\Models;
 
 use App\Traits\QueryInstitution;
-use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-
+/**
+ * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\EventCourse> $eventCourses
+ */
 class Event extends BaseModel
 {
   use HasFactory, QueryInstitution;
@@ -27,7 +28,7 @@ class Event extends BaseModel
       ...$event
         ? []
         : [
-          'external_content_id' => ['sometimes', 'exists:external_contents,id'],
+          'external_content_id' => ['nullable', 'exists:external_contents,id'],
         ],
     ];
   }
@@ -54,6 +55,15 @@ class Event extends BaseModel
     }
     return $this->external_event_courses;
   }
+  function findCourseSession($courseSessionId): CourseSession|array|null
+  {
+    return $this->getEventCourses()
+      ->filter(
+        fn($item) => $item['course_session_id'] == intval($courseSessionId),
+      )
+      ->first()
+      ?->getCourseSession();
+  }
 
   function externalEventCourses(): Attribute
   {
@@ -63,7 +73,7 @@ class Event extends BaseModel
         return collect($valueArr)->map(function ($item) {
           $eventCourse = new EventCourse($item);
           $courseSession = new CourseSession($item['course_session'] ?? []);
-          $courseSession->course = new Course(
+          $courseSession['course'] = new Course(
             $item['course_session']['course'] ?? [],
           );
           $eventCourse->course_session = $courseSession;

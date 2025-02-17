@@ -52,8 +52,8 @@ $title = 'Register Event'; ?>
 				</div> --}}
 				@if (!$edit)
 				<div class="form-group">
-					<label class="control-label">Subjects</label>
-					<select name="external_content_id" required="required" class="form-control">
+					<label class="control-label">External Content</label>
+					<select name="external_content_id" class="form-control">
 						<option value="">Select Extent Content</option>
 						@foreach ($externalContents as $externalContent)
 							<option value="{{$externalContent->id}}">{{$externalContent->name}} | From {{$externalContent->source}}</option>

@@ -48,8 +48,8 @@ class ExamController extends Controller
     return function ($attr, $value, $fail) use ($event) {
       $exists = $event
         ->getEventCourses()
-        ->where('course_session_id', $value)
-        ->exists();
+        ->filter(fn($item) => $item['course_session_id'] == intval($value))
+        ->first();
       if (!$exists) {
         $fail("$attr is not part of this event {$event->title}");
       }
@@ -96,7 +96,7 @@ class ExamController extends Controller
     $data = $request->validate([
       'grade_id' => 'exists:grades,id',
       'course_session_ids' => ['required', 'array', 'min:1'],
-      'course_session_ids' => [
+      'course_session_ids.*' => [
         'required',
         $this->validateEventCourseSessions($event),
       ],

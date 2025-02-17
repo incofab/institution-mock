@@ -34,7 +34,7 @@ Route::post('/exams/events/{event}/store-grade-exam', [Inst\ExamController::clas
 ->name('exams.events.grades.store');
 Route::post('/exams/events/{event}/multi-store-exam', [Inst\ExamController::class, 'multiStoreExam'])
 ->name('exams.multi-store-exam');
-Route::get('/exams/{exam}/delete', [Inst\ExamController::class, 'destroy'])
+Route::delete('/exams/{exam}/delete', [Inst\ExamController::class, 'destroy'])
 ->name('exams.destroy');
 
 Route::resource('/grades', Inst\GradeController::class);

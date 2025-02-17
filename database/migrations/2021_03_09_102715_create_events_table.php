@@ -15,7 +15,7 @@ return new class extends Migration {
     Schema::create('events', function (Blueprint $table) {
       $table->id('id');
 
-      $table->foreignId('institution_id')->references('id')->on('institutions');
+      $table->foreignId('institution_id')->constrained()->cascadeOnDelete();
       $table->string('title');
       $table->text('description')->nullable(true);
       $table->unsignedInteger('duration');
@@ -25,7 +25,7 @@ return new class extends Migration {
         ->foreignId('external_content_id')
         ->nullable()
         ->constrained()
-        ->nullOnDelete();
+        ->cascadeOnDelete();
       $table->json('external_event_courses')->nullable();
 
       $table->timestamps();

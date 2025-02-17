@@ -5,7 +5,6 @@ use App\Models\Course;
 use App\Models\Event;
 use App\Http\Controllers\Controller;
 use App\Models\EventCourse;
-use App\Models\ExternalContent;
 use App\Models\Institution;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -15,7 +14,6 @@ class EventCourseController extends Controller
   function index(Institution $institution, Event $event)
   {
     $event->load('externalContent', 'eventCourses.courseSession.course');
-    // $query = $event->eventCourses()->with('courseSession.course');
     return view('institutions.event-courses.index', [
       'allRecords' => $event->getEventCourses(),
       'event' => $event,
@@ -35,15 +33,11 @@ class EventCourseController extends Controller
       'course_session_id' => [
         'required',
         'integer',
-        // 'exists:course_sessions,id',
-        Rule::when(
-          $event->isNotExternal(),
-          fn($q) => $q->exists('course_sessions', 'id'),
-        ),
+        Rule::when($event->isNotExternal(), 'exists:course_sessions,id'),
       ],
       'num_of_questions' => ['nullable', 'integer'],
     ]);
-    // dd($data);
+
     if ($event->isExternal()) {
       /** @var \App\Models\ExternalContent $externalContent */
       $externalContent = $event->externalContent;
@@ -66,7 +60,7 @@ class EventCourseController extends Controller
         ->eventCourses()
         ->updateOrCreate(
           ['course_session_id' => $data['course_session_id']],
-          $data,
+          collect($data)->except('course_id')->toArray(),
         );
     }
 
@@ -78,9 +72,9 @@ class EventCourseController extends Controller
 
   function multiCreate(Institution $institution, Event $event)
   {
-    return view('institutions.event-courses.create-multi-event-courses', [
-      'event' => $event,
-      'courses' => Course::query()
+    $courses = $event->isExternal()
+      ? $event->externalContent->exam_content->courses
+      : Course::query()
         ->when(
           $event->exam_content_id,
           fn($q, $value) => $q->where('exam_content_id', $value),
@@ -88,7 +82,10 @@ class EventCourseController extends Controller
         ->with('courseSessions', fn($q) => $q->latest('session'))
         ->oldest('order')
         ->oldest('course_code')
-        ->get(),
+        ->get();
+    return view('institutions.event-courses.create-multi-event-courses', [
+      'event' => $event,
+      'courses' => $courses,
     ]);
   }
 
@@ -101,7 +98,8 @@ class EventCourseController extends Controller
       'subjects.*.course_session_id' => [
         'nullable',
         'integer',
-        'exists:course_sessions,id',
+        // 'exists:course_sessions,id',
+        Rule::when($event->isNotExternal(), 'exists:course_sessions,id'),
       ],
     ]);
     $filteredSubjects = array_filter(
@@ -125,7 +123,7 @@ class EventCourseController extends Controller
           ->eventCourses()
           ->updateOrCreate(
             ['course_session_id' => $data['course_session_id']],
-            $data,
+            collect($data)->except('course_id')->toArray(),
           );
       }
     }

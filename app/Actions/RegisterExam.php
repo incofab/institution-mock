@@ -52,8 +52,10 @@ class RegisterExam
   {
     $eventCourse = $this->event
       ->getEventCourses()
-      ->where('course_session_id', $courseSessionId)
+      ->filter(
+        fn($item) => $item['course_session_id'] == intval($courseSessionId),
+      )
       ->first();
-    return $eventCourse->courseSession;
+    return $eventCourse->getCourseSession();
   }
 }

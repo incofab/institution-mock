@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Enums\ContentSource;
 use App\Traits\ExternalContentActions;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
+ * @property Collection<int, \App\Models\ExamContent> $exam_content
  * @author Incofab
  */
 class ExternalContent extends BaseModel
@@ -15,6 +17,7 @@ class ExternalContent extends BaseModel
 
   protected $casts = [
     'content_id' => 'integer',
+    'source' => ContentSource::class,
   ];
 
   function examContent(): Attribute
@@ -23,7 +26,7 @@ class ExternalContent extends BaseModel
       get: function ($value) {
         $valueArr = json_decode($value, true) ?? [];
         $examContent = new ExamContent($valueArr);
-        $examContent->courses = collect($valueArr['courses'] ?? [])->map(
+        $examContent['courses'] = collect($valueArr['courses'] ?? [])->map(
           function ($courseData) {
             $courseSessions = $courseData['course_sessions'] ?? [];
             $course = new Course($courseData);

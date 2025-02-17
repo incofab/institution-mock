@@ -2,10 +2,13 @@
 namespace App\Helpers;
 
 use App\Models\Exam;
+use App\Support\ExamProcess;
 
 class ExamHandler
 {
   const EXAM_TIME_ALLOWANCE = 100; // 100 seconds
+  const EXAM_FILES_DIR = __DIR__ . '/../../public/exams/';
+  const EXAM_FILE_EXT = 'edr';
 
   function __construct()
   {
@@ -20,25 +23,18 @@ class ExamHandler
    * This creates an exam file if it doesn't exits or updates it
    * @param \App\Models\Exam $exam
    * @param bool $forStart indentifies if this is for starting or resuming an exam
-   * @return array {success: bool, message: string}
    */
-  function syncExamFile(Exam $exam, $forStart = true)
+  function syncExamFile(Exam $exam, $forStart = true): ExamProcess
   {
-    $contentRes = $this->getContent($exam->event_id, $exam->exam_no, $forStart);
+    $contentRes = $this->getContent($exam->exam_no, $forStart);
 
     if ($forStart) {
-      if (!$contentRes['success'] && empty($contentRes['exam_not_found'])) {
+      if ($contentRes->isNotSuccessful() && !$contentRes->getExamNotFound()) {
         return $contentRes;
       }
     }
 
-    $examFileContent = $contentRes['content'] ?? null;
-
-    // $file = $this->getFullFilepath($exam->event_id, $exam->exam_no);
-    // $examFileContent = file_exists($file)
-    //   ? json_decode(file_get_contents($file), true)
-    //   : null;
-
+    $examFileContent = $contentRes->getExamTrack();
     $examData = $exam->only(
       'event_id',
       'student_id',
@@ -50,35 +46,30 @@ class ExamHandler
       'end_time',
     );
     // If it's not empty, then the exam has just been restarted
-    $examFileContent = $contentRes['content'] ?? ['attempts' => []];
+    $examFileContent = $contentRes->getExamTrack() ?? [];
     $examFileContent['exam'] = $examData;
-    // if (empty($examFileContent)) {
-    //   $examFileContent = [
-    //     'exam' => $examData,
-    //     'attempts' => [],
-    //   ];
-    // } else {
-    //   $examFileContent['exam'] = $examData;
-    // }
+    $examFileContent['attempts'] =
+      $examFileContent['attempts'] ?? ($exam->attempts ?? []);
+    // info($exam->toArray());
+    // info($examData);
+    $ret = $this->saveFile($contentRes->getFile(), $examFileContent);
 
-    $ret = $this->saveFile($contentRes['file'], $examFileContent);
-
-    return [
-      'success' => boolval($ret),
-      'message' => $ret ? 'Exam file ready' : 'Exam file failed to create',
-    ];
+    return new ExamProcess(
+      boolval($ret),
+      $ret ? 'Exam file ready' : 'Exam file failed to create',
+    );
   }
 
-  function attemptQuestion(array $studentAttempts, $eventId, $examNo)
+  function attemptQuestion(array $studentAttempts, $examNo): ExamProcess
   {
-    $content = $this->getContent($eventId, $examNo);
+    $content = $this->getContent($examNo);
 
-    if (!$content['success']) {
+    if ($content->isNotSuccessful()) {
       return $content;
     }
 
-    $examFileContent = $content['content'];
-    $file = $content['file'];
+    $examFileContent = $content->getExamTrack();
+    $file = $content->getFile();
     $savedAttempts = $examFileContent['attempts'];
 
     foreach ($studentAttempts as $questionId => $studentAttempt) {
@@ -89,34 +80,35 @@ class ExamHandler
 
     $ret = $this->saveFile($file, $examFileContent);
 
-    return [
-      'success' => boolval($ret),
-      'message' => $ret ? 'Attempt recorded' : 'Error recording attempt',
-    ];
+    return new ExamProcess(
+      boolval($ret),
+      $ret ? 'Attempt recorded' : 'Error recording attempt',
+    );
   }
 
-  function endExam($eventId, $examNo)
+  function endExam($examNo): ExamProcess
   {
-    $content = $this->getContent($eventId, $examNo, false);
+    $content = $this->getContent($examNo, false);
 
-    if (!$content['success']) {
+    if ($content->isNotSuccessful()) {
       return $content;
     }
 
-    $examFileContent = $content['content'];
-    $file = $content['file'];
+    $examFileContent = $content->getExamTrack();
+    $file = $content->getFile();
     $examFileContent['exam']['status'] = 'ended';
     $examFileContent['exam']['end_time'] = date('d-m-Y H:m:s');
 
     $ret = $this->saveFile($file, $examFileContent);
 
-    return [
-      'success' => boolval($ret),
-      'message' => $ret ? 'Exam ended' : 'Error ending exam',
-    ];
+    return new ExamProcess(
+      boolval($ret),
+      $ret ? 'Exam ended' : 'Error ending exam',
+    );
   }
 
-  private function saveFile($filename, $content)
+  /** Wasn't made private to allow for testing (Mocking) */
+  function saveFile($filename, $content)
   {
     return file_put_contents(
       $filename,
@@ -124,101 +116,91 @@ class ExamHandler
     );
   }
 
-  function calculateScoreFromFile($exam, $questions)
+  /**
+   * @param Collection<int, \App\Models\Question> $questions
+   */
+  function calculateScoreFromFile(Exam $exam, $questions): ExamProcess
   {
-    $ret = $this->getContent($exam->event_id, $exam->exam_no, false);
+    $ret = $this->getContent($exam->exam_no, false);
 
-    if (!$ret['success']) {
+    if ($ret->isNotSuccessful()) {
       return $ret;
     }
 
-    $size = count($questions);
-    $examFileContent = $ret['content'] ?? null;
+    $size = $questions->count();
+    $examFileContent = $ret->getExamTrack();
 
     if (empty($examFileContent) || empty($examFileContent['attempts'])) {
-      return [
-        'success' => true,
-        'score' => 0,
-        'num_of_questions' => $size,
-      ];
+      return ExamProcess::success()->score(0)->numOfQuestions($size);
     }
 
     $score = 0;
     $attempts = $examFileContent['attempts'];
     foreach ($questions as $question) {
       $attempt = $attempts[$question->id] ?? '';
-      if ($question['answer'] === $attempt) {
+      if ($question->answer === $attempt) {
         $score++;
       }
     }
-
-    return [
-      'success' => true,
-      'score' => $score,
-      'num_of_questions' => $size,
-    ];
+    return ExamProcess::success()->score($score)->numOfQuestions($size);
   }
 
-  private function getFullFilepath(
-    $eventId,
-    $examNo,
-    $toCreateBaseFolder = true,
-  ) {
-    $filename = "exam_$examNo";
-    $baseFolder = EXAM_FILES_DIR . "event_$eventId";
-    if (!file_exists($baseFolder) && $toCreateBaseFolder) {
-      mkdir($baseFolder, 0777, true);
-    }
-    return "$baseFolder/$filename." . EXAM_FILE_EXT;
-  }
-
-  function getContent($eventId, $examNo, $checkTime = true)
+  /** Wasn't made private to allow for testing (Mocking) */
+  function getFullFilepath($examNo)
   {
-    $file = $this->getFullFilepath($eventId, $examNo, false);
+    return self::EXAM_FILES_DIR . "exam_$examNo." . self::EXAM_FILE_EXT;
+  }
+
+  function getContent($examNo, $checkTime = true): ExamProcess
+  {
+    $file = $this->getFullFilepath($examNo);
 
     if (!file_exists($file)) {
-      return [
-        'success' => false,
-        'message' => 'Exam file not found',
-        'exam_not_found' => true,
-        'file' => $file,
-      ];
+      return ExamProcess::fail('Exam file not found')
+        ->examNotFound()
+        ->file($file);
     }
 
-    $examTrackContent = json_decode(file_get_contents($file), true);
+    $examTrackContent = $this->getExamTrack($file);
 
     if (empty($examTrackContent)) {
-      return [
-        'success' => false,
-        'message' => 'Exam file not found',
-        'exam_not_found' => true,
-        'file' => $file,
-      ];
+      return ExamProcess::fail('Exam file not found')
+        ->examNotFound()
+        ->file($file);
     }
-
     /************Check Exam Time**************/
     if ($checkTime) {
       $exam = $examTrackContent['exam'];
       $currentTime = time();
-      $endTime = strtotime($exam['end_time']) + self::EXAM_TIME_ALLOWANCE;
+      $endTime = strtotime($exam['end_time']); // + self::EXAM_TIME_ALLOWANCE;
       $isEnded = ($exam['status'] ?? '') === 'ended';
+      // info([$currentTime, $endTime, $isEnded]);
+      // info($exam);
       if ($currentTime > $endTime || $isEnded) {
-        return [
-          'success' => false,
-          'message' => 'Time Elapsed/Exam ended',
-          'time_elapsed' => true,
-          'content' => $examTrackContent,
-          'file' => $file,
-        ];
+        return ExamProcess::fail('Time Elapsed/Exam ended')
+          ->timeElapsed()
+          ->examTrack($examTrackContent)
+          ->file($file);
       }
     }
     /*//***********Check Exam Time**************/
+    return ExamProcess::success()->examTrack($examTrackContent)->file($file);
+  }
 
-    return [
-      'success' => true,
-      'message' => '',
-      'content' => $examTrackContent,
-      'file' => $file,
-    ];
+  /**
+   * @return array {
+   *  exam: App\Models\Exam,
+   *  attempts: array {
+   *    question_id: attempt
+   *  }
+   * }
+   */
+  function getExamTrack($file)
+  {
+    return json_decode(@file_get_contents($file), true);
+  }
+  function getExamFileData($examNo)
+  {
+    return $this->getExamTrack($this->getFullFilepath($examNo))['exam'] ?? null;
   }
 }

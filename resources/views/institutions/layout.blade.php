@@ -10,6 +10,7 @@ $title = isset($title) ? $title : config('app.name'); ?>
 	@include('institutions._sidebar')
 	
 	<main class="app-content">
+		@include('common.message')
 		@yield('content')
 	</main>
 	

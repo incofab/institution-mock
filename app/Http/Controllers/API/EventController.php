@@ -1,67 +1,49 @@
 <?php
 namespace App\Http\Controllers\API;
 
-use App\Models\Exam;
 use App\Http\Controllers\Controller;
+use App\Models\Event;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Models\Institution;
-use App\Models\ExamSubject;
 
 class EventController extends Controller
 {
-    private $resultsDir = '../public/files/';
+  function index(Institution $institution, Request $request)
+  {
+    $latestEventId = $request->latest_event_id ?? 0;
+    $events = Event::query()
+      ->where('id', '>', $latestEventId)
+      ->with('eventCourses.courseSession.course')
+      ->latest('id')
+      ->take(100)
+      ->get()
+      ->map(function ($event) {
+        $event->event_courses = $event->getEventCourses();
+        return $event;
+      });
 
-    private $eventHelper;
+    return $this->apiSuccessRes($events);
+  }
 
-    function __construct(\App\Helpers\EventHelper $eventHelper)
-    {
-        $this->eventHelper = $eventHelper;
+  function show(Institution $institution, Event $event)
+  {
+    $event->load('eventCourses.courseSession.course');
+    return $this->apiSuccessRes($event);
+  }
+
+  function deepShow(Institution $institution, Event $event)
+  {
+    //Todo: If event is external, call the external API to retrieve Event Course
+    if ($event->isExternal()) {
+      return $this->apiFailRes('External event content not available');
+    } else {
+      $event->load(
+        'eventCourses.courseSession.course',
+        'eventCourses.courseSession.passages',
+        'eventCourses.courseSession.instructions',
+        'eventCourses.courseSession.questions',
+      );
     }
-
-    function index(Request $request)
-    {
-        $institutionCode = $request->input('institution_code');
-
-        $institution = Institution::whereCode($institutionCode)->first();
-
-        $ret = $this->eventHelper->list(
-            null,
-            $institution->id,
-            $this->numPerPage,
-            $this->page,
-        );
-
-        return $this->emitResponseRet($ret);
-    }
-
-    function downloadEventContent(
-        \App\Helpers\EventContentHelper $eventContentHelper,
-        Request $request,
-    ) {
-        $ret = $eventContentHelper->downloadEventContent($request->all());
-
-        return $this->emitResponseRet($ret);
-    }
-
-    function uploadEventResult(Request $request)
-    {
-        $exams = $request->input('exams');
-
-        DB::beginTransaction();
-
-        foreach ($exams as $exam) {
-            $examSubjects = $exam['exam_subjects'];
-
-            foreach ($examSubjects as $examSubject) {
-                ExamSubject::find($examSubject['id'])->update($examSubject);
-            }
-
-            Exam::find($exam['id'])->update($exam);
-        }
-
-        DB::commit();
-
-        return $this->emitResponseRet(retS('Exam records updated'));
-    }
+    return $this->apiSuccessRes($event);
+  }
 }

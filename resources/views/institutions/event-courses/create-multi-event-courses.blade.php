@@ -37,7 +37,7 @@ $title = 'Register Multi Event Courses'; ?>
 											<div class="form-group">
 												<select name="subjects[{{$course->id}}][course_session_id]" class="form-control">
 													<option value="">Select subject</option>
-													@foreach ($course->courseSessions as $courseSession)
+													@foreach ($course->course_sessions ?? $course->courseSessions as $courseSession)
 													<option value="{{$courseSession->id}}">{{$courseSession->session}}</option>
 													@endforeach
 												</select>

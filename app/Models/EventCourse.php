@@ -13,6 +13,11 @@ class EventCourse extends BaseModel
     'course_session_id' => 'integer',
   ];
 
+  function getCourseSession()
+  {
+    return $this->course_session ?? $this->courseSession;
+  }
+
   function event()
   {
     return $this->belongsTo(Event::class);

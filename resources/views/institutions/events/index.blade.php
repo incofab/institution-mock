@@ -31,16 +31,16 @@ $confirmMsg = 'Are you sure?';
     				<th>Title</th>
     				<th>Description</th>
     				<th>Subjects</th>
-    				<th>Duration</th>
+    				<th>Duration(mins)</th>
     				<th><i class="fa fa-bars p-2"></i></th>
     			</tr>
     		</thead>
 			@foreach($allRecords as $record)
 				<tr>
 					<td>{{$loop->iteration}}</td>
-					<td><a href='{{instRoute('events.show', $record)}}' class='btn btn-link'>{{$record['title']}}</a></td>
+					<td><a href='{{instRoute('event-courses.index', $record)}}' class='btn btn-link'>{{$record['title']}}</a></td>
 					<td>{{$record['description']}}</td>
-					<td>{{$record->event_courses_count}}</td>
+					<td>{{$record->getEventCourses()->count()}}</td>
 					<td>{{$record->duration}}</td>
 					<td>
 						{{-- <a href='{{instRoute('event-courses.index', $record)}}' class='btn btn-link'>Subjects</a> 

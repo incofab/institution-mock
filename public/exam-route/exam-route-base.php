@@ -2,7 +2,7 @@
 
 header('Access-Control-Allow-Origin: *');
 header(
-  'Access-Control-Allow-Headers: Content-Type, Origin, Authorization, X-Requested-With',
+  'Access-Control-Allow-Headers: Content-Type, Origin, Authorization, X-Requested-With'
 );
 header('Content-Type: application/json; charset=UTF-8');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
@@ -16,7 +16,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 // ini_set('display_errors', 1);
 define('APP_DIR', __DIR__ . '/../../app/');
 
-require_once APP_DIR . '../config/a_config.php';
+require_once APP_DIR . 'Helpers/ExamHandler.php';
+require_once APP_DIR . 'Support/ExamProcess.php';
 
 function emitResponse($data)
 {
@@ -46,6 +47,6 @@ function dlog($msg)
       '*************************************' .
       PHP_EOL,
     3,
-    __DIR__ . '/public/errorlog.txt',
+    __DIR__ . '/public/errorlog.txt'
   );
 }

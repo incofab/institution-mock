@@ -6,8 +6,8 @@ use App\Models\Institution;
 
 class InstitutionController extends Controller
 {
-    function showInstitution(Institution $institution)
-    {
-        return $this->apiSuccessRes($institution);
-    }
+  function showInstitution(Institution $institution)
+  {
+    return $this->apiSuccessRes($institution);
+  }
 }
