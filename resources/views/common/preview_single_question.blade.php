@@ -12,17 +12,18 @@ $attemptResult = 'not-attempted';
 $answer = $questionObj->answer;
 $questionAttempt = '';
 
-if(!empty($attempts[$questionObj->id]['attempt']))
-{
-    $questionAttempt = $attempts[$questionObj->id]['attempt'];
-    
-    if ($questionAttempt == $answer) $attemptResult = 'correct';
-    else $attemptResult = 'wrong';
+if (!empty($attempts[$questionObj->id]['attempt'])) {
+  $questionAttempt = $attempts[$questionObj->id]['attempt'];
 
-//     dlog('$attemptResult = '.$attemptResult.', $questionAttempt = '.$questionAttempt.', $questionObj->answer '.  $questionObj->answer.
-//         ', QuestionNo = '.$questionObj->question_no.', CourseName = '.$courseName);
+  if ($questionAttempt == $answer) {
+    $attemptResult = 'correct';
+  } else {
+    $attemptResult = 'wrong';
+  }
+
+  //     dlog('$attemptResult = '.$attemptResult.', $questionAttempt = '.$questionAttempt.', $questionObj->answer '.  $questionObj->answer.
+  //         ', QuestionNo = '.$questionObj->question_no.', CourseName = '.$courseName);
 }
-
 ?>
 
  <div class="p-2 p-md-3 white-bg question-container mt-2 card shadow rounded {{$attemptResult}}" >
@@ -30,7 +31,7 @@ if(!empty($attempts[$questionObj->id]['attempt']))
  	@if($instruction)
  	<div>
 		<label for="" ><b>Instruction: </b></label> 
-		<b>Questions {{$instruction['from_']}} - {{$instruction['to_']}}</b>
+		<b>Questions {{$instruction['from']}} - {{$instruction['to']}}</b>
 		<div class="text">{!! $instruction['instruction'] !!}</div>
 	</div>
 	<br />
@@ -39,7 +40,7 @@ if(!empty($attempts[$questionObj->id]['attempt']))
  	@if($passage)
  	<div>
 		<label for="" ><b>Passage: </b></label>
-		<b>Questions {{$passage['from_']}} - {{$passage['to_']}}</b>
+		<b>Questions {{$passage['from']}} - {{$passage['to']}}</b>
 		<div class="text">{!! $passage['passage'] !!}</div>
 	</div>
 	<br />
@@ -94,7 +95,8 @@ if(!empty($attempts[$questionObj->id]['attempt']))
 		</div>
 		@endif
 	</div> 
-	<?php /*
+	<?php
+/*
 	{{--
 	<div style="margin-top: 20px;">
 		<a href="<?= getAddr('ccd_edit_session_question', [$courseId, $year_id, $questionObj['id']])."?next=$next" ?>"
@@ -105,7 +107,8 @@ if(!empty($attempts[$questionObj->id]['attempt']))
 			 ><span>Delete</span></a>	
 	</div>
 	--}}
-	*/ ?>
+	*/
+?>
 </div>
 
 <script type="text/javascript">

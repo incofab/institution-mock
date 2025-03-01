@@ -81,6 +81,19 @@
 				</li>
 			</ul>
 		</li>
+		<li class="treeview"><a class="app-menu__item" href="#"
+			data-toggle="treeview"><i class="app-menu__icon fa fa-hourglass-half"></i><span
+				class="app-menu__label">Subjects</span><i
+				class="treeview-indicator fa fa-angle-right"></i></a>
+			<ul class="treeview-menu">
+				<li><a class="treeview-item" href="{{instRoute('ccd.courses.index')}}"><i
+						class="icon fa fa-graduation-cap"></i> View Subjects</a>
+				</li>
+				<li><a class="treeview-item" href="{{instRoute('ccd.courses.create')}}"
+					><i class="icon fa fa-plus"></i> Add Subject</a>
+				</li>
+			</ul>
+		</li>
 		{{-- <li class="treeview"><a class="app-menu__item" href="#"
 			data-toggle="treeview"><i class="app-menu__icon fa fa-edit"></i><span
 				class="app-menu__label">Exams</span><i

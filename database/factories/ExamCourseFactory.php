@@ -17,7 +17,7 @@ class ExamCourseFactory extends Factory
       'score' => $this->faker->numberBetween(0, 100),
       'num_of_questions' => $this->faker->numberBetween(10, 100),
       'status' => 'active',
-      'course_code' => 'English Dummy',
+      'code' => 'English Dummy',
       'session' => fake()->randomElement(range(2000, 2025)),
     ];
   }

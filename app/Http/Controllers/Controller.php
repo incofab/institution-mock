@@ -7,33 +7,20 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Arr;
-use App\Core\ErrorCodes;
+use App\Support\Res;
 
 class Controller extends BaseController
 {
   use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-  protected $page = 1;
-  protected $lastIndex = 0;
-  protected $numPerPage = 100;
+  // protected $page = 1;
+  // protected $lastIndex = 0;
+  // protected $numPerPage = 100;
 
-  function __construct()
-  {
-    $this->page = Arr::get($_GET, 'page', 1);
-  }
-
-  public function view($view, $data = [], $merge = [])
-  {
-    if (!isset($data['page'])) {
-      $data['page'] = $this->page;
-    }
-
-    if (!isset($data['numPerPage'])) {
-      $data['numPerPage'] = $this->numPerPage;
-    }
-
-    return view($view, $data, $merge);
-  }
+  // function __construct()
+  // {
+  //   $this->page = Arr::get($_GET, 'page', 1);
+  // }
 
   function redirect($redirect, $ret)
   {
@@ -68,14 +55,18 @@ class Controller extends BaseController
     return $this->apiRes(false, $message, $data, 401);
   }
 
-  // function emitResponseRet(array $ret){
+  protected function res(
+    Res $res,
+    string $successRoute = null,
+    $failureRoute = null,
+  ) {
+    if ($res->success && $successRoute) {
+      $obj = $successRoute ? redirect($successRoute) : redirect()->back();
+      return $obj->with('message', $res->message);
+    }
 
-  //     $ret['error_code'] = $ret['success'] ? ErrorCodes::OK : ErrorCodes::FAILED;
+    $obj = $failureRoute ? redirect($failureRoute) : redirect()->back();
 
-  //     return response()->json($ret);
-  // }
-
-  // function apiEmitResponse($data){
-  //     return response()->json($data);
-  // }
+    return $obj->with('error', $res->message)->withInput();
+  }
 }

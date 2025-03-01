@@ -1,77 +1,69 @@
 <?php
 namespace App\Http\Controllers\CCD;
 
+use App\Http\Controllers\Controller;
 use App\Models\Course;
-use Illuminate\Support\Facades\Auth;
+use App\Models\ExamContent;
+use App\Models\Institution;
 use Illuminate\Http\Request;
 
-class CourseController extends BaseCCD
+class CourseController extends Controller
 {
-    function index($institutionId)
-    {
-        $allRecord = Course::whereInstitution_id($institutionId)
-            ->orderBy('id', 'DESC')
-            ->get();
+  public function index(
+    Institution $institution,
+    ExamContent $examContent = null,
+  ) {
+    $query = $examContent?->courses() ?? Course::query();
+    return view('ccd.courses.index', [
+      'allRecords' => paginateFromRequest($query->withCount('courseSessions')),
+    ]);
+  }
 
-        return view('ccd.course.index', ['allRecords' => $allRecord]);
-    }
+  public function create(Institution $institution)
+  {
+    return view('ccd.courses.create', ['edit' => null]);
+  }
 
-    function create($institutionId)
-    {
-        return view('ccd.course.create');
-    }
+  public function store(Request $request, Institution $institution)
+  {
+    $validatedData = $request->validate(Course::createRule());
+    $course = Course::query()->create($validatedData);
 
-    function store($institutionId, Request $request)
-    {
-        $request->merge(['institution_id' => $institutionId]);
+    return redirect(
+      instRoute('ccd.courses.index', [$course->exam_content_id]),
+    )->with('message', 'Data recorded successfully');
+  }
 
-        $ret = Course::insert($request->all());
+  public function edit(Institution $institution, Course $course)
+  {
+    return view('ccd.courses.create', ['edit' => $course]);
+  }
 
-        if (!$ret[SUCCESSFUL]) {
-            return $this->redirect(redirect()->back(), $ret);
-        }
+  public function update(
+    Request $request,
+    Institution $institution,
+    Course $course,
+  ) {
+    $validatedData = $request->validate(Course::createRule());
 
-        return redirect(route('ccd.course.index', $institutionId))->with(
-            'message',
-            $ret[MESSAGE],
-        );
-    }
+    $course->update($validatedData);
 
-    function edit($institutionId, $table_id)
-    {
-        $course = Course::where('id', '=', $table_id)->firstOrFail();
+    return redirect(
+      instRoute('ccd.courses.index', [$course->exam_content_id]),
+    )->with('message', 'Record updated successfully');
+  }
 
-        return view('ccd.course.edit', ['data' => $course]);
-    }
+  public function destroy(Institution $institution, Course $course)
+  {
+    abort_if(
+      $course->courseSessions()->exists(),
+      403,
+      'Cannot delete content with subject(s)',
+    );
+    $course->delete();
 
-    function update($institutionId, Request $request, Course $course)
-    {
-        $course->update($request->all());
-
-        return redirect(route('ccd.course.index', $institutionId))->with(
-            'message',
-            'Subject detail updated',
-        );
-    }
-
-    function delete($institutionId, $table_id)
-    {
-        $course = Course::where('id', '=', $table_id)->firstOrFail();
-
-        if (!$course->canDelete()) {
-            return redirect()
-                ->back()
-                ->with(
-                    'error',
-                    'Cannot delete the course because it has some content',
-                );
-        }
-
-        $course->delete();
-
-        return redirect(route('ccd.course.index', $institutionId))->with(
-            'message',
-            'Subject deleted',
-        );
-    }
+    return redirect(
+      instRoute('ccd.courses.index', [$course->exam_content_id]),
+    )->with('message', 'Data deleted successfully');
+  }
 }

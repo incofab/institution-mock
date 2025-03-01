@@ -59,7 +59,7 @@ $confirmMsg = 'Are you sure?';
 						<a href="{{instRoute('event-courses.index', [$event->id])}}" 
 							class="btn-link">{{$event['title']}}</a>
 					</td>
-					<td>{{implode(', ', $record->examCourses->map(fn($item) => $item->course_code)->toArray())}}</td>
+					<td>{{implode(', ', $record->examCourses->map(fn($item) => $item->code)->toArray())}}</td>
 					<td>{{$event['duration']}} mins</td>
 					<td>
 						<button class="btn btn-primary">{{$record['status']}}</button>

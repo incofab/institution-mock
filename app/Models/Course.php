@@ -13,9 +13,19 @@ class Course extends BaseModel
     'exam_content_id' => 'integer',
   ];
 
+  static function createRule()
+  {
+    return [
+      'exam_content_id' => ['nullable', 'integer', 'exists:exam_contents,id'],
+      'code' => ['required', 'string', 'max:255'],
+      'title' => ['nullable', 'string', 'max:255'],
+      'order' => ['nullable', 'string', 'max:255'],
+    ];
+  }
+
   public function canDelete()
   {
-    return $this->sessions()->count();
+    return $this->courseSessions()->count();
   }
 
   function institution()

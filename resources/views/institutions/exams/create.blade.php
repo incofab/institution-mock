@@ -62,7 +62,7 @@ $subjects = [];
 						class="form-control" multiple="multiple">
 						<option value="">Select Subject</option>
 						@foreach ($eventCourses as $eventCourse)
-							<option value="{{$eventCourse->course_session_id}}">{{$eventCourse->courseSession->course->course_code}}</option>
+							<option value="{{$eventCourse->course_session_id}}">{{$eventCourse->courseSession->course->code}}</option>
 						@endforeach
 					</select>
 				</div>
@@ -126,7 +126,7 @@ $(function () {
 // 	var subjects = eventSubjects[eventId];
 // 	var s = '';
 // 	subjects.forEach(function(subject, i) {
-// 		s += '<option value="'+subject.course_session_id+'">'+subject.course.course_title+'</option>';
+// 		s += '<option value="'+subject.course_session_id+'">'+subject.course.title+'</option>';
 // 	});
 // 	$('#select-subjects').html(s);
 // 	$('form .select2-selection__rendered').html(''); // For Select 2 plugin

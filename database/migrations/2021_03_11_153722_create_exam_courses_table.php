@@ -23,7 +23,7 @@ return new class extends Migration {
       $table->unsignedInteger('score')->nullable(true);
       $table->unsignedInteger('num_of_questions')->nullable(true);
       $table->string('status')->default('active');
-      $table->string('course_code');
+      $table->string('code');
       $table->string('session')->nullable();
       $table->timestamps();
     });

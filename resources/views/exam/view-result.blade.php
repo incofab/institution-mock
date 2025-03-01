@@ -45,7 +45,7 @@ hr.line{
 			@foreach($result_detail as $detail)
 			<li
 				class="list-group-item d-flex justify-content-between align-items-center">
-				{{$detail['course_title']}} 
+				{{$detail['title']}} 
 				<span class="badge badge-primary badge-pill">
 					{{$detail['score_percent']}}
 				</span>

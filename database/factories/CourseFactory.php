@@ -32,10 +32,10 @@ class CourseFactory extends Factory
 
     return [
       'institution_id' => null, //Institution::factory(),
-      'course_code' => fake()->randomElement($courseCodes),
+      'code' => fake()->randomElement($courseCodes),
       // 'exam_content_id' => ExamContent::factory(),
       'category' => fake()->word,
-      'course_title' => fake()->words(7, true),
+      'title' => fake()->words(7, true),
       'description' => fake()->sentence,
       'is_file_content_uploaded' => false,
     ];

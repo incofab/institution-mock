@@ -43,7 +43,7 @@ class RegisterExam
       $courseSession = $this->getCourseSession($id);
       $exam->examCourses()->firstOrCreate([
         'course_session_id' => $id,
-        'course_code' => $courseSession->course->course_code,
+        'code' => $courseSession->course->code,
         'session' => $courseSession->session,
       ]);
     }

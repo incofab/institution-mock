@@ -3,30 +3,38 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Validation\Rule;
 
 class Question extends BaseModel
 {
-    use HasFactory;
-    protected $casts = [
-        'course_session_id' => 'integer',
-        'question_no' => 'integer',
+  use HasFactory;
+  protected $casts = [
+    'course_session_id' => 'integer',
+    'question_no' => 'integer',
+  ];
+
+  static function createRule(Question $question = null, $prefix = '')
+  {
+    $options = ['A', 'B', 'C', 'D', 'E'];
+    return [
+      $prefix . 'question_no' => ['required', 'integer'],
+      $prefix . 'question' => ['required', 'string'],
+      $prefix . 'option_a' => ['required'],
+      $prefix . 'option_b' => ['required'],
+      $prefix . 'option_c' => ['nullable'],
+      $prefix . 'option_d' => ['nullable'],
+      $prefix . 'option_e' => ['nullable'],
+      $prefix . 'answer' => ['required', Rule::in($options)],
+      $prefix . 'answer_meta' => ['nullable', 'string'],
+      $prefix . 'topic_id' => [
+        'nullable',
+        'integer',
+        Rule::exists('topics', 'id'),
+      ],
     ];
-
-    static function ruleCreate()
-    {
-        return [
-            'course_session_id' => ['required', 'numeric'],
-            'question_no' => ['required', 'numeric'],
-            'question' => ['required', 'string'],
-            'option_a' => ['required', 'string'],
-            'option_b' => ['required', 'string'],
-            'option_c' => ['required', 'string'],
-            'answer' => ['required', 'string'],
-        ];
-    }
-
-    function courseSession()
-    {
-        return $this->belongsTo(CourseSession::class);
-    }
+  }
+  function courseSession()
+  {
+    return $this->belongsTo(CourseSession::class);
+  }
 }
