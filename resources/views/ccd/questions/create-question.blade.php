@@ -158,8 +158,8 @@
 		cursor: pointer;
 	}
 </style>
-@include('ccd.questions._handle_image_base_url_script', ['courseSession' => $courseSession])
-<script>
+{{-- @include('ccd.questions._handle_image_base_url_script', ['courseSession' => $courseSession]) --}}
+{{-- <script>
 	function handleImages() {
 		$('form[name="record-question"]').find('.useEditor').each(function(i, ele) {
 			var $ele = $(ele);
@@ -174,19 +174,19 @@
 			$ele.val($parsedHtml.html());
 		});
 	}
-</script>
+</script> --}}
 
 @include('ccd._question_tinymce', [
-	'uploadURL' => instRoute('api.questions.image-upload', $courseSession),
-	'imagePath' => asset(config('app.image-content-folder')."{$courseSession->course_id}/{$courseSession->id}")
+	'uploadURL' => '',//route('api.questions.image-upload', $courseSession),
+	'imagePath' => '',//asset(config('app.image-content-folder')."{$courseSession->course_id}/{$courseSession->id}")
 ])
-
+{{-- 
 @if(!isset($edit))
 	<script src="{{asset('js/add-question.js')}}"></script>
 	<script>
 		var addQuestionAPI = "{{instRoute('api.questions.store', $courseSession)}}";
 		var currentQuestionNo = {{$questionNo}};
 	</script>
-@endif
+@endif --}}
 
 @endsection

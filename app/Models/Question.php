@@ -18,14 +18,14 @@ class Question extends BaseModel
     $options = ['A', 'B', 'C', 'D', 'E'];
     return [
       $prefix . 'question_no' => ['required', 'integer'],
-      $prefix . 'question' => ['required', 'string'],
-      $prefix . 'option_a' => ['required'],
-      $prefix . 'option_b' => ['required'],
-      $prefix . 'option_c' => ['nullable'],
-      $prefix . 'option_d' => ['nullable'],
-      $prefix . 'option_e' => ['nullable'],
+      $prefix . 'question' => ['required', 'string', 'max:60000'],
+      $prefix . 'option_a' => ['required', 'max:60000'],
+      $prefix . 'option_b' => ['required', 'max:60000'],
+      $prefix . 'option_c' => ['nullable', 'max:60000'],
+      $prefix . 'option_d' => ['nullable', 'max:60000'],
+      $prefix . 'option_e' => ['nullable', 'max:60000'],
       $prefix . 'answer' => ['required', Rule::in($options)],
-      $prefix . 'answer_meta' => ['nullable', 'string'],
+      $prefix . 'answer_meta' => ['nullable', 'string', 'max:60000'],
       $prefix . 'topic_id' => [
         'nullable',
         'integer',

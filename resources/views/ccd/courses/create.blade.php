@@ -23,9 +23,9 @@
 				</div>
 				
 				<div class="form-group">
-					<label for="" >Description [optional]</label>
-					<textarea name="description" id="" rows="4" class="form-control" 
-						>{{old('description', $edit?->description)}}</textarea>
+					<label for="" >Title [optional]</label>
+					<textarea name="title" id="" rows="4" class="form-control" 
+						>{{old('title', $edit?->title)}}</textarea>
 				</div>
 				
 				<div class="form-group">

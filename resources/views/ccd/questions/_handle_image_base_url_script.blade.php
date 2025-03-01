@@ -4,7 +4,7 @@ $questionImgUrl =
   '/' .
   $institution->folder(
     \App\Enums\S3Folder::CCD,
-    "{$courseSession->course_id}/{$courseSession->id}/"
+    "{$courseSession->course_id}/{$courseSession->id}/",
   ); ?>
 <script>
 	function getImageBaseUrl(src, alt) {

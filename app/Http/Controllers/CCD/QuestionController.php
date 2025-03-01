@@ -46,7 +46,7 @@ class QuestionController extends Controller
 
     return $this->res(
       successRes('Question created'),
-      instRoute('questions.index', [$courseSession]),
+      instRoute('ccd.questions.index', [$courseSession]),
     );
   }
 
@@ -58,7 +58,6 @@ class QuestionController extends Controller
     $question = $courseSession->questions()->updateOrCreate(
       [
         'question_no' => $validatedData['question_no'],
-        'institution_id' => $institution->id,
       ],
       $validatedData,
     );
@@ -70,7 +69,7 @@ class QuestionController extends Controller
   {
     return view('ccd.questions.create-question', [
       'edit' => $question,
-      'courseSession' => $question->courseable,
+      'courseSession' => $question->courseSession,
       'questionNo' => $question->question_no,
     ]);
   }
@@ -83,7 +82,7 @@ class QuestionController extends Controller
 
     return $this->res(
       successRes('Question record updated'),
-      instRoute('questions.index', [$question->course_session_id]),
+      instRoute('ccd.questions.index', [$question->course_session_id]),
     );
   }
 
@@ -93,7 +92,7 @@ class QuestionController extends Controller
 
     return $this->res(
       successRes('Question record deleted'),
-      instRoute('questions.index'),
+      instRoute('ccd.questions.index', $question->course_session_id),
     );
   }
 
@@ -116,7 +115,7 @@ class QuestionController extends Controller
       $this->storeQuestion($institution, $courseSession, $item);
     }
 
-    return redirect(instRoute('questions.index', $courseSession))->with(
+    return redirect(instRoute('ccd.questions.index', $courseSession))->with(
       'message',
       'Questions uploaded successfully',
     );
