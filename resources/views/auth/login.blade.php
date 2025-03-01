@@ -16,6 +16,11 @@
 			</h3>
         	@include('common.message')
             @csrf
+			<div class="clearfix">
+				<div class="float-right">
+					<a href="{{route('exam-login')}}">Exam Page</a>
+				</div>
+			</div>
             <div class="form-group">
 				<label class="control-label">Email</label> 
 				<input class="form-control" type="text" placeholder="email" autofocus
@@ -49,7 +54,7 @@
 				<a href="#">Forgot Password</a> | 
 				<a href="{{route('register')}}">Register</a>
 			</div>
-			<div class="form-group btn-container">
+			<div class="form-group btn-container mb-2">
 				<button class="btn btn-primary btn-block">
 					<i class="fa fa-sign-in fa-lg fa-fw"></i>SIGN IN
 				</button>

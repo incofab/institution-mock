@@ -10,13 +10,9 @@ use Illuminate\Validation\ValidationException;
 
 class ExamController extends Controller
 {
-  /** @deprecated No longer in use. The examiner react app is used instead */
   function startExamView(Request $request)
   {
-    if ($request->has('exam_no')) {
-      return view('exam.exam-page');
-    }
-    return view('exam.exam-login');
+    return redirect(config('app.exam-url'));
   }
 
   /**

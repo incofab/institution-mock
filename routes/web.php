@@ -75,7 +75,7 @@ Route::group(['middleware' => ['auth', 'admin.user'], 'prefix' => 'admin/', 'as'
     Route::post('institutions/{institution}/assign-user', [Admin\InstitutionController::class, 'assignUserStore'])->name('institutions.assign-user.store');
 });
 
-Route::get('/exam/login', [Home\ExamController::class, 'startExamView'])->name('exam-login');
+Route::get('/exam', [Home\ExamController::class, 'startExamView'])->name('exam-login');
 
 Route::get('/rough/{instId?}', function (Request $request) {
     dd('rough');
