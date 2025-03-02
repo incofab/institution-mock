@@ -19,7 +19,7 @@ class Event extends BaseModel
     // 'external_event_courses' => AsArrayObject::class,
   ];
 
-  static function ruleCreate(Event $event = null)
+  static function ruleCreate(Event|null $event = null)
   {
     return [
       'title' => ['required', 'string'],

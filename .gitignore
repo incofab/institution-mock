@@ -14,7 +14,7 @@ yarn-error.log
 /.idea
 /.vscode
 
-/public/examiner
+/public/examiner/*
 
 
 

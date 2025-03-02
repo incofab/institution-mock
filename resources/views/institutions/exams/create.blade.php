@@ -62,7 +62,7 @@ $subjects = [];
 						class="form-control" multiple="multiple">
 						<option value="">Select Subject</option>
 						@foreach ($eventCourses as $eventCourse)
-							<option value="{{$eventCourse->course_session_id}}">{{$eventCourse->courseSession->course->course_code}}</option>
+							<option value="{{$eventCourse->course_session_id}}">{{$eventCourse->getCourseSession()->course->course_code}}</option>
 						@endforeach
 					</select>
 				</div>

@@ -26,7 +26,7 @@ class ExamController extends Controller
     ]);
   }
 
-  function create(Institution $institution, Student $student = null)
+  function create(Institution $institution, Student|null $student = null)
   {
     $events = Event::query()->active()->get();
     $students = Student::all();
@@ -75,7 +75,10 @@ class ExamController extends Controller
       $data['course_session_ids'],
     );
 
-    return redirect()->back()->with('message', 'Exam registered');
+    return redirect(instRoute('exams.index', $event))->with(
+      'message',
+      'Exam registered',
+    );
   }
 
   function createGradeExam(Institution $institution, Event $event)
@@ -141,16 +144,6 @@ class ExamController extends Controller
     );
   }
 
-  // function forceEndExam(Institution $institution, Exam $exam)
-  // {
-  //     // $ret = $this->examRepository->endExam($examNo, $student);
-
-  //     return redirect(route('institutions.exams.index'))->with(
-  //         'message',
-  //         'Exam ended',
-  //     );
-  // }
-
   function destroy(Institution $institution, Exam $exam)
   {
     $exam->delete();
@@ -160,68 +153,6 @@ class ExamController extends Controller
       'Exam deleted',
     );
   }
-  /*
-    function extendExamTimeView($institutionId, $examNo)
-    {
-        $exam = Exam::whereExam_no($examNo)
-            ->with('student', 'event')
-            ->firstOrFail();
-
-        $event = $exam->event;
-        $startTime = \Carbon\Carbon::parse($exam['start_time']);
-        $pausedTime = \Carbon\Carbon::parse($exam['pause_time']);
-        $endTime = \Carbon\Carbon::parse($exam['end_time']);
-
-        if ($exam['status'] === STATUS_PAUSED) {
-            $timeElapsed = $startTime->diffInSeconds($pausedTime);
-            $timeRemaining = $event['duration'] - $timeElapsed;
-        } else {
-            $timeRemaining = \Carbon\Carbon::now()->diffInSeconds(
-                $endTime,
-                false,
-            );
-        }
-
-        if ($timeRemaining < 1) {
-            $timeRemaining = 0;
-        }
-
-        return view('institutions.exams.extend_time', [
-            'exam' => $exam,
-            'student' => $exam->student,
-            'event' => $event,
-            'timeRemaining' => $timeRemaining,
-        ]);
-    }
-
-    function extendExamTime($institutionId, $examNo, Request $request)
-    {
-        $exam = Exam::whereExam_no($examNo)
-            ->with(['student', 'event'])
-            ->firstOrFail();
-
-        if ($exam['status'] !== STATUS_PAUSED && empty($exam['end_time'])) {
-            return redirect(
-                route('institutions.exams.index', $institutionId),
-            )->with('error', 'Exam has not started');
-        }
-
-        $event = $exam['event'];
-
-        $time = (int) $request->extend_time;
-
-        $ret = $this->examRepository->extendExam($exam, $time);
-
-        if (!$ret[SUCCESSFUL]) {
-            return $this->redirect(redirect()->back(), $ret);
-        }
-
-        return redirect(route('institutions.exams.index', $institutionId))->with(
-            'message',
-            $ret[MESSAGE],
-        );
-    }
-*/
 
   function viewExamResult($institutionId, $examNo, $studentID)
   {
