@@ -31,7 +31,7 @@ $title = 'Register Multi Event Courses'; ?>
 								<tbody>
 									@foreach ($courses as $course)
 									<tr>
-										<td class="py-0 pt-3">{{$course->code}}</td>
+										<td class="py-0 pt-3">{{$course->course_code}}</td>
 										<td class="py-0 pt-3">
 											<input type="hidden" name="subjects[{{$course->id}}][course_id]" value="{{$course->id}}">
 											<div class="form-group">

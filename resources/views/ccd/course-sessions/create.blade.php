@@ -15,7 +15,7 @@
 				@endif
 				<div class="font-weight-bold">
 					<span>Subject: </span>
-					<span class="ml-2">{{$course->code}}</span>
+					<span class="ml-2">{{$course->course_code}}</span>
 				</div>
 				<hr class="my-3">
 				<div class="form-group">

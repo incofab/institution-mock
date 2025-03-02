@@ -19,13 +19,13 @@
 				@endif
 				<div class="form-group">
 					<label for="" >Subject Name</label><br />
-					<input type="text" name="code" value="{{old('code',$edit?->code)}}"  class="form-control" />
+					<input type="text" name="course_code" value="{{old('course_code',$edit?->course_code)}}"  class="form-control" />
 				</div>
 				
 				<div class="form-group">
 					<label for="" >Title [optional]</label>
-					<textarea name="title" id="" rows="4" class="form-control" 
-						>{{old('title', $edit?->title)}}</textarea>
+					<textarea name="course_title" id="" rows="4" class="form-control" 
+						>{{old('course_title', $edit?->course_title)}}</textarea>
 				</div>
 				
 				<div class="form-group">

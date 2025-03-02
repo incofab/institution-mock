@@ -25,7 +25,7 @@
 				<div class="font-weight-bold">
 					<div>
 						<span>Course: </span>
-						<span class="ml-2">{{$courseSession->course->code}}</span>
+						<span class="ml-2">{{$courseSession->course->course_code}}</span>
 					</div>
 					<div class="mt-2">
 						<span>Session: </span>

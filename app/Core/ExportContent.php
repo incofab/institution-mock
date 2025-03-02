@@ -13,7 +13,7 @@ class ExportContent
   {
     ini_set('max_execution_time', 480);
 
-    $courseName = $course['code'];
+    $courseName = $course['course_code'];
     $courseId = $course['id'];
 
     $allSessions = CourseSession::whereCourse_id($courseId)

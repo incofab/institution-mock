@@ -12,8 +12,8 @@
 				enctype="multipart/form-data" >
 				@include('common.message')
 				@csrf
-				<div><b>Subject: </b> <span>{{$course->code}}</span></div>
-				<div class="mt-1"><b>Subject Title: </b> <span>{{$course->title}}</span></div>
+				<div><b>Subject: </b> <span>{{$course->course_code}}</span></div>
+				<div class="mt-1"><b>Subject Title: </b> <span>{{$course->course_title}}</span></div>
 				<br>
 				<div class="form-group">
 					<label for="" >Content</label><br />

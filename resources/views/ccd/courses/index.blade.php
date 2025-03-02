@@ -25,8 +25,8 @@
 				</tr>
 				@foreach($allRecords as $record)
 				<tr>
-					<td>{{$record->code}}</td>
-					<td>{{$record->title}}</td>
+					<td>{{$record->course_code}}</td>
+					<td>{{$record->course_title}}</td>
 					<td>{{$record->course_sessions_count}}</td>
 					<td>
 						<a href="{{instRoute('ccd.course-sessions.index', $record)}}" 

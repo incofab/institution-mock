@@ -14,7 +14,7 @@
 		<div class="tile full p-0">
 			<div class="tile-title p-2">
 				<div class="clearfix">
-					<div class="float-left">All Questions for {{$courseSession->course->code}} {{$courseSession->session}}</div>
+					<div class="float-left">All Questions for {{$courseSession->course->course_code}} {{$courseSession->session}}</div>
 					<a href="{{instRoute('ccd.questions.create', [$courseSession])}}" class="btn btn-success float-right" >
 						<i class="fa fa-plus"></i> New
 					</a>

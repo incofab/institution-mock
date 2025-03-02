@@ -43,7 +43,7 @@ $title = 'Preview'; ?>
 						<select name="course_id" id="select-subject" class="form-control">
 							<option value="">Select subject</option>
 							@foreach ($courses as $course)
-							<option value="{{$course->id}}">{{$course->code}}</option>
+							<option value="{{$course->id}}">{{$course->course_code}}</option>
 							@endforeach
 						</select>
 					</div>
@@ -85,7 +85,7 @@ $title = 'Preview'; ?>
 							@foreach($allRecords as $record)
 							<?php $courseSession = $record->courseSession ?? $record->course_session; ?> 
 								<tr>
-									<td>{{$courseSession->course->code}} - {{$courseSession->session}}</td>
+									<td>{{$courseSession->course->course_code}} - {{$courseSession->session}}</td>
 									<td>{{$record->created_at}}</td>
 									<td>
 										@if ($event->isNotExternal())

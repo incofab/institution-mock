@@ -81,7 +81,7 @@ class EventCourseController extends Controller
         )
         ->with('courseSessions', fn($q) => $q->latest('session'))
         ->oldest('order')
-        ->oldest('code')
+        ->oldest('course_code')
         ->get();
     return view('institutions.event-courses.create-multi-event-courses', [
       'event' => $event,

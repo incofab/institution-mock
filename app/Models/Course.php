@@ -18,8 +18,8 @@ class Course extends BaseModel
     return [
       'exam_content_id' => ['nullable', 'integer', 'exists:exam_contents,id'],
       'description' => ['nullable', 'string'],
-      'code' => ['required', 'string', 'max:255'],
-      'title' => ['nullable', 'string', 'max:255'],
+      'course_code' => ['required', 'string', 'max:255'],
+      'course_title' => ['nullable', 'string', 'max:255'],
       'order' => ['nullable', 'string', 'max:255'],
     ];
   }

@@ -9,7 +9,7 @@
 	<div class="tile full">
 		<div class="tile-title">
 			<div>
-				<div class="float-left">Sessions {{'for '.$course->code}}</div>
+				<div class="float-left">Sessions {{'for '.$course->course_code}}</div>
 				@if (!empty($course))
 					<a href="{{instRoute('ccd.course-sessions.create', [$course])}}" class="btn btn-success float-right" >
 						<i class="fa fa-plus"></i> New

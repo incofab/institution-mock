@@ -24,9 +24,9 @@ return new class extends Migration {
         ->nullable()
         ->references('id')
         ->on('exam_contents');
-      $table->string('code');
+      $table->string('course_code');
       $table->string('category')->nullable(true);
-      $table->string('title')->nullable(true);
+      $table->string('course_title')->nullable(true);
       $table->text('description')->nullable(true);
       $table->unsignedInteger('order')->default(1000);
       $table->boolean('is_file_content_uploaded')->default(false);

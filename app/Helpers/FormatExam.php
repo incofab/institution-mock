@@ -18,7 +18,7 @@ class FormatExam
       $session = $examSubject['session'];
 
       $questions = Question::where('course_session_id', '=', $session['id'])
-        //             ->where('code', '=', $subject['code'])
+        //             ->where('course_code', '=', $subject['course_code'])
         ->get();
 
       $questionsFormated = [];
@@ -73,9 +73,9 @@ class FormatExam
       $subjectDataFormatted = [
         'exam_subject_id' => $examSubject['id'],
         'session_id' => $session['id'],
-        'code' => $subject['code'],
+        'course_code' => $subject['course_code'],
         'course_id' => $subject['id'],
-        'title' => $subject['title'],
+        'course_title' => $subject['course_title'],
         'year' => $session['session'],
         'general_instructions' => $session['general_instructions'],
         'instructions' => $instructions->toArray(),
