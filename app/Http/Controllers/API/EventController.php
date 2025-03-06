@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\API;
 
+use App\Actions\PullEventCourseContent;
 use App\Http\Controllers\Controller;
 use App\Models\Event;
 use Illuminate\Http\Request;
@@ -35,7 +36,8 @@ class EventController extends Controller
   {
     //Todo: If event is external, call the external API to retrieve Event Course
     if ($event->isExternal()) {
-      return $this->apiFailRes('External event content not available');
+      (new PullEventCourseContent($event))->mapEventCourseContent();
+      // return $this->apiFailRes([], 'External event content not available');
     } else {
       $event->load(
         'eventCourses.courseSession.course',

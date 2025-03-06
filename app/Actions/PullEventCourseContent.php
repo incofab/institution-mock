@@ -19,22 +19,22 @@ class PullEventCourseContent
   {
     $courseSessionIds = $this->event
       ->getEventCourses()
-      ->map(fn($item) => ['course_session_id' => $item['course_session_id']]);
+      ->map(fn($item) => ['course_session_id' => $item['course_session_id']])
+      ->toArray();
     try {
       $courseSessions = Cache::get($this->getCacheKey(), function () use (
         $courseSessionIds,
       ) {
-        $res = Http::post(
+        $res = Http::timeout(60)->post(
           'http://content.examscholars.com/api/course-sessions/retrieve',
           ['subjects' => $courseSessionIds],
         );
-
         $body = $res->body();
         if (!$res->ok()) {
           info('Error syncing courses: ' . $body);
           return [];
         }
-
+        // info('content cached');
         $courseSessions = $res->json('course_sessions');
         $this->cacheContent($courseSessions);
         return $courseSessions;
@@ -44,8 +44,24 @@ class PullEventCourseContent
       //   }
       return $courseSessions;
     } catch (\Throwable $th) {
+      info('Error syncing courses: ' . $th->getMessage());
       return [];
     }
+  }
+
+  function mapEventCourseContent()
+  {
+    $eventCourseSessions = $this->getEventCourseContent();
+    // Apply course session content to external event courses
+    $this->event
+      ->getEventCourses()
+      ->each(function ($eventCourse) use ($eventCourseSessions) {
+        $cs = array_filter(
+          $eventCourseSessions,
+          fn($item) => $item['id'] == $eventCourse['course_session_id'],
+        );
+        $eventCourse->course_session = reset($cs);
+      });
   }
 
   private function cacheContent(array $content)

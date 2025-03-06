@@ -49,19 +49,20 @@ class StartExam
   {
     $event = $exam->event;
     if ($event->isExternal()) {
-      $eventCourseSessions = (new PullEventCourseContent(
-        $event,
-      ))->getEventCourseContent();
+      // $eventCourseSessions = (new PullEventCourseContent(
+      //   $event,
+      // ))->getEventCourseContent();
       // Apply course session content to external event courses
-      $event
-        ->getEventCourses()
-        ->each(function ($eventCourse) use ($eventCourseSessions) {
-          $cs = array_filter(
-            $eventCourseSessions,
-            fn($item) => $item['id'] == $eventCourse['course_session_id'],
-          );
-          $eventCourse->course_session = reset($cs);
-        });
+      // $event
+      //   ->getEventCourses()
+      //   ->each(function ($eventCourse) use ($eventCourseSessions) {
+      //     $cs = array_filter(
+      //       $eventCourseSessions,
+      //       fn($item) => $item['id'] == $eventCourse['course_session_id'],
+      //     );
+      //     $eventCourse->course_session = reset($cs);
+      //   });
+      (new PullEventCourseContent($event))->mapEventCourseContent();
     } else {
       $event->eventCourses = EventCourse::query()
         ->where('event_id', $event->id)

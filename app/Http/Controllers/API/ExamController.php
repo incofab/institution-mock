@@ -26,6 +26,7 @@ class ExamController extends Controller
     return $this->apiSuccessRes($exams);
   }
 
+  /** @deprecated The start exam function is in Home folder */
   function startExam(Request $request)
   {
     $request->validate([
