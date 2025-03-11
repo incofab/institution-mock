@@ -18,7 +18,7 @@
             @csrf
 			<div class="clearfix">
 				<div class="float-right">
-					<a href="{{route('exam-login')}}">Exam Page</a>
+					<a href="{{config('app.exam-url')}}">Exam Page</a>
 				</div>
 			</div>
             <div class="form-group">
