@@ -52,7 +52,7 @@ $confirmMsg = 'Are you sure?';
 				<tr>
 					<td>{{$record['code']}}</td>
 					<td>{{$record['lastname']}} {{$record['firstname']}}</td>
-					<td>{{$record->grade->title}}</td>
+					<td>{{$record->grade?->title}}</td>
 					<td>{{$record['phone']}}</td>
 					<td>{{$record['email']}}</td>
 					<td>

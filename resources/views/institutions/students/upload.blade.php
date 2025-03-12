@@ -25,7 +25,7 @@ $subjects = [];
 	<div class="tile">
 		<h3 class="tile-title">Upload Students</h3>
 		<div class="clearfix">
-        	<a href="{{instRoute('students.download-sample-excel')}}" class="btn btn-primary float-left">
+        	<a href="{{instRoute('students.download-template')}}" class="btn btn-primary float-left">
         		<i class="fa fa-download"></i> Download Sample File
         	</a>
 		</div>
@@ -38,7 +38,7 @@ $subjects = [];
     		<div class="tile-body">
     			<div class="form-group w-75">    		
     				<label for="" >Excel Student Records</label><br />
-    				<input type="file" class="form-control" name="content" value="" />
+    				<input type="file" class="form-control" name="file" value="" />
     				<input type="hidden" class="form-control" name="upload_students" value="true" />
 	    		</div>
     		</div>

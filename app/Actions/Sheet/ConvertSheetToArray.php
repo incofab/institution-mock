@@ -15,7 +15,7 @@ class ConvertSheetToArray
    */
   function __construct(
     private UploadedFile $file,
-    private array $columnKeyMapping
+    private array $columnKeyMapping,
   ) {
     $this->spreadsheet = IOFactory::load($this->file->getRealPath());
     $this->sheetData = $this->spreadsheet->getActiveSheet();
@@ -33,16 +33,24 @@ class ConvertSheetToArray
 
   function run($startingRow = 1)
   {
-    $totalRows = $this->sheetData->getHighestDataRow('A');
+    $referenceColumn = 'A';
+    $totalRows = $this->sheetData->getHighestDataRow($referenceColumn);
 
     $data = [];
     $rows = range($startingRow + 1, $totalRows);
     foreach ($rows as $row) {
+      $referenceValue = $this->sheetData
+        ->getCell($referenceColumn . $row)
+        ->getValue();
+      if (empty($referenceValue)) {
+        break;
+      }
+
       $dataItem = [];
       foreach ($this->columnKeyMapping as $excelColumn => $dataKey) {
         $key = $dataKey;
         $value = trim(
-          $this->sheetData->getCell($excelColumn . $row)->getValue()
+          $this->sheetData->getCell($excelColumn . $row)->getValue(),
         );
         if ($dataKey instanceof SheetValueHandler) {
           $key = $dataKey->key;
