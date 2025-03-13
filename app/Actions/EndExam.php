@@ -3,6 +3,7 @@ namespace App\Actions;
 
 use App\Enums\ExamStatus;
 use App\Helpers\ExamHandler;
+use App\Models\CourseSession;
 use App\Models\Event;
 use App\Models\Exam;
 use App\Support\Res;
@@ -33,7 +34,8 @@ class EndExam
 
   function endExam(Exam $exam): Res
   {
-    $examCourses = $exam->exam_courses;
+    // $exam->markAsStarted();
+    $examCourses = $exam->examCourses;
     if ($exam->status === ExamStatus::Ended) {
       return failRes('Exam already submitted');
     }
@@ -41,14 +43,18 @@ class EndExam
       return failRes('Exam is not active');
     }
 
+    $event = $exam->event;
+    $event->loadContent();
+
     $totalScore = 0;
     $totalNumOfQuestions = 0;
     /** @var \App\Models\ExamCourse $examCourse */
     foreach ($examCourses as $examCourse) {
-      $questions =
-        $exam->event->findCourseSession($examCourse->course_session_id)
-          ?->questions ?? [];
-
+      $courseSession = $event->findCourseSession(
+        $examCourse->course_session_id,
+      );
+      // $courseSession = new CourseSession($courseSession);
+      $questions = $courseSession->questions;
       $scoreDetail = $this->examHandler->calculateScoreFromFile(
         $exam,
         $questions,
@@ -56,11 +62,13 @@ class EndExam
 
       $score = $scoreDetail->getScore();
       $numOfQuestions = $scoreDetail->getNumOfQuestions();
-      $examCourse->fill([
-        'score' => $score,
-        'num_of_questions' => $numOfQuestions,
-        'status' => ExamStatus::Ended->value,
-      ]);
+      $examCourse
+        ->fill([
+          'score' => $score,
+          'num_of_questions' => $numOfQuestions,
+          'status' => ExamStatus::Ended->value,
+        ])
+        ->save();
       $totalScore += $score;
       $totalNumOfQuestions += $numOfQuestions;
     }

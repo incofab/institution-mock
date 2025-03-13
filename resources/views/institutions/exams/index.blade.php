@@ -43,7 +43,7 @@ $confirmMsg = 'Are you sure?';
     			<tr>
     				<th>Student Name</th>
     				<th>Exam No</th>
-    				<th>Event</th>
+    				{{-- <th>Event</th> --}}
      				<th>Subjects</th>
     				<th>Duration</th>
     				<th>Status</th>
@@ -51,34 +51,44 @@ $confirmMsg = 'Are you sure?';
     			</tr>
     		</thead>
 			@foreach($allRecords as $record)
-			<?php $student = $record['student']; ?>
+			<?php
+   $examFileData = $record->isActive()
+     ? \App\Helpers\ExamHandler::make()->getExamFileData($record->exam_no)
+     : null;
+   $isOngoing = $record->isOngoing($examFileData);
+   $student = $record['student'];
+   ?>
 				<tr>
 					<td>{{$student->name}}</td>
 					<td>{{$record['exam_no']}}</td>
-					<td>
+					{{-- <td>
 						<a href="{{instRoute('event-courses.index', [$event->id])}}" 
 							class="btn-link">{{$event['title']}}</a>
-					</td>
+					</td> --}}
 					<td>{{implode(', ', $record->examCourses->map(fn($item) => $item->course_code)->toArray())}}</td>
 					<td>{{$event['duration']}} mins</td>
-					<td>
-						<button class="btn btn-primary">{{$record['status']}}</button>
-						{{-- @if($record['status'] == 'active')
-							@if(empty($record['start_time']))
-								<button class="btn btn-success">Ready</button>
-							@else
-								<button class="btn btn-success">{{$record['status']}}</button>
-							@endif
-						@elseif($record['status'] == STATUS_PAUSED)
-						<button class="btn btn-warning">{{$record[STATUS]}}</button>						
-						@elseif($record['status'] == STATUS_SUSPENDED)
-						<button class="btn btn-danger">{{$record['status']}}</button>						
+					<td class="text-center">
+						@if($record->isActive() || $record->isPending())
+							<button class="btn btn-sm btn-success">{{$record->status}}</button>
+						@elseif($record->isEnded())
+							<button class="btn btn-sm btn-danger">{{$record->status}}</button>						
+							<a href="{{route('exams.view-result', [$record->exam_no])}}" class="btn btn-link">View Results</a>
 						@else
-						<a href="{{instRoute('home.exams.view-result', [$examNo])}}" class="btn btn-link">View Results</a>
-						@endif --}}
+							<button class="btn btn-sm btn-primary">{{$record->status}}</button>
+						@endif
 					</td>
 					<td>
-						@include('common._delete_form', ['deleteRoute' => instRoute('exams.destroy', $record)])
+                        @if($record->canExtendTime())
+                        <a href="{{instRoute('exams.extend-time', [$record->id])}}" class="btn btn-primary btn-sm mt-2">
+                            <i class="fa fa-clock"></i> Extend Time
+                        </a>
+                        @endif
+                        @if($isOngoing || $record->canExtendTime())
+                        <a href="{{instRoute('exams.evaluate', $record->id)}}" class="btn btn-danger btn-sm mt-2" onclick="return confirm('Do you want to submit this exam?')">
+                            <i class="fa fa-reload"></i> Evaluate
+                        </a>
+                        @endif
+						@include('common._delete_form', ['deleteRoute' => instRoute('exams.destroy', $record->id)])
 					</td>
 				</tr>
 			@endforeach

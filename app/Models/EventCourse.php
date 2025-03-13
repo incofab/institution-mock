@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-
+/**
+ * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\CourseSession> $courseSession
+ */
 class EventCourse extends BaseModel
 {
   use HasFactory;

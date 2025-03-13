@@ -34,6 +34,21 @@ class Exam extends BaseModel
     return $key;
   }
 
+  function scorePercent()
+  {
+    return ($this->score /
+      ($this->num_of_questions == 0 ? 1 : $this->num_of_questions)) *
+      100;
+  }
+
+  function scorePercentSum()
+  {
+    return $this->examCourses->sum(fn($item) => $item->scorePercent());
+    // return ($this->score /
+    //   ($this->num_of_questions == 0 ? 1 : $this->num_of_questions)) *
+    //   100;
+  }
+
   function markAsStarted()
   {
     $this->fill([
@@ -69,6 +84,30 @@ class Exam extends BaseModel
   {
     $timeRemaining = now()->diffInSeconds($this->end_time);
     return $timeRemaining < 1 ? 0 : $timeRemaining;
+  }
+
+  function isActive()
+  {
+    return $this->status === ExamStatus::Active;
+  }
+  function isPending()
+  {
+    return $this->status === ExamStatus::Pending;
+  }
+  function isEnded()
+  {
+    return $this->status === ExamStatus::Ended;
+  }
+  function isOngoing($examFileData)
+  {
+    $isEnded = ($examFileData['status'] ?? null) === ExamStatus::Ended->value;
+    // info([$this->exam_no, $isEnded]);
+    return !$isEnded && $this->status === ExamStatus::Active;
+  }
+  function canExtendTime()
+  {
+    return $this->status === ExamStatus::Active ||
+      $this->status === ExamStatus::Ended;
   }
 
   function examCourses()

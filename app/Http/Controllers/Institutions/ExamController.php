@@ -1,6 +1,8 @@
 <?php
 namespace App\Http\Controllers\Institutions;
 
+use App\Actions\EndExam;
+use App\Actions\ExtendExamTime;
 use App\Actions\RegisterExam;
 use App\Http\Controllers\Controller;
 use App\Models\Event;
@@ -154,8 +156,27 @@ class ExamController extends Controller
     );
   }
 
-  function viewExamResult($institutionId, $examNo, $studentID)
+  function evaluateExam(Institution $institution, Exam $exam)
   {
-    return $this->displayExamResult($examNo, $studentID);
+    EndExam::make()->endExam($exam);
+    return back()->with('message', 'Exam result evaluated successfully');
+  }
+
+  function extentTimeView(Institution $institution, Exam $exam)
+  {
+    return view('institutions.exams.extend-time', ['exam' => $exam]);
+  }
+
+  function extentTimeStore(
+    Institution $institution,
+    Exam $exam,
+    Request $request,
+  ) {
+    $request->validate(['duration' => ['required', 'integer', 'min:1']]);
+    ExtendExamTime::make($exam)->run($request->duration);
+    return redirect(instRoute('exams.index', $exam->event_id))->with(
+      'message',
+      "Exam time extended by {$request->duration} mins",
+    );
   }
 }

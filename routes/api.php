@@ -4,7 +4,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CCD\QuestionController;
 use App\Http\Controllers\API as Api;
-use App\Http\Controllers\Home as Home;
 use App\Http\Controllers\Exam as Exam;
 use App\Http\Controllers\Auth as Auth;
 
@@ -23,7 +22,8 @@ Route::middleware('auth:sanctum')->any('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/exam/start', [Home\ExamController::class, 'startExam'])->name('exam-start');
+Route::post('exam/start', [Api\ExamController::class, 'startExam'])->name('exam-start');
+Route::get('{exam:exam_no}/end-exam', [Api\ExamController::class, 'endExam'])->name('end-exam');
 
 Route::group(['prefix' => 'institutions/{institution}/', 'middleware' => [], 'as' => 'institutions.'], function() {
     Route::any('show-institution', [Api\InstitutionController::class, 'showInstitution'])->name('show-institution');

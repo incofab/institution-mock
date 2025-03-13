@@ -36,6 +36,9 @@ Route::post('/exams/events/{event}/multi-store-exam', [Inst\ExamController::clas
 ->name('exams.multi-store-exam');
 Route::delete('/exams/{exam}/delete', [Inst\ExamController::class, 'destroy'])
 ->name('exams.destroy');
+Route::get('exams/{exam}/evaluate', [Inst\ExamController::class, 'evaluateExam'])->name('exams.evaluate');
+Route::get('exams/{exam}/extend-time', [Inst\ExamController::class, 'extentTimeView'])->name('exams.extend-time');
+Route::post('exams/{exam}/extend-time', [Inst\ExamController::class, 'extentTimeStore'])->name('exams.extend-time.store');
 
 Route::resource('/grades', Inst\GradeController::class);
 

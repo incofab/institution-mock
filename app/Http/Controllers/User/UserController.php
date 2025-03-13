@@ -14,10 +14,14 @@ class UserController extends Controller
       return redirect(route('admin.dashboard'));
     }
 
-    $institutionUser = InstitutionUser::whereUser_id($user->id)->first();
+    $institutionUser = InstitutionUser::where('user_id', $user->id)
+      ->with('institution')
+      ->first();
 
     if ($institutionUser) {
-      return redirect(route('institutions.dashboard', $institutionUser->code));
+      return redirect(
+        route('institutions.dashboard', $institutionUser->institution),
+      );
     }
     return view('user.index', []);
   }

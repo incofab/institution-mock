@@ -15,6 +15,7 @@ $ret = $examHandler->attemptQuestion($allAttempts, $examNo);
 
 if ($ret->isNotSuccessful()) {
   emitResponse($ret);
+  return;
 }
 
 emitResponse([

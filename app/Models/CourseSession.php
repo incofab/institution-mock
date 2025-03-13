@@ -35,6 +35,22 @@ class CourseSession extends BaseModel
     ];
   }
 
+  static function buildCourseSession($data): self
+  {
+    $courseSession = new CourseSession($data ?? []);
+    $courseSession->questions = collect($data['questions'] ?? [])->map(
+      fn($item) => new Question($item),
+    );
+    $courseSession->instructions = collect($data['instructions'] ?? [])->map(
+      fn($item) => new Instruction($item),
+    );
+    $courseSession->passages = collect($data['passages'] ?? [])->map(
+      fn($item) => new Passage($item),
+    );
+    $courseSession->course = new Course($data['course'] ?? []);
+    return $courseSession;
+  }
+
   function course()
   {
     return $this->belongsTo(Course::class);

@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Institutions;
 
+use App\Actions\EndExam;
 use App\Models\Course;
 use App\Models\Event;
 use App\Http\Controllers\Controller;
@@ -94,4 +95,10 @@ class EventController extends Controller
       'eventCourses' => $event->getEventCourses(),
     ]);
   }
+
+  // function evaluateEvent(Event $event)
+  // {
+  //   EndExam::make()->endEventExams($event);
+  //   return back()->with('message', 'Result evaluated successfully');
+  // }
 }

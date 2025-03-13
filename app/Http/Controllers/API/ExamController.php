@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\API;
 
+use App\Actions\EndExam;
 use App\Actions\StartExam;
 use App\Http\Controllers\Controller;
 use App\Models\Event;
@@ -26,14 +27,12 @@ class ExamController extends Controller
     return $this->apiSuccessRes($exams);
   }
 
-  /** @deprecated The start exam function is in Home folder */
   function startExam(Request $request)
   {
     $request->validate([
       'exam_no' => ['required', 'string'],
       'student_code' => ['nullable', 'string'],
     ]);
-    return $request->all();
     $exam = Exam::query()
       ->where('exam_no', $request->exam_no)
       ->with('event')
@@ -43,15 +42,14 @@ class ExamController extends Controller
         'exam_no' => 'Exam record not found',
       ]);
     }
-
-    // return $exam->toArray();
     $res = StartExam::make($exam)->getExamStartupData();
+
     if ($res->isNotSuccessful()) {
-      return $this->fail([], $res->getMessage());
+      return $this->apiFailRes([], $res->getMessage());
     }
 
     $exam = $res->exam;
-    return $this->ok([
+    return $this->apiSuccessRes([
       'exam_track' => $res->exam_track,
       'exam' => $exam,
       'timeRemaining' => $exam->getTimeRemaining(),
@@ -90,5 +88,11 @@ class ExamController extends Controller
     DB::commit();
 
     return $this->emitResponseRet(retS('Exam records updated'));
+  }
+
+  function endExam(Exam $exam)
+  {
+    EndExam::make()->endExam($exam);
+    return response()->json(successRes('Exam ended successfully')->toArray());
   }
 }

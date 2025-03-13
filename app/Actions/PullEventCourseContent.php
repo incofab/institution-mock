@@ -1,6 +1,7 @@
 <?php
 namespace App\Actions;
 
+use App\Models\CourseSession;
 use App\Models\Event;
 use Cache;
 use Http;
@@ -60,7 +61,9 @@ class PullEventCourseContent
           $eventCourseSessions,
           fn($item) => $item['id'] == $eventCourse['course_session_id'],
         );
-        $eventCourse->course_session = reset($cs);
+        $courseSession = CourseSession::buildCourseSession(reset($cs));
+        $eventCourse->course_session = $courseSession;
+        $eventCourse->courseSession = $courseSession;
       });
   }
 

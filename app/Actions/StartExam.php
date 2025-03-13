@@ -48,32 +48,20 @@ class StartExam
   private function prepareExam(Exam $exam)
   {
     $event = $exam->event;
-    if ($event->isExternal()) {
-      // $eventCourseSessions = (new PullEventCourseContent(
-      //   $event,
-      // ))->getEventCourseContent();
-      // Apply course session content to external event courses
-      // $event
-      //   ->getEventCourses()
-      //   ->each(function ($eventCourse) use ($eventCourseSessions) {
-      //     $cs = array_filter(
-      //       $eventCourseSessions,
-      //       fn($item) => $item['id'] == $eventCourse['course_session_id'],
-      //     );
-      //     $eventCourse->course_session = reset($cs);
-      //   });
-      (new PullEventCourseContent($event))->mapEventCourseContent();
-    } else {
-      $event->eventCourses = EventCourse::query()
-        ->where('event_id', $event->id)
-        ->with(
-          'courseSession.course',
-          'courseSession.questions',
-          'courseSession.instructions',
-          'courseSession.passages',
-        )
-        ->get();
-    }
+    $event->loadContent();
+    // if ($event->isExternal()) {
+    //   (new PullEventCourseContent($event))->mapEventCourseContent();
+    // } else {
+    //   $event->eventCourses = EventCourse::query()
+    //     ->where('event_id', $event->id)
+    //     ->with(
+    //       'courseSession.course',
+    //       'courseSession.questions',
+    //       'courseSession.instructions',
+    //       'courseSession.passages',
+    //     )
+    //     ->get();
+    // }
     /** @var ExamCourse $examCourse */
     foreach ($exam->examCourses as $key => $examCourse) {
       $courseSession = $event->findCourseSession(

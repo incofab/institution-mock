@@ -8,16 +8,17 @@ $title = 'Exam Result'; ?>
 	<div class="cover"></div>
 </section>
 <section class="login-content">
-	<div class="logo">
+	{{-- <div class="logo">
 		<h1>{{config('app.name')}}</h1>
-	</div>
+	</div> --}}
 	<div class="login-box">
-		<form class="login-form" action="{{route('home.exams.view-result')}}" method="get">
+		<form class="login-form" action="{{route('exams.view-result')}}" method="get">
 			<h3 class="login-head">
 				<i class="fa fa-lg fa-fw fa-certificate"></i> 
 				View My Result
 			</h3>
         	<br />
+			@include('common.message')
 			<div class="form-group">
 				<label class="control-label">Exam Number</label> 
 				<input class="form-control" type="text" placeholder="Exam No" name="exam_no">

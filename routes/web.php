@@ -4,19 +4,11 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Home\ExamController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\Home\CallbackController;
 use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Institution\EventController;
-use App\Http\Controllers\Institution\StudentController;
-use App\Http\Controllers\CCD\CourseController;
-use App\Http\Controllers\CCD\SessionController;
-use App\Http\Controllers\CCD\QuestionController;
-use App\Http\Controllers\Institution\InstitutionController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\User\UserController;
-use App\Http\Controllers\Institution\GradeController;
 use App\Http\Controllers\Admin as Admin;
-use App\Http\Controllers\Home as Home;
+use App\Http\Controllers\Exam as Exam;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,15 +42,13 @@ Route::get('/init-exam', [ExamController::class, 'selectExamBody'])->name('home.
 Route::get('/select-exam-subjects/{examBodyId}', [ExamController::class, 'selectExamSubjects'])->name('home.select-subjects');
 Route::post('/register-exam', [ExamController::class, 'registerExam'])->name('home.register-exam');
 Route::post('/pause-exam', [ExamController::class, 'pauseExam'])->name('home.pause-exam');
-Route::get('/view-exam-result/{examNo}', [ExamController::class, 'viewResult'])->name('home.view-result');
-Route::get('/preview-exam-result/{examNo}', [ExamController::class, 'previewExamResult'])->name('home.preview-result');
 
 Route::get('/exam/start/{examNo?}', [\App\Http\Controllers\Exam\ExamController::class, 'startExam'])->name('home.exams.start');
 Route::get('/exam/completed/{examNo?}', [\App\Http\Controllers\Exam\ExamController::class, 'examCompleted'])->name('home.exams.completed');
-Route::get('/exam/view-result-form', [\App\Http\Controllers\Exam\ExamController::class, 'viewResultForm'])->name('home.exams.view-result-form');
 Route::get('/exam/view-result', [\App\Http\Controllers\Exam\ExamController::class, 'viewResult'])->name('home.exams.view-result');
 */
 
+Route::get('exams/view-result/{examNo?}', [Exam\ExamController::class, 'viewResult'])->name('exams.view-result');
 
 Route::get('/dashboard', [UserController::class, 'index'])->name('users.dashboard');
 
@@ -74,8 +64,6 @@ Route::group(['middleware' => ['auth', 'admin.user'], 'prefix' => 'admin/', 'as'
     Route::get('institutions/{institution}/assign-user', [Admin\InstitutionController::class, 'assignUserView'])->name('institutions.assign-user');
     Route::post('institutions/{institution}/assign-user', [Admin\InstitutionController::class, 'assignUserStore'])->name('institutions.assign-user.store');
 });
-
-Route::get('/exam', [Home\ExamController::class, 'startExamView'])->name('exam-login');
 
 Route::get('/rough/{instId?}', function (Request $request) {
     dd('rough');

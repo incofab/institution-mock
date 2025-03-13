@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Actions\PullEventCourseContent;
 use App\Traits\QueryInstitution;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -72,16 +73,41 @@ class Event extends BaseModel
         $valueArr = json_decode($value, true) ?? [];
         return collect($valueArr)->map(function ($item) {
           $eventCourse = new EventCourse($item);
-          $courseSession = new CourseSession($item['course_session'] ?? []);
-          $courseSession['course'] = new Course(
-            $item['course_session']['course'] ?? [],
+          $courseSession = CourseSession::buildCourseSession(
+            $item['course_session'] ?? [],
           );
+          // $questions = collect($item['course_session']['questions'] ?? [])->map(
+          //   fn($q) => new Question($q),
+          // );
+          // $courseSession = new CourseSession($item['course_session'] ?? []);
+          // $courseSession['questions'] = $questions;
+          // $courseSession['course'] = new Course(
+          //   $item['course_session']['course'] ?? [],
+          // );
           $eventCourse->course_session = $courseSession;
+          $eventCourse->courseSession = $courseSession;
           return $eventCourse;
         });
       },
       set: fn($value) => json_encode($value),
     );
+  }
+
+  function loadContent()
+  {
+    if ($this->isExternal()) {
+      (new PullEventCourseContent($this))->mapEventCourseContent();
+    } else {
+      $this->eventCourses = EventCourse::query()
+        ->where('event_id', $this->id)
+        ->with(
+          'courseSession.course',
+          'courseSession.questions',
+          'courseSession.instructions',
+          'courseSession.passages',
+        )
+        ->get();
+    }
   }
 
   function institution()
