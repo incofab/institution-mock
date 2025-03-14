@@ -11,15 +11,14 @@
 	</div>
 	<div class="login-box" style="min-height: 500px;">
         <form method="POST" action="{{ route('login') }}" class="login-form">
-			<h3 class="login-head">
+			<h3 class="login-head mb-1 pb-2">
 				<i class="fa fa-lg fa-fw fa-user"></i>SIGN IN
 			</h3>
         	@include('common.message')
             @csrf
-			<div class="clearfix">
-				<div class="float-right">
-					<a href="{{config('app.exam-url')}}">Exam Page</a>
-				</div>
+			<div class="clearfix mb-3">
+				<a href="{{route('exams.view-result')}}" class="float-left">Check Result</a>
+				<a href="{{config('app.exam-url')}}" class="float-right">Exam Page</a>
 			</div>
             <div class="form-group">
 				<label class="control-label">Email</label> 

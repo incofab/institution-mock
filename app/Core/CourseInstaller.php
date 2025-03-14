@@ -101,14 +101,14 @@ class CourseInstaller
     $course = Course::whereId($courseId)->first();
 
     if (empty($course)) {
-      return retF('Error: Course not found');
+      return failRes('Error: Course not found');
     }
 
     $contentDir = $this->extractionFolder . $courseId;
 
     $ret = \App\Core\Helper::unzip($contentPath, $contentDir);
 
-    if (!$ret[SUCCESSFUL]) {
+    if (!$ret['success']) {
       return $ret;
     }
 
@@ -118,11 +118,11 @@ class CourseInstaller
     $summaryData = null;
 
     if (!file_exists($courseFilename)) {
-      return retF('Error: Course file not found');
+      return failRes('Error: Course file not found');
     }
 
     if (!file_exists($sessionsFilename)) {
-      return retF('Error: Sessions file not found');
+      return failRes('Error: Sessions file not found');
     }
 
     if (file_exists($summaryFilename)) {
@@ -130,7 +130,7 @@ class CourseInstaller
 
       $summaryVal = $this->validateSummary($summaryData, $courseId);
 
-      if (!$summaryVal[SUCCESSFUL]) {
+      if (!$summaryVal['success']) {
         return $summaryVal;
       }
     }
@@ -143,12 +143,12 @@ class CourseInstaller
       $courseId,
     );
 
-    if (!$sessionVal[SUCCESSFUL]) {
+    if (!$sessionVal['success']) {
       return $sessionVal;
     }
 
     if (empty($allSessionData)) {
-      return retF('Error: Sessions file content empty');
+      return failRes('Error: Sessions file content empty');
     }
 
     // 	    $sessionIDMappingOldToNew = [];

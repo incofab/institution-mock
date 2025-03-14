@@ -2,7 +2,7 @@
 
 header('Access-Control-Allow-Origin: *');
 header(
-  'Access-Control-Allow-Headers: Content-Type, Origin, Authorization, X-Requested-With'
+  'Access-Control-Allow-Headers: Content-Type, Origin, Authorization, X-Requested-With',
 );
 header('Content-Type: application/json; charset=UTF-8');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
@@ -32,8 +32,8 @@ function dlog($msg)
   } else {
     $str = $msg;
   }
-
-  error_log(
+  @file_put_contents(
+    __DIR__ . '/../errorlog.txt',
     '*************************************' .
       PHP_EOL .
       '     Date Time: ' .
@@ -46,7 +46,6 @@ function dlog($msg)
       PHP_EOL .
       '*************************************' .
       PHP_EOL,
-    3,
-    __DIR__ . '/public/errorlog.txt'
+    -1,
   );
 }

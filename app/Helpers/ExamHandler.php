@@ -130,12 +130,14 @@ class ExamHandler
     $size = $questions->count();
     $examFileContent = $ret->getExamTrack();
 
-    if (empty($examFileContent) || empty($examFileContent['attempts'])) {
-      return ExamProcess::success()->score(0)->numOfQuestions($size);
+    if (empty($exam->attempts)) {
+      if (empty($examFileContent) || empty($examFileContent['attempts'])) {
+        return ExamProcess::success()->score(0)->numOfQuestions($size);
+      }
     }
 
     $score = 0;
-    $attempts = $examFileContent['attempts'];
+    $attempts = $examFileContent['attempts'] ?? $exam->attempts;
     foreach ($questions as $question) {
       $attempt = $attempts[$question->id] ?? '';
       if ($question->answer === $attempt) {

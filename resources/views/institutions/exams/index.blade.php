@@ -59,7 +59,7 @@ $confirmMsg = 'Are you sure?';
    $student = $record['student'];
    ?>
 				<tr>
-					<td>{{$student->name}}</td>
+					<td>{{$student?->name}}</td>
 					<td>{{$record['exam_no']}}</td>
 					{{-- <td>
 						<a href="{{instRoute('event-courses.index', [$event->id])}}" 

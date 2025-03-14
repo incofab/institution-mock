@@ -64,13 +64,16 @@ class ExamController extends Controller
       'exams.*.id' => ['required', 'integer', 'exists:exams,id'],
       'exams.*.exam_courses' => ['required', 'array', 'min:1'],
       'exams.*.exam_courses.*.course_session_id' => 'required|integer',
-      'exams.*.exam_courses.*.score' => 'required|numeric',
+      'exams.*.exam_courses.*.score' => ['nullable', 'numeric'],
     ]);
     $exams = $request->input('exams');
 
     DB::beginTransaction();
 
     foreach ($exams as $exam) {
+      if (empty($exam['attempts'])) {
+        continue;
+      }
       $examCourses = $exam['exam_courses'];
       foreach ($examCourses as $examCourse) {
         ExamCourse::query()->updateOrCreate(
@@ -78,21 +81,43 @@ class ExamController extends Controller
             'exam_id' => $exam['id'],
             'course_session_id' => $examCourse['course_session_id'],
           ],
-          $examCourse,
+          collect($examCourse)
+            ->only(
+              'score',
+              'course_code',
+              'session',
+              'status',
+              'num_of_questions',
+            )
+            ->toArray(),
         );
       }
 
-      Exam::find($exam['id'])->update($exam);
+      Exam::find($exam['id'])->update(
+        collect($exam)
+          ->only(
+            'time_remaining',
+            'start_time',
+            'pause_time',
+            'end_time',
+            'score',
+            'status',
+            'num_of_questions',
+            'attempts',
+          )
+          ->toArray(),
+      );
     }
 
     DB::commit();
 
-    return $this->emitResponseRet(retS('Exam records updated'));
+    return $this->apiSuccessRes([], 'Exam records updated');
   }
 
   function endExam(Exam $exam)
   {
+    // info("Exam exam called {$exam->exam_no}");
     EndExam::make()->endExam($exam);
-    return response()->json(successRes('Exam ended successfully')->toArray());
+    return $this->apiSuccessRes([], 'Exam ended successfully')->toArray();
   }
 }
