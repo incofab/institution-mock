@@ -31,7 +31,7 @@ class ExtendExamTime
       ])
       ->save();
 
-    $examHandler = new ExamHandler();
+    $examHandler = ExamHandler::make();
     $ret = $examHandler->syncExamFile($this->exam, false);
     return $ret->isSuccessful()
       ? successRes($ret->getMessage())

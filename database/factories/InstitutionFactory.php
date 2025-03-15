@@ -24,13 +24,14 @@ class InstitutionFactory extends Factory
     ];
   }
 
-  function user(User $user = null)
+  function user(User|null $user = null)
   {
     return $this->afterCreating(function (Institution $model) use ($user) {
       $user = $user ?? User::factory()->create();
       $model->institutionUsers()->firstOrCreate(['user_id' => $user->id]);
     });
   }
+
   function students($count = 2, ?Grade $grade = null)
   {
     return $this->afterCreating(
@@ -43,6 +44,7 @@ class InstitutionFactory extends Factory
         ->create(),
     );
   }
+
   function courses($count = 2)
   {
     return $this->afterCreating(

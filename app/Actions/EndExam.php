@@ -3,7 +3,6 @@ namespace App\Actions;
 
 use App\Enums\ExamStatus;
 use App\Helpers\ExamHandler;
-use App\Models\CourseSession;
 use App\Models\Event;
 use App\Models\Exam;
 use App\Support\Res;
@@ -13,7 +12,7 @@ class EndExam
   private ExamHandler $examHandler;
   function __construct()
   {
-    $this->examHandler = new ExamHandler();
+    $this->examHandler = ExamHandler::make();
   }
 
   static function make()

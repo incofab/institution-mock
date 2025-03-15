@@ -23,7 +23,7 @@ Route::middleware('auth:sanctum')->any('/user', function (Request $request) {
 });
 
 Route::post('exam/start', [Api\ExamController::class, 'startExam'])->name('exam-start');
-Route::get('{exam:exam_no}/end-exam', [Api\ExamController::class, 'endExam'])->name('end-exam');
+Route::any('{exam:exam_no}/end-exam', [Api\ExamController::class, 'endExam'])->name('end-exam');
 
 Route::group(['prefix' => 'institutions/{institution}/', 'middleware' => [], 'as' => 'institutions.'], function() {
     Route::any('show-institution', [Api\InstitutionController::class, 'showInstitution'])->name('show-institution');

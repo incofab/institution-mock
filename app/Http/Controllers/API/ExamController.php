@@ -118,6 +118,6 @@ class ExamController extends Controller
   {
     // info("Exam exam called {$exam->exam_no}");
     EndExam::make()->endExam($exam);
-    return $this->apiSuccessRes([], 'Exam ended successfully')->toArray();
+    return $this->apiSuccessRes([], 'Exam ended successfully');
   }
 }

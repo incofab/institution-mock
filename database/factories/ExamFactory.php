@@ -16,7 +16,7 @@ class ExamFactory extends Factory
       'institution_id' => Institution::factory(),
       'event_id' => Event::factory(),
       'student_id' => Student::factory(),
-      'exam_no' => $this->faker->unique()->randomNumber(5, true),
+      'exam_no' => $this->faker->unique()->numerify('#######'),
       'time_remaining' => $this->faker->randomFloat(2, 0, 120),
       'start_time' => $this->faker->dateTime,
       'pause_time' => $this->faker->dateTime,

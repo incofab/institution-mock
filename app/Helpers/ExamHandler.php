@@ -14,9 +14,10 @@ class ExamHandler
   {
   }
 
-  static function make()
+  static function make(): self
   {
-    return new self();
+    return app()->make(self::class);
+    // return new self();
   }
 
   /**

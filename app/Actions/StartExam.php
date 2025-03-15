@@ -3,7 +3,6 @@ namespace App\Actions;
 
 use App\Enums\ExamStatus;
 use App\Helpers\ExamHandler;
-use App\Models\EventCourse;
 use App\Models\Exam;
 use App\Models\ExamCourse;
 
@@ -13,9 +12,10 @@ class StartExam
   {
   }
 
-  static function make(Exam $exam)
+  static function make(Exam $exam): self
   {
-    return new self($exam);
+    return app()->make(StartExam::class, ['exam' => $exam]);
+    // return new self($exam);
   }
 
   function getExamStartupData($start = true)
@@ -28,7 +28,7 @@ class StartExam
       return failRes('Exam has already ended');
     }
 
-    $examHandler = new ExamHandler();
+    $examHandler = ExamHandler::make();
     $ret = $examHandler->syncExamFile($this->exam);
     if ($ret->isNotSuccessful()) {
       return failRes($ret->getMessage());
@@ -49,19 +49,6 @@ class StartExam
   {
     $event = $exam->event;
     $event->loadContent();
-    // if ($event->isExternal()) {
-    //   (new PullEventCourseContent($event))->mapEventCourseContent();
-    // } else {
-    //   $event->eventCourses = EventCourse::query()
-    //     ->where('event_id', $event->id)
-    //     ->with(
-    //       'courseSession.course',
-    //       'courseSession.questions',
-    //       'courseSession.instructions',
-    //       'courseSession.passages',
-    //     )
-    //     ->get();
-    // }
     /** @var ExamCourse $examCourse */
     foreach ($exam->examCourses as $key => $examCourse) {
       $courseSession = $event->findCourseSession(
