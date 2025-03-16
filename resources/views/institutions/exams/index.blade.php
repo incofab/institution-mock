@@ -23,7 +23,13 @@ $confirmMsg = 'Are you sure?';
 @include('common.message')
 <div class="tile">
     <div class="tile-header clearfix mb-3">
-    	<div class="form-group row float-right">
+		<div class="float-left">
+			<a href="{{instRoute('events.download', [$event])}}" class="btn btn-primary btn-sm"
+				onclick="return confirm('Download result records')">
+				<i class="fa fa-download"></i> Download
+			</a>
+		</div>
+    	{{-- <div class="form-group row float-right m-0">
 			<label for="select-grade" class="col-sm-5 col-form-label">Select Event</label>
 			<div class="col-sm-7">
 				<select name="event_id" id="select-event" class="form-control">
@@ -34,7 +40,7 @@ $confirmMsg = 'Are you sure?';
 					@endforeach
 				</select>
 			</div>
-		</div>
+		</div> --}}
     </div>
     <div class="tile-body">
 		<div class="mb-2"><b>Event: </b> {{$event->title}}</div>
@@ -65,7 +71,7 @@ $confirmMsg = 'Are you sure?';
 						<a href="{{instRoute('event-courses.index', [$event->id])}}" 
 							class="btn-link">{{$event['title']}}</a>
 					</td> --}}
-					<td>{{implode(', ', $record->examCourses->map(fn($item) => $item->course_code)->toArray())}}</td>
+					<td><small>{{implode(', ', $record->examCourses->map(fn($item) => $item->course_code . ($record->isEnded() ? " = {$item->score}/{$item->num_of_questions}" : ''))->toArray())}}</small></td>
 					<td>{{$event['duration']}} mins</td>
 					<td class="text-center">
 						@if($record->isActive() || $record->isPending())

@@ -9,6 +9,8 @@ Route::get('/events/{event}/suspend', [Inst\EventController::class, 'suspend'])
 ->name('events.suspend');
 Route::get('/events/{event}/unsuspend', [Inst\EventController::class, 'unSuspend'])
 ->name('events.unsuspend');
+Route::get('/events/{event}/download', [Inst\EventController::class, 'download'])
+->name('events.download');
 Route::resource('/events', Inst\EventController::class);
 
 Route::get('/event-courses/events/{event}/index', [Inst\EventCourseController::class, 'index'])

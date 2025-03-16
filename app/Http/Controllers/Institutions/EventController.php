@@ -1,13 +1,14 @@
 <?php
 namespace App\Http\Controllers\Institutions;
 
-use App\Actions\EndExam;
+use App\Actions\DownloadResult;
 use App\Models\Course;
 use App\Models\Event;
 use App\Http\Controllers\Controller;
 use App\Models\ExternalContent;
 use Illuminate\Http\Request;
 use App\Models\Institution;
+use Illuminate\Support\Facades\Response;
 
 class EventController extends Controller
 {
@@ -94,6 +95,19 @@ class EventController extends Controller
       'event' => $event,
       'eventCourses' => $event->getEventCourses(),
     ]);
+  }
+
+  function download(Institution $institution, Event $event)
+  {
+    $excelWriter = DownloadResult::run($event);
+    $fileName = sanitizeFilename("{$event->title}-exams.xlsx");
+    $tempFilePath = storage_path("app/public/{$fileName}");
+    // Save to a temporary file
+    $excelWriter->save($tempFilePath);
+
+    return Response::download($tempFilePath, $fileName)->deleteFileAfterSend(
+      true,
+    );
   }
 
   // function evaluateEvent(Event $event)

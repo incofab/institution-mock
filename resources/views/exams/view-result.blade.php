@@ -64,11 +64,14 @@ $student = $exam->student;
     					<td>{{$examCourse->scorePercent()}}</td>
     				</tr>
     				@endforeach
+<?php $totalScorePercent = $exam->examCourses->sum(
+  fn($item) => $item->scorePercent(),
+); ?>
     				<tr class="font-weight-bold">
     					<td colspan="{{!$exam->event ? 2 : 1}}"><b>Total</b></td>
 						<td></td>
     					<td>{{$exam->score}}/{{$exam->num_of_questions}}</td>
-    					<td>{{round($exam->scorePercent(), 2)}}</td>
+    					<td>{{round($totalScorePercent, 2)}}/{{$exam->examCourses->count() * 100}}</td>
     				</tr>
     			</tbody>
     		</table>
