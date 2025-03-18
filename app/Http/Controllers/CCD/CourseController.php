@@ -11,7 +11,7 @@ class CourseController extends Controller
 {
   public function index(
     Institution $institution,
-    ExamContent $examContent = null,
+    ExamContent|null $examContent = null,
   ) {
     $query = $examContent?->courses() ?? Course::query();
     return view('ccd.courses.index', [
@@ -27,7 +27,12 @@ class CourseController extends Controller
   public function store(Request $request, Institution $institution)
   {
     $validatedData = $request->validate(Course::createRule());
-    $course = Course::query()->create($validatedData);
+    $course = $institution->courses()->firstOrCreate(
+      [
+        'course_code' => $validatedData['course_code'],
+      ],
+      $validatedData,
+    );
 
     return redirect(
       instRoute('ccd.courses.index', [$course->exam_content_id]),
