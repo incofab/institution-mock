@@ -23,12 +23,14 @@ $confirmMsg = 'Are you sure?';
 @include('common.message')
 <div class="tile">
     <div class="tile-header clearfix mb-3">
-		<div class="float-left">
-			<a href="{{instRoute('events.download', [$event])}}" class="btn btn-primary btn-sm"
-				onclick="return confirm('Download result records')">
-				<i class="fa fa-download"></i> Download
-			</a>
-		</div>
+		<a href="{{instRoute('events.download', [$event])}}" class="btn btn-primary btn-sm float-left"
+			onclick="return confirm('Download result records')">
+			<i class="fa fa-download"></i> Download
+		</a>
+		<a href="{{instRoute('events.evaluate', [$event])}}" class="btn btn-danger btn-sm float-right"
+			onclick="return confirm('This wil end all ongoing exams in this event. Do you want to continue?')">
+			<i class="fa fa-check"></i> Evaluate
+		</a>
     	{{-- <div class="form-group row float-right m-0">
 			<label for="select-grade" class="col-sm-5 col-form-label">Select Event</label>
 			<div class="col-sm-7">

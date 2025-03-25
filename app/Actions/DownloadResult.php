@@ -42,7 +42,7 @@ class DownloadResult
       );
       $totalQuestion = $exam->examCourses->count() * 100;
       $items[] = [
-        'A' => $exam->name,
+        'A' => $exam->student?->name,
         'B' => implode(' | ', $subjects),
         'C' => "{$exam->score}/{$exam->num_of_questions}",
         'D' => "{$scorePercent}/$totalQuestion",

@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Institutions;
 
 use App\Actions\DownloadResult;
+use App\Actions\EndExam;
 use App\Models\Course;
 use App\Models\Event;
 use App\Http\Controllers\Controller;
@@ -99,6 +100,7 @@ class EventController extends Controller
 
   function download(Institution $institution, Event $event)
   {
+    $event->load('exams.student', 'exams.examCourses');
     $excelWriter = DownloadResult::run($event);
     $fileName = sanitizeFilename("{$event->title}-exams.xlsx");
     $tempFilePath = storage_path("app/public/{$fileName}");
@@ -110,9 +112,9 @@ class EventController extends Controller
     );
   }
 
-  // function evaluateEvent(Event $event)
-  // {
-  //   EndExam::make()->endEventExams($event);
-  //   return back()->with('message', 'Result evaluated successfully');
-  // }
+  function evaluateEvent(Institution $institution, Event $event)
+  {
+    EndExam::make()->endEventExams($event);
+    return back()->with('message', 'All Exam results evaluated successfully');
+  }
 }
