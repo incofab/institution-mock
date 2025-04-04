@@ -35,7 +35,7 @@ class ExamController extends Controller
     ]);
     $exam = Exam::query()
       ->where('exam_no', $request->exam_no)
-      ->with('event')
+      ->with('event', 'student')
       ->first();
     if (!$exam) {
       return throw ValidationException::withMessages([

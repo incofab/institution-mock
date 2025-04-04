@@ -177,7 +177,12 @@ class ExamHandler
       $currentTime = time();
       $endTime = strtotime($exam['end_time']); // + self::EXAM_TIME_ALLOWANCE;
       $isEnded = ($exam['status'] ?? '') === 'ended';
-      // info([$currentTime, $endTime, $isEnded]);
+      // info([
+      //   'crrentTime' => $currentTime,
+      //   'endTime' => $endTime,
+      //   'isEnded' => $isEnded,
+      //   'curent > end time' => $currentTime > $endTime,
+      // ]);
       // info($exam);
       if ($currentTime > $endTime || $isEnded) {
         return ExamProcess::fail('Time Elapsed/Exam ended')

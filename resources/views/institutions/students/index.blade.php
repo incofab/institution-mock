@@ -69,7 +69,7 @@ $confirmMsg = 'Are you sure?';
 		</table>
 	</div>
 	<div class="tile-footer">
-		@include('common.paginate')
+		@include('common.paginate', ['paginatedData' => $allRecords])
 	</div>
 </div>
 <script>

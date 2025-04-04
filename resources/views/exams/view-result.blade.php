@@ -50,7 +50,7 @@ $student = $exam->student;
     			<thead>
     				<tr>
     					<th>Subject</th>
-    					<th>Session</th>
+    					{{-- <th>Session</th> --}}
     					<th>Score</th>
     					<th>Score %</th>
     				</tr>
@@ -59,7 +59,7 @@ $student = $exam->student;
     				@foreach($exam->examCourses as $examCourse)
     				<tr>
     					<td>{{$examCourse->course_code}}</td>
-						<td>{{$examCourse->session}}</td>
+						{{-- <td>{{$examCourse->session}}</td> --}}
     					<td>{{$examCourse->score}}/{{$examCourse->num_of_questions}}</td>
     					<td>{{$examCourse->scorePercent()}}</td>
     				</tr>
