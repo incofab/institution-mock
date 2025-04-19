@@ -22,32 +22,37 @@ class PullEventCourseContent
       ->getEventCourses()
       ->map(fn($item) => ['course_session_id' => $item['course_session_id']])
       ->toArray();
+
+    return $this->retrieveEventCourse($courseSessionIds);
+
     try {
       $courseSessions = Cache::get($this->getCacheKey(), function () use (
         $courseSessionIds,
       ) {
-        $res = Http::timeout(60)->post(
-          'http://content.examscholars.com/api/course-sessions/retrieve',
-          ['subjects' => $courseSessionIds],
-        );
-        $body = $res->body();
-        if (!$res->ok()) {
-          info('Error syncing courses: ' . $body);
-          return [];
-        }
-        // info('content cached');
-        $courseSessions = $res->json('course_sessions');
-        $this->cacheContent($courseSessions);
-        return $courseSessions;
+        return $this->retrieveEventCourse($courseSessionIds);
       });
-      //   foreach ($courseSessions as $key => $cs) {
-      //     info("Available course sessions = {$cs['id']}");
-      //   }
       return $courseSessions;
     } catch (\Throwable $th) {
       info('Error syncing courses: ' . $th->getMessage());
       return [];
     }
+  }
+
+  function retrieveEventCourse($courseSessionIds)
+  {
+    $res = Http::timeout(60)->post(
+      'http://content.examscholars.com/api/course-sessions/retrieve',
+      ['subjects' => $courseSessionIds],
+    );
+    $body = $res->body();
+    if (!$res->ok()) {
+      info('Error syncing courses: ' . $body);
+      return [];
+    }
+    // info('content cached');
+    $courseSessions = $res->json('course_sessions');
+    // $this->cacheContent($courseSessions);
+    return $courseSessions;
   }
 
   function mapEventCourseContent()

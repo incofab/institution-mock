@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Institutions;
 use App\Actions\EndExam;
 use App\Actions\ExtendExamTime;
 use App\Actions\RegisterExam;
+use App\Enums\ExamStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Event;
 use App\Models\Exam;
@@ -16,6 +17,14 @@ class ExamController extends Controller
 {
   function index(Institution $institution, Event $event)
   {
+    $query = Exam::query()->where('event_id', $event->id);
+    $allExamsCount = (clone $query)->count();
+    $startedExamsCount = (clone $query)
+      ->where('status', '!', ExamStatus::Pending)
+      ->count();
+    $pendingExamsCount = (clone $query)
+      ->where('status', ExamStatus::Pending)
+      ->count();
     return view('institutions.exams.index', [
       'allRecords' => $event
         ->exams()
@@ -25,6 +34,9 @@ class ExamController extends Controller
         ->with('eventCourses.courseSession.course')
         ->get(),
       'event' => $event,
+      'allExamsCount' => $allExamsCount,
+      'startedExamsCount' => $startedExamsCount,
+      'pendingExamsCount' => $pendingExamsCount,
     ]);
   }
 

@@ -46,6 +46,11 @@ $confirmMsg = 'Are you sure?';
     </div>
     <div class="tile-body">
 		<div class="mb-2"><b>Event: </b> {{$event->title}}</div>
+		<div>
+			<p><b>All Exams: </b> {{$allExamsCount}}</p>
+			<p><b>Conducted Exams: </b> {{$startedExamsCount}}</p>
+			<p><b>Pending Exams: </b> {{$pendingExamsCount}}</p>
+		</div>
     	<table class="table table-hover table-bordered" id="data-table" >
     		<thead>
     			<tr>
