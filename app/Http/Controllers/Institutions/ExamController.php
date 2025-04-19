@@ -20,7 +20,7 @@ class ExamController extends Controller
     $query = Exam::query()->where('event_id', $event->id);
     $allExamsCount = (clone $query)->count();
     $startedExamsCount = (clone $query)
-      ->where('status', '!', ExamStatus::Pending)
+      ->where('status', '!=', ExamStatus::Pending)
       ->count();
     $pendingExamsCount = (clone $query)
       ->where('status', ExamStatus::Pending)
