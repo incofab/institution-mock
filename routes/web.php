@@ -66,7 +66,8 @@ Route::group(['middleware' => ['auth', 'admin.user'], 'prefix' => 'admin/', 'as'
 });
 
 Route::get('/rough/{instId?}', function (Request $request) {
-    dd('rough');
+    $diff = now()->diffInSeconds(now()->addMinutes(30), false);
+    dd(['diff' => $diff]);
 });
 
 // Route::group(['prefix' => 'admin'], function () {

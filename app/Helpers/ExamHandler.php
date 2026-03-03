@@ -36,16 +36,13 @@ class ExamHandler
     }
 
     $examFileContent = $contentRes->getExamTrack();
-    $examData = $exam->only(
-      'event_id',
-      'student_id',
-      'num_of_questions',
-      'score',
-      'status',
-      'start_time',
-      'pause_time',
-      'end_time',
-    );
+    $examData = [
+      ...$exam->only('event_id', 'student_id', 'num_of_questions', 'score'),
+      'status' => $exam->status->value,
+      'start_time' => $exam->start_time?->toDateTimeString(),
+      'pause_time' => $exam->pause_time?->toDateTimeString(),
+      'end_time' => $exam->end_time?->toDateTimeString(),
+    ];
     // If it's not empty, then the exam has just been restarted
     $examFileContent = $contentRes->getExamTrack() ?? [];
     $examFileContent['exam'] = $examData;

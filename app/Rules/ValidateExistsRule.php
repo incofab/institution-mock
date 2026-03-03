@@ -16,7 +16,7 @@ class ValidateExistsRule implements ValidationRule
   private $model;
   function __construct(
     private string $modelClass,
-    private string $column = 'id'
+    private string $column = 'id',
   ) {
   }
 
@@ -31,8 +31,16 @@ class ValidateExistsRule implements ValidationRule
       ->query()
       ->where($this->column, $value)
       ->first();
-
     if (!$model) {
+      dd([
+        'toSql' => (new $this->modelClass())
+          ->query()
+          ->where($this->column, $value)
+          ->toSql(),
+        'value' => $value,
+        'column' => $this->column,
+        'model' => $model?->toArray(),
+      ]);
       $fail("$attribute does not exist");
       return;
     }

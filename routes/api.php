@@ -30,6 +30,7 @@ Route::group(['prefix' => 'institutions/{institution}/', 'middleware' => [], 'as
     Route::any('events', [Api\EventController::class, 'index'])->name('events.index');
     Route::any('events/{event}/show', [Api\EventController::class, 'show'])->name('events.show');
     Route::any('events/{event}/deep-show', [Api\EventController::class, 'deepShow'])->name('events.deep-show');
+    Route::any('events/{event:code}/deep-show-by-code', [Api\EventController::class, 'deepShow'])->name('events.deep-show-by-code');
     Route::any('events/{event}/exams', [Api\ExamController::class, 'index'])->name('events.exams.index');
     Route::any('exams/upload', [Api\ExamController::class, 'uploadEventResult'])->name('exams.upload');
 }); 

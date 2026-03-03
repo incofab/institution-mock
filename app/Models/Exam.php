@@ -55,8 +55,13 @@ class Exam extends BaseModel
       'start_time' => now(),
       'status' => ExamStatus::Active,
       'pause_time' => null,
-      'end_time' => now()->addMinutes($this->event->duration),
+      'end_time' => $this->getEndTime(),
     ])->save();
+  }
+
+  function getEndTime()
+  {
+    return now()->addMinutes($this->event->duration);
   }
 
   function markAsEnded($totalScore, $totalNumOfQuestions, $attempts = [])
@@ -82,7 +87,10 @@ class Exam extends BaseModel
   /** @return int the remaining time in seconds */
   function getTimeRemaining()
   {
-    $timeRemaining = now()->diffInSeconds($this->end_time);
+    $timeRemaining = now()->diffInSeconds(
+      $this->end_time ?? $this->getEndTime(),
+      false,
+    );
     return $timeRemaining < 1 ? 0 : $timeRemaining;
   }
 
