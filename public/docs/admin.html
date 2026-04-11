@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang='en'>
+<head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'><title>Admin Area</title><link rel='stylesheet' href='styles.css'></head>
+<body>
+<header><h1>Admin Area</h1><p class='muted'>Pages and features mounted from <code>routes/web.php</code> under <code>/admin</code>.</p><nav><a href='index.html'>Overview</a><a href='admin.html'>Admin</a><a href='institution.html'>Institution</a><a href='ccd.html'>CCD Content</a><a href='exams.html'>Exam Runtime</a><a href='api.html'>API</a><a href='data-model.html'>Data Model</a></nav></header>
+<main>
+<section><h2>Access and Layout</h2><p>Admin pages use prefix <code>admin/</code>, route name prefix <code>admin.</code>, and middleware <code>auth</code> plus <code>admin.user</code>. The current <code>VerifyAdminUser</code> middleware checks that a user is authenticated; <code>User::isAdmin()</code> compares the user email to <code>config('app.admin.email')</code>.</p><p>Admin views live under <code>resources/views/admin</code> and use <code>admin/layout.blade.php</code>, <code>admin/header.blade.php</code>, and <code>admin/_sidebar.blade.php</code>.</p></section>
+<section><h2>Pages</h2><table><tr><th>Page</th><th>Route</th><th>Controller</th><th>How It Works</th></tr>
+<tr><td>Dashboard</td><td><code>GET /admin/dashboard</code></td><td><code>Admin\AdminController@index</code></td><td>Renders the admin dashboard view.</td></tr>
+<tr><td>User list</td><td><code>GET /admin/users</code></td><td><code>Admin\UserController@index</code></td><td>Loads users ordered latest first and paginates with <code>paginateFromRequest()</code>.</td></tr>
+<tr><td>User search</td><td><code>GET /admin/users/search</code></td><td><code>Admin\UserController@search</code></td><td>Searches <code>name</code>, <code>email</code>, and <code>phone</code> using the <code>search_user</code> query value.</td></tr>
+<tr><td>User details</td><td><code>GET /admin/users/{user}</code></td><td><code>Admin\UserController@show</code></td><td>Passes the route-bound user to <code>admin.users.show</code>.</td></tr>
+<tr><td>Delete user</td><td><code>DELETE /admin/users/{user}</code></td><td><code>Admin\UserController@destroy</code></td><td>Deletes the user and redirects back to the users index.</td></tr>
+<tr><td>Institution list</td><td><code>GET /admin/institutions</code></td><td><code>Admin\InstitutionController@index</code></td><td>Lists institutions ordered latest first.</td></tr>
+<tr><td>Create institution</td><td><code>GET/POST /admin/institutions</code></td><td><code>Admin\InstitutionController@create/store</code></td><td>Validates <code>Institution::ruleCreate()</code>, assigns <code>created_by_user_id</code>, generates a unique six-digit code, and creates the record.</td></tr>
+<tr><td>Edit institution</td><td><code>GET/PATCH /admin/institutions/{institution}</code></td><td><code>Admin\InstitutionController@edit/update</code></td><td>Renders the shared create form with <code>edit</code> data and updates validated fields.</td></tr>
+<tr><td>Delete institution</td><td><code>DELETE /admin/institutions/{institution}</code></td><td><code>Admin\InstitutionController@destroy</code></td><td>Deletes only when the institution has no courses and no events.</td></tr>
+<tr><td>Assign user</td><td><code>GET/POST /admin/institutions/{institution}/assign-user</code></td><td><code>Admin\InstitutionController@assignUserView/assignUserStore</code></td><td>Validates an existing user email and creates an <code>institution_users</code> join record if missing.</td></tr>
+</table></section>
+<section><h2>Related Models</h2><ul><li><code>User</code> is a Laravel authenticatable model with Sanctum tokens available and an <code>isAdmin()</code> helper.</li><li><code>Institution</code> stores institution metadata and uses <code>code</code> as the route key.</li><li><code>InstitutionUser</code> links users to institutions and is checked by institution middleware.</li></ul></section>
+</main><footer>Admin docs for <code>institution-mock</code>.</footer>
+</body></html>

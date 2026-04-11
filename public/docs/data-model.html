@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang='en'>
+<head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'><title>Data Model</title><link rel='stylesheet' href='styles.css'></head>
+<body>
+<header><h1>Data Model</h1><p class='muted'>Main Eloquent models, relationships, and workflow tables.</p><nav><a href='index.html'>Overview</a><a href='admin.html'>Admin</a><a href='institution.html'>Institution</a><a href='ccd.html'>CCD Content</a><a href='exams.html'>Exam Runtime</a><a href='api.html'>API</a><a href='data-model.html'>Data Model</a></nav></header>
+<main>
+<section><h2>Core Relationships</h2><pre><code>Institution
+  has many Users through InstitutionUser
+  has many ExamContent, Course, Grade, Student, Event
+
+ExamContent
+  has many Course
+
+Course
+  belongs to Institution
+  belongs to ExamContent
+  has many CourseSession
+
+CourseSession
+  belongs to Course
+  has many Question, Instruction, Passage
+
+Event
+  belongs to Institution
+  belongs to ExternalContent
+  has many EventCourse
+  has many Exam
+
+Exam
+  belongs to Event
+  belongs to Student
+  has many ExamCourse</code></pre></section>
+<section><h2>Main Models</h2><table><tr><th>Model</th><th>Purpose</th><th>Key Details</th></tr><tr><td><code>Institution</code></td><td>Tenant-like owner for users, students, content, and exams.</td><td>Uses <code>code</code> as route key and generates six-digit institution codes.</td></tr><tr><td><code>User</code></td><td>Authenticated application user.</td><td>Uses Laravel auth and Sanctum tokens. <code>isAdmin()</code> checks email against configured admin email.</td></tr><tr><td><code>InstitutionUser</code></td><td>Join table assigning users to institutions.</td><td>Checked by <code>VerifyInstitutionUser</code>.</td></tr><tr><td><code>ExamContent</code></td><td>Content grouping/exam body.</td><td>Has many courses.</td></tr><tr><td><code>Course</code></td><td>Subject/course under an institution and optional exam content group.</td><td>Has code, title, description, order, and sessions.</td></tr><tr><td><code>CourseSession</code></td><td>Question set for a course session/category.</td><td>Has questions, instructions, passages, general instructions, and file metadata.</td></tr><tr><td><code>Question</code></td><td>Multiple choice question.</td><td>Stores question text, options A-E, answer, answer metadata, and course session id.</td></tr><tr><td><code>Instruction</code></td><td>Session-level instruction.</td><td>Created under a course session and institution.</td></tr><tr><td><code>Passage</code></td><td>Session-level passage.</td><td>Created under a course session and institution.</td></tr><tr><td><code>Grade</code></td><td>Class/grade grouping for students.</td><td>Has many students.</td></tr><tr><td><code>Student</code></td><td>Exam candidate.</td><td>Belongs to institution and grade, appends computed <code>name</code>, and generates <code>S-</code> prefixed codes.</td></tr><tr><td><code>Event</code></td><td>Scheduled exam event.</td><td>Has duration, status, optional external content, event courses, and exams.</td></tr><tr><td><code>EventCourse</code></td><td>Course session attached to an event.</td><td>Links event to course session and stores optional question counts.</td></tr><tr><td><code>Exam</code></td><td>Student registration for an event.</td><td>Tracks exam number, status enum, times, attempts, score, and related exam courses.</td></tr><tr><td><code>ExamCourse</code></td><td>One course session inside an exam registration.</td><td>Stores course code, session, score, question count, and status.</td></tr><tr><td><code>ExternalContent</code></td><td>Imported/external exam content snapshot.</td><td>Casts source enum and rebuilds nested exam content/course/session objects from JSON.</td></tr></table></section>
+<section><h2>Important Migrations</h2><p>The main tables are created by migrations for institutions, institution users, external contents, events, exam contents, courses, course sessions, instructions, questions, passages, grades, students, event courses, exams, and exam courses.</p></section>
+<section><h2>Internal vs External Event Content</h2><p>Internal events use database-backed <code>EventCourse</code> rows and eager-load <code>courseSession.course</code>, <code>questions</code>, <code>instructions</code>, and <code>passages</code>. External events use <code>external_content_id</code>; selected event courses are stored in the event's <code>external_event_courses</code> JSON field and rehydrated into <code>EventCourse</code> and <code>CourseSession</code> objects by model accessors.</p></section>
+<section><h2>Deletion Rules</h2><ul><li>Institutions cannot be deleted if they have courses or events.</li><li>Exam content cannot be deleted if it has courses.</li><li>Courses cannot be deleted if they have course sessions.</li><li>Course sessions cannot be deleted if they have questions.</li><li>Events cannot be deleted if they already have exams.</li><li>Grade deletion currently deletes its students before deleting the grade.</li></ul></section>
+</main><footer>Data model docs for <code>institution-mock</code>.</footer>
+</body></html>
