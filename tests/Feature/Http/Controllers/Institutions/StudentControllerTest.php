@@ -3,12 +3,16 @@
 use App\Models\Grade;
 use App\Models\Institution;
 use App\Models\Student;
+use Illuminate\Http\UploadedFile;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
 use function Pest\Laravel\deleteJson;
 use function Pest\Laravel\getJson;
+use function Pest\Laravel\post;
 use function Pest\Laravel\postJson;
 use function Pest\Laravel\putJson;
 
@@ -163,3 +167,69 @@ test('destroy method deletes a student and redirects', function () {
   );
   assertDatabaseMissing('students', ['id' => $student->id]);
 });
+
+test('uploadStore method applies selected grade to all uploaded students', function () {
+  $grade = Grade::factory()
+    ->for($this->institution)
+    ->create();
+
+  $response = post(route('institutions.students.upload.store', $this->institution), [
+    'grade_id' => $grade->id,
+    'file' => makeStudentUploadFile([
+      ['Mary', 'Stone', '', '', 'Class Not In This Institution'],
+      ['James', 'Hill', '', '', 'Another Missing Class'],
+    ]),
+  ]);
+
+  $response->assertSessionHasNoErrors();
+  $response->assertSessionHas('message', 'Records uploaded successfully');
+  assertDatabaseHas('students', [
+    'firstname' => 'Mary',
+    'lastname' => 'Stone',
+    'grade_id' => $grade->id,
+    'institution_id' => $this->institution->id,
+  ]);
+  assertDatabaseHas('students', [
+    'firstname' => 'James',
+    'lastname' => 'Hill',
+    'grade_id' => $grade->id,
+    'institution_id' => $this->institution->id,
+  ]);
+});
+
+test('uploadStore method reads grade from spreadsheet when none is selected', function () {
+  $response = post(route('institutions.students.upload.store', $this->institution), [
+    'file' => makeStudentUploadFile([
+      ['Ruth', 'Cole', '', '', $this->grade->title],
+    ]),
+  ]);
+
+  $response->assertSessionHasNoErrors();
+  $response->assertSessionHas('message', 'Records uploaded successfully');
+  assertDatabaseHas('students', [
+    'firstname' => 'Ruth',
+    'lastname' => 'Cole',
+    'grade_id' => $this->grade->id,
+    'institution_id' => $this->institution->id,
+  ]);
+});
+
+function makeStudentUploadFile(array $rows): UploadedFile
+{
+  $spreadsheet = new Spreadsheet();
+  $sheet = $spreadsheet->getActiveSheet();
+  $sheet->fromArray(
+    [['Firstname', 'Lastname', 'Phone', 'Email', 'Class'], ...$rows],
+  );
+
+  $path = tempnam(sys_get_temp_dir(), 'students-upload');
+  (new Xlsx($spreadsheet))->save($path);
+
+  return new UploadedFile(
+    $path,
+    'students-upload.xlsx',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    null,
+    true,
+  );
+}

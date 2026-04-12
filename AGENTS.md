@@ -58,15 +58,25 @@
 
 - Before you perform any task, Study the style, theme, structure and convention
   followed in this project.
-- Your implementation should follow this structure and coding style,
+- Your implementation should follow this structure and coding style, but always
+  follow popular and accepter software developement conventions.
 - Try to reuse what has already been defined, but when you need to create one,
-  Make your code resuable and
+  Make your code resuable. Reusability and scalability is extremely important.
 - If you have any questions or need clarifications, ask the questions at once
   before you start. Responses will be provided to all your questions.
 - Where possible, Make reasonable assumptions where necessary
 
 ## Application Documentation
 
-- Start with [public/docs/index.html](public/docs/index.html) for a comprehensive overview of the application structure, route groups, feature areas, and runtime flow.
-- Feature-specific docs are in [public/docs/admin.html](public/docs/admin.html), [public/docs/institution.html](public/docs/institution.html), [public/docs/ccd.html](public/docs/ccd.html), [public/docs/exams.html](public/docs/exams.html), [public/docs/api.html](public/docs/api.html), and [public/docs/data-model.html](public/docs/data-model.html).
-- Keep these docs updated when changing routes, controllers, models, exam workflows, or major Blade pages so future AI agents can understand the project quickly.
+- Start with [public/docs/index.html](public/docs/index.html) for a
+  comprehensive overview of the application structure, route groups, feature
+  areas, and runtime flow.
+- Feature-specific docs are in [public/docs/admin.html](public/docs/admin.html),
+  [public/docs/institution.html](public/docs/institution.html),
+  [public/docs/ccd.html](public/docs/ccd.html),
+  [public/docs/exams.html](public/docs/exams.html),
+  [public/docs/api.html](public/docs/api.html), and
+  [public/docs/data-model.html](public/docs/data-model.html).
+- Keep these docs updated when changing routes, controllers, models, exam
+  workflows, or major Blade pages so future AI agents can understand the project
+  quickly.

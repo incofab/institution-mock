@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Institutions;
 
+use App\Actions\ActivateExam;
 use App\Actions\EndExam;
 use App\Actions\ExtendExamTime;
 use App\Actions\RegisterExam;
@@ -28,7 +29,7 @@ class ExamController extends Controller
     return view('institutions.exams.index', [
       'allRecords' => $event
         ->exams()
-        ->with('examCourses.courseSession.course')
+        ->with('activation', 'examCourses.courseSession.course')
         ->get(),
       'allEvents' => Event::query()
         ->with('eventCourses.courseSession.course')
@@ -37,6 +38,9 @@ class ExamController extends Controller
       'allExamsCount' => $allExamsCount,
       'startedExamsCount' => $startedExamsCount,
       'pendingExamsCount' => $pendingExamsCount,
+      'activatedExamsCount' => (clone $query)
+        ->whereNotNull('exam_activation_id')
+        ->count(),
     ]);
   }
 
@@ -172,6 +176,26 @@ class ExamController extends Controller
   {
     EndExam::make()->endExam($exam);
     return back()->with('message', 'Exam result evaluated successfully');
+  }
+
+  function activateExam(Institution $institution, Exam $exam)
+  {
+    $activatedCount = (new ActivateExam())->exam($institution, $exam);
+    $message = $activatedCount
+      ? 'Exam activated successfully'
+      : 'Exam is already activated';
+
+    return back()->with('message', $message);
+  }
+
+  function activateEvent(Institution $institution, Event $event)
+  {
+    $activatedCount = (new ActivateExam())->event($institution, $event);
+    $message = $activatedCount
+      ? "{$activatedCount} exam(s) activated successfully"
+      : 'All exams in this event are already activated';
+
+    return back()->with('message', $message);
   }
 
   function extentTimeView(Institution $institution, Exam $exam)

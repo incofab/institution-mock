@@ -36,6 +36,28 @@
 				class="app-menu__icon fa fa-tachometer-alt"></i><span
 				class="app-menu__label">Dashboard</span></a>
 		</li>
+		@if(currentUser()?->isAdmin() || currentInstitutionUser()?->isAdmin())
+			<li><a class="app-menu__item" href="{{instRoute('users.index')}}"><i
+					class="app-menu__icon fa fa-user"></i><span
+					class="app-menu__label">Users</span></a>
+			</li>
+		@endif
+		<li class="treeview"><a class="app-menu__item" href="#"
+			data-toggle="treeview"><i class="app-menu__icon fa fa-id-card"></i><span
+				class="app-menu__label">Licenses</span><i
+				class="treeview-indicator fa fa-angle-right"></i></a>
+			<ul class="treeview-menu">
+				<li><a class="treeview-item" href="{{instRoute('fund-licenses.create')}}"><i
+						class="icon fa fa-plus"></i> Fund Licenses</a>
+				</li>
+				<li><a class="treeview-item" href="{{instRoute('activation-history')}}"><i
+						class="icon fa fa-check-circle"></i> Activation History</a>
+				</li>
+				<li><a class="treeview-item" href="{{instRoute('funding-history')}}"><i
+						class="icon fa fa-money"></i> Funding History</a>
+				</li>
+			</ul>
+		</li>
 		<li class="treeview"><a class="app-menu__item" href="#"
 			data-toggle="treeview"><i class="app-menu__icon fa fa-calendar-day"></i><span
 				class="app-menu__label">Events</span><i

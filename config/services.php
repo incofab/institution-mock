@@ -1,8 +1,7 @@
 <?php
 
 return [
-
-    /*
+  /*
     |--------------------------------------------------------------------------
     | Third Party Services
     |--------------------------------------------------------------------------
@@ -14,20 +13,42 @@ return [
     |
     */
 
-    'mailgun' => [
-        'domain' => env('MAILGUN_DOMAIN'),
-        'secret' => env('MAILGUN_SECRET'),
-        'endpoint' => env('MAILGUN_ENDPOINT', 'api.mailgun.net'),
-    ],
+  'mailgun' => [
+    'domain' => env('MAILGUN_DOMAIN'),
+    'secret' => env('MAILGUN_SECRET'),
+    'endpoint' => env('MAILGUN_ENDPOINT', 'api.mailgun.net'),
+  ],
 
-    'postmark' => [
-        'token' => env('POSTMARK_TOKEN'),
-    ],
+  'postmark' => [
+    'token' => env('POSTMARK_TOKEN'),
+  ],
 
-    'ses' => [
-        'key' => env('AWS_ACCESS_KEY_ID'),
-        'secret' => env('AWS_SECRET_ACCESS_KEY'),
-        'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
-    ],
+  'ses' => [
+    'key' => env('AWS_ACCESS_KEY_ID'),
+    'secret' => env('AWS_SECRET_ACCESS_KEY'),
+    'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
+  ],
 
+  'paystack' => [
+    'secret_key' => env('PAYSTACK_SECRET_KEY'),
+  ],
+
+  'flutterwave' => [
+    'secret_key' => env('FLUTTERWAVE_SECRET_KEY'),
+  ],
+
+  'monnify' => [
+    'api_key' => env('MONNIFY_API_KEY'),
+    'secret_key' => env('MONNIFY_SECRET_KEY'),
+    'contract_code' => env('MONNIFY_CONTRACT_CODE'),
+    'base_url' => env('MONNIFY_BASE_URL', 'https://api.monnify.com'),
+  ],
+
+  'license_payments' => [
+    'gateways' => [
+      \App\Services\Payments\Gateways\PaystackGateway::class,
+      // \App\Services\Payments\Gateways\MonnifyGateway::class,
+      // \App\Services\Payments\Gateways\FlutterwaveGateway::class,
+    ],
+  ],
 ];

@@ -36,6 +36,19 @@ $subjects = [];
 		<form action="{{instRoute('students.upload.store')}}" method="post" enctype="multipart/form-data" >
     		@csrf
     		<div class="tile-body">
+            <div class="form-group w-75">
+              <label class="control-label">Class [optional]</label>
+              <select name="grade_id" id="select-grade" class="form-control">
+                <option value="">Read Class From Excel</option>
+                @foreach($grades as $grade)
+                  <option value="{{$grade->id}}" @selected($grade->id == old('grade_id'))
+                  title="{{$grade->description}}" >{{$grade->title}}</option>
+                @endforeach
+              </select>
+              <small class="form-text text-muted">
+                Select a class to apply it to every uploaded student. Leave blank to use the class in the Excel file.
+              </small>
+            </div>
     			<div class="form-group w-75">    		
     				<label for="" >Excel Student Records</label><br />
     				<input type="file" class="form-control" name="file" value="" />

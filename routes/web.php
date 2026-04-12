@@ -51,6 +51,10 @@ Route::get('/exam/view-result', [\App\Http\Controllers\Exam\ExamController::clas
 Route::get('exams/view-result/{examNo?}', [Exam\ExamController::class, 'viewResult'])->name('exams.view-result');
 
 Route::get('/dashboard', [UserController::class, 'index'])->name('users.dashboard');
+Route::middleware('auth')->group(function () {
+    Route::get('/institutions/create', [UserController::class, 'createInstitution'])->name('users.institutions.create');
+    Route::post('/institutions', [UserController::class, 'storeInstitution'])->name('users.institutions.store');
+});
 
 Route::group(['middleware' => ['auth', 'admin.user'], 'prefix' => 'admin/', 'as' => 'admin.'], function() {
     //Admin
@@ -60,9 +64,12 @@ Route::group(['middleware' => ['auth', 'admin.user'], 'prefix' => 'admin/', 'as'
     Route::resource('users', Admin\UserController::class)
     ->except(['create']);
 
+    Route::get('fundings', [Admin\InstitutionController::class, 'fundingHistory'])->name('fundings.index');
     Route::resource('institutions', Admin\InstitutionController::class);
     Route::get('institutions/{institution}/assign-user', [Admin\InstitutionController::class, 'assignUserView'])->name('institutions.assign-user');
     Route::post('institutions/{institution}/assign-user', [Admin\InstitutionController::class, 'assignUserStore'])->name('institutions.assign-user.store');
+    Route::get('institutions/{institution}/fund', [Admin\InstitutionController::class, 'fundView'])->name('institutions.fund');
+    Route::post('institutions/{institution}/fund', [Admin\InstitutionController::class, 'fundStore'])->name('institutions.fund.store');
 });
 
 Route::get('/rough/{instId?}', function (Request $request) {

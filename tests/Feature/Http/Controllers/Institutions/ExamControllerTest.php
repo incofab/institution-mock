@@ -189,3 +189,92 @@ it('deletes an exam successfully', function () {
   $response->assertRedirect();
   $response->assertSessionHas('message', 'Exam deleted');
 });
+
+it('activates an exam and deducts one license', function () {
+  $this->institution->update(['licenses' => 2]);
+  $exam = Exam::factory()
+    ->event($this->event)
+    ->create();
+
+  $this->post(
+    route('institutions.exams.activate', [$this->institution, $exam]),
+  )
+    ->assertRedirect()
+    ->assertSessionHas('message', 'Exam activated successfully');
+
+  $this->assertDatabaseHas('exam_activations', [
+    'institution_id' => $this->institution->id,
+    'event_id' => $this->event->id,
+    'num_of_exams' => 1,
+    'licenses' => 1,
+    'license_balance_before' => 2,
+    'license_balance_after' => 1,
+  ]);
+  expect($exam->fresh()->exam_activation_id)->not->toBeNull();
+  $this->assertDatabaseHas('institutions', [
+    'id' => $this->institution->id,
+    'licenses' => 1,
+  ]);
+});
+
+it('does not activate an exam when licenses are insufficient', function () {
+  $this->institution->update(['licenses' => 0]);
+  $exam = Exam::factory()
+    ->event($this->event)
+    ->create();
+
+  $this->post(
+    route('institutions.exams.activate', [$this->institution, $exam]),
+  )
+    ->assertRedirect()
+    ->assertSessionHasErrors('licenses');
+
+  expect($exam->fresh()->exam_activation_id)->toBeNull();
+});
+
+it('activates all unactivated event exams and deducts only those licenses', function () {
+  $this->institution->update(['licenses' => 3]);
+  $exams = Exam::factory()
+    ->count(3)
+    ->event($this->event)
+    ->create();
+  $activation = \App\Models\ExamActivation::query()->create([
+    'institution_id' => $this->institution->id,
+    'event_id' => $this->event->id,
+    'activated_by_user_id' => $this->assignedUser->id,
+    'num_of_exams' => 1,
+    'licenses' => 1,
+    'license_balance_before' => 4,
+    'license_balance_after' => 3,
+  ]);
+  $exams[0]->update(['exam_activation_id' => $activation->id]);
+
+  $this->post(
+    route('institutions.exams.events.activate', [
+      $this->institution,
+      $this->event,
+    ]),
+  )
+    ->assertRedirect()
+    ->assertSessionHas('message', '2 exam(s) activated successfully');
+
+  expect(
+    \App\Models\ExamActivation::query()
+      ->where('event_id', $this->event->id)
+      ->count(),
+  )->toBe(2);
+  $this->assertDatabaseHas('exam_activations', [
+    'event_id' => $this->event->id,
+    'num_of_exams' => 2,
+    'licenses' => 2,
+    'license_balance_before' => 3,
+    'license_balance_after' => 1,
+  ]);
+  foreach ($exams->fresh() as $exam) {
+    expect($exam->exam_activation_id)->not->toBeNull();
+  }
+  $this->assertDatabaseHas('institutions', [
+    'id' => $this->institution->id,
+    'licenses' => 1,
+  ]);
+});

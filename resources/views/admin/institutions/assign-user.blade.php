@@ -34,6 +34,17 @@ $title = 'Admin - Assign User to Institution'; ?>
 					<input type="text" id="" name="email" value="{{old('email')}}" 
 						placeholder="Email" class="form-control" >
 				</div>
+				<div class="form-group">
+					<label class="control-label">Role</label>
+					<select name="role" id="" class="form-control" required>
+						<option value="">Select role</option>
+						@foreach(\App\Enums\InstitutionUserRole::cases() as $role)
+							<option value="{{$role->value}}" @selected(old('role') === $role->value)>
+								{{$role->label()}}
+							</option>
+						@endforeach
+					</select>
+				</div>
     		</div>
     		<div class="tile-footer">
     			<button class="btn btn-primary" type="submit">

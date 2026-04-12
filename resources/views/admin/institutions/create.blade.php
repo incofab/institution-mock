@@ -23,7 +23,7 @@ $edit = isset($edit) ? $edit : null;
 <div>
 	<div class="tile">
 		<h3 class="tile-title">Register/Update Institution</h3>
-		<form action="{{route('admin.institutions.store')}}" method="post">
+		<form action="{{$edit ? route('admin.institutions.update', $edit) : route('admin.institutions.store')}}" method="post">
 			@include('common.message')
 			@csrf
             @if ($edit)
@@ -44,6 +44,16 @@ $edit = isset($edit) ? $edit : null;
 					<label class="control-label">Phone [optional]</label> 
 					<input type="text" id="" name="phone" value="{{old('phone', $edit?->phone)}}" 
 						placeholder="Reachable Mobile number" class="form-control">
+				</div>
+				<div class="form-group">
+					<label class="control-label">Licenses</label>
+					<input type="number" id="" name="licenses" value="{{old('licenses', $edit?->licenses ?? 0)}}"
+						min="0" placeholder="Available activation licenses" class="form-control">
+				</div>
+				<div class="form-group">
+					<label class="control-label">License Cost</label>
+					<input type="number" id="" name="license_cost" value="{{old('license_cost', $edit?->license_cost ?? \App\Models\Institution::DEFAULT_LICENSE_COST)}}"
+						min="1" step="0.01" placeholder="Amount per license" class="form-control" required>
 				</div>
 				<div class="form-group">
 					<label class="control-label">Address [optional]</label>

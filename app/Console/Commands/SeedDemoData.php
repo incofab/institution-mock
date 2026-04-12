@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Enums\ContentSource;
 use App\Enums\ExamStatus;
+use App\Enums\InstitutionUserRole;
 use App\Models\Course;
 use App\Models\CourseSession;
 use App\Models\Event;
@@ -153,7 +154,7 @@ class SeedDemoData extends Command
         'institution_id' => $institution->id,
         'user_id' => $user->id,
       ],
-      ['status' => 'active'],
+      ['status' => 'active', 'role' => InstitutionUserRole::Admin],
     );
 
     return $user;

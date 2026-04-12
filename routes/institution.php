@@ -4,6 +4,21 @@ use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\Institutions as Inst;
 
 Route::get('/dashboard', [Inst\InstitutionController::class, 'index'])->name('dashboard');
+Route::get('/activation-history', [Inst\InstitutionController::class, 'activationHistory'])
+->name('activation-history');
+Route::get('/funding-history', [Inst\InstitutionController::class, 'fundingHistory'])
+->name('funding-history');
+Route::get('/fund-licenses', [Inst\InstitutionController::class, 'fundLicensesView'])
+->name('fund-licenses.create');
+Route::post('/fund-licenses', [Inst\InstitutionController::class, 'fundLicensesStore'])
+->name('fund-licenses.store');
+Route::get('/fund-licenses/{gateway}/callback', [Inst\InstitutionController::class, 'fundLicensesCallback'])
+->name('fund-licenses.callback');
+
+Route::get('/users', [Inst\InstitutionUserController::class, 'index'])
+->name('users.index');
+Route::post('/users', [Inst\InstitutionUserController::class, 'store'])
+->name('users.store');
 
 Route::get('/events/{event}/suspend', [Inst\EventController::class, 'suspend'])
 ->name('events.suspend');
@@ -40,6 +55,10 @@ Route::post('/exams/events/{event}/store-grade-exam', [Inst\ExamController::clas
 ->name('exams.events.grades.store');
 Route::post('/exams/events/{event}/multi-store-exam', [Inst\ExamController::class, 'multiStoreExam'])
 ->name('exams.multi-store-exam');
+Route::post('/exams/events/{event}/activate', [Inst\ExamController::class, 'activateEvent'])
+->name('exams.events.activate');
+Route::post('/exams/{exam}/activate', [Inst\ExamController::class, 'activateExam'])
+->name('exams.activate');
 Route::delete('/exams/{exam}/delete', [Inst\ExamController::class, 'destroy'])
 ->name('exams.destroy');
 Route::get('exams/{exam}/evaluate', [Inst\ExamController::class, 'evaluateExam'])->name('exams.evaluate');
@@ -94,4 +113,3 @@ Route::resource('/students', Inst\StudentController::class);
     Route::get('/ccd/institutions/{institution}/course/uninstall/{courseId}', [\App\Http\Controllers\CCD\CourseUploadController::class, 'unInstallCourse'])->name('ccd.course.uninstall');
     Route::get('/ccd/institutions/{institution}/course/export/{courseId}', [\App\Http\Controllers\CCD\CourseUploadController::class, 'exportCourse'])->name('ccd.course.export');
 */
-

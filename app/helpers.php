@@ -108,7 +108,17 @@ if (!function_exists('currentInstitution')) {
 if (!function_exists('currentInstitutionUser')) {
   function currentInstitutionUser(): InstitutionUser|null
   {
-    return currentInstitution()?->institutionUsers?->first();
+    $institution = currentInstitution();
+    $user = currentUser();
+
+    if (!$institution || !$user) {
+      return null;
+    }
+
+    return InstitutionUser::query()
+      ->where('institution_id', $institution->id)
+      ->where('user_id', $user->id)
+      ->first();
   }
 }
 

@@ -124,6 +124,12 @@ class Event extends BaseModel
   {
     return $this->hasMany(Exam::class);
   }
+
+  function examActivations()
+  {
+    return $this->hasMany(ExamActivation::class);
+  }
+
   function externalContent()
   {
     return $this->belongsTo(ExternalContent::class);

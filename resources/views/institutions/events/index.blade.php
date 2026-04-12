@@ -31,6 +31,8 @@ $confirmMsg = 'Are you sure?';
     				<th>Title</th>
     				<th>Description</th>
     				<th>Subjects</th>
+				<th>Exams</th>
+				<th>Activated</th>
     				<th>Duration(mins)</th>
     				<th><i class="fa fa-bars p-2"></i></th>
     			</tr>
@@ -41,6 +43,8 @@ $confirmMsg = 'Are you sure?';
 					<td><a href='{{instRoute('event-courses.index', $record)}}' class='btn btn-link'>{{$record['title']}}</a></td>
 					<td>{{$record['description']}}</td>
 					<td>{{$record->getEventCourses()->count()}}</td>
+					<td>{{$record->exams_count}}</td>
+					<td>{{$record->activated_exams_count}} / {{$record->exams_count}}</td>
 					<td>{{$record->duration}}</td>
 					<td>
 						{{-- <a href='{{instRoute('event-courses.index', $record)}}' class='btn btn-link'>Subjects</a> 
@@ -87,6 +91,14 @@ $confirmMsg = 'Are you sure?';
 					</td>
 				</tr>
 			@endforeach
+			@if($allRecords->count() < 1)
+				<tr>
+					<td colspan="8" class="text-center py-4">
+						No exam events yet.
+						<a href="{{instRoute('events.create')}}">Create your first event</a>.
+					</td>
+				</tr>
+			@endif
 		</table>
 	</div>
 	<div class="tile-footer">

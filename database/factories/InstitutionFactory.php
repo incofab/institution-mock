@@ -1,6 +1,7 @@
 <?php
 namespace Database\Factories;
 
+use App\Enums\InstitutionUserRole;
 use App\Models\Course;
 use App\Models\Grade;
 use App\Models\Institution;
@@ -21,6 +22,8 @@ class InstitutionFactory extends Factory
       'phone' => fake()->numerify('###########'),
       'email' => fake()->unique()->safeEmail,
       'status' => 'active',
+      'licenses' => 0,
+      'license_cost' => Institution::DEFAULT_LICENSE_COST,
     ];
   }
 
@@ -28,7 +31,10 @@ class InstitutionFactory extends Factory
   {
     return $this->afterCreating(function (Institution $model) use ($user) {
       $user = $user ?? User::factory()->create();
-      $model->institutionUsers()->firstOrCreate(['user_id' => $user->id]);
+      $model->institutionUsers()->firstOrCreate(
+        ['user_id' => $user->id],
+        ['role' => InstitutionUserRole::Admin],
+      );
     });
   }
 

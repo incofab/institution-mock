@@ -1,9 +1,13 @@
 <?php
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\CreditLicenseFunding;
+use App\Enums\InstitutionUserRole;
 use Illuminate\Http\Request;
+use App\Models\Funding;
 use App\Models\Institution;
 use App\Models\User;
+use Illuminate\Validation\Rule;
 
 class InstitutionController extends BaseAdminController
 {
@@ -76,14 +80,71 @@ class InstitutionController extends BaseAdminController
   {
     $data = $request->validate([
       'email' => ['required', 'exists:users,email'],
+      'role' => ['required', Rule::in(InstitutionUserRole::values())],
     ]);
 
     $user = User::where('email', $data['email'])->firstOrFail();
-    $institution->institutionUsers()->firstOrCreate(['user_id' => $user->id]);
+    $institution->institutionUsers()->updateOrCreate(
+      ['user_id' => $user->id],
+      ['role' => $data['role']],
+    );
 
     return redirect(route('admin.institutions.index'))->with(
       'message',
       'User assigned',
     );
+  }
+
+  function fundView(Institution $institution)
+  {
+    $this->authorizeFunding();
+
+    return view('admin.institutions.fund', [
+      'institution' => $institution,
+      'fundings' => $institution
+        ->fundings()
+        ->with('user')
+        ->latest()
+        ->limit(20)
+        ->get(),
+    ]);
+  }
+
+  function fundingHistory()
+  {
+    $this->authorizeFunding();
+
+    return view('admin.institutions.funding-history', [
+      'allRecords' => paginateFromRequest(
+        Funding::query()
+          ->with('institution', 'user')
+          ->latest('id'),
+      ),
+    ]);
+  }
+
+  function fundStore(Request $request, Institution $institution)
+  {
+    $this->authorizeFunding();
+
+    $data = $request->validate([
+      'amount' => ['required', 'numeric', 'min:0.01'],
+    ]);
+
+    (new CreditLicenseFunding())->runForAmount(
+      $institution,
+      currentUser(),
+      (float) $data['amount'],
+    );
+
+    return redirect(route('admin.institutions.index'))->with(
+      'message',
+      'Institution licenses funded successfully',
+    );
+  }
+
+  private function authorizeFunding()
+  {
+    abort_unless(currentUser()?->isAdmin(), 403);
   }
 }

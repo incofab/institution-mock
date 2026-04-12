@@ -28,10 +28,13 @@ $title = 'Register Event'; ?>
                 @method('PUT')
             @endif
     		<div class="tile-body">
+				<p class="text-muted">
+					An event is the exam window students will be registered for.
+				</p>
 				<div class="form-group w-75" >
 					<label class="control-label">Title</label>
 					<input type="text" name="title" value="{{old('title', $edit?->title)}}" class="form-control"
-						placeholder="Enter title" />
+						placeholder="e.g. First Term Mathematics Exam" />
 				</div>
 				<div class="form-group w-75" >
 					<label class="control-label">Description</label>
@@ -41,7 +44,7 @@ $title = 'Register Event'; ?>
 				<div class="form-group w-75" >
 					<label class="control-label">Duration in mins</label>
 					<input type="text" name="duration" value="{{old('duration', $edit?->duration)}}" class="form-control"
-						placeholder="Enter duration in mins" />
+						placeholder="e.g. 60" />
 				</div>
 				{{-- <div class="form-check">
 					<input type="checkbox" value="1" id="flexCheckChecked" name="for_external"

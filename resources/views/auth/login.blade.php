@@ -12,8 +12,11 @@
 	<div class="login-box" style="min-height: 500px;">
         <form method="POST" action="{{ route('login') }}" class="login-form">
 			<h3 class="login-head mb-1 pb-2">
-				<i class="fa fa-lg fa-fw fa-user"></i>SIGN IN
+				<i class="fa fa-lg fa-fw fa-user"></i>Sign in
 			</h3>
+			<p class="text-center text-muted mb-3">
+				Sign in to manage exams, students, and licenses for your school.
+			</p>
         	@include('common.message')
             @csrf
 			<div class="clearfix mb-3">
@@ -51,12 +54,15 @@
 			</div>
 			<div class="semibold-text mb-2">
 				<a href="#">Forgot Password</a> | 
-				<a href="{{route('register')}}">Register</a>
+				<a href="{{route('register')}}">Create an account</a>
 			</div>
 			<div class="form-group btn-container mb-2">
 				<button class="btn btn-primary btn-block">
-					<i class="fa fa-sign-in fa-lg fa-fw"></i>SIGN IN
+					<i class="fa fa-sign-in fa-lg fa-fw"></i>Sign in
 				</button>
+			</div>
+			<div class="text-center small text-muted">
+				New here? Create an account, create your institution, then add students and exams.
 			</div>
         </form>
 	</div>

@@ -15,8 +15,42 @@
 	</ul>
 </div>
 @include('common.message')
+<div class="tile">
+	<h3 class="tile-title">Start running exams</h3>
+	<div class="tile-body">
+		<p class="mb-3">
+			Follow these steps in order. You can come back here anytime.
+		</p>
+		<div class="table-responsive">
+			<table class="table mb-3">
+				<tr>
+					<td><strong>1. Add classes</strong><br><span class="small">Create the class groups your students belong to.</span></td>
+					<td class="text-right"><a href="{{instRoute('grades.create')}}" class="btn btn-sm btn-primary">Add Class</a></td>
+				</tr>
+				<tr>
+					<td><strong>2. Add students</strong><br><span class="small">Add one student or upload many at once.</span></td>
+					<td class="text-right"><a href="{{instRoute('students.create')}}" class="btn btn-sm btn-primary">Add Student</a></td>
+				</tr>
+				<tr>
+					<td><strong>3. Add subjects</strong><br><span class="small">Create subjects and add question sessions.</span></td>
+					<td class="text-right"><a href="{{instRoute('ccd.courses.create')}}" class="btn btn-sm btn-primary">Add Subject</a></td>
+				</tr>
+				<tr>
+					<td><strong>4. Create exam</strong><br><span class="small">Create an event, attach subjects, then register students.</span></td>
+					<td class="text-right"><a href="{{instRoute('events.create')}}" class="btn btn-sm btn-primary">Create Event</a></td>
+				</tr>
+			</table>
+		</div>
+		@if($licenses_count < 1)
+			<div class="alert alert-info mb-0">
+				You will need licenses before students can start activated exams.
+				<a href="{{instRoute('fund-licenses.create')}}">Fund licenses</a>
+			</div>
+		@endif
+	</div>
+</div>
 <div class="row">
-	<div class="col-sm-4">
+	<div class="col-sm-3">
 		<div class="widget-small primary coloured-icon">
 			<i class="icon fa fa-users fa-3x"></i>
 			<div class="info">
@@ -27,7 +61,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="col-sm-4">
+	<div class="col-sm-3">
 		<div class="widget-small info coloured-icon">
 			<i class="icon fa fa-calendar-day fa-3x"></i>
 			<div class="info">
@@ -38,13 +72,24 @@
 			</div>
 		</div>
 	</div>
-	<div class="col-sm-4">
+	<div class="col-sm-3">
 		<div class="widget-small warning coloured-icon">
 			<i class="icon fa fa-book fa-3x"></i>
 			<div class="info">
-				<h4>Exams</h4>
+				<h4>Subjects</h4>
 				<p>
-					<b>~</b>
+					<b>{{$courses_count}}</b>
+				</p>
+			</div>
+		</div>
+	</div>
+	<div class="col-sm-3">
+		<div class="widget-small danger coloured-icon">
+			<i class="icon fa fa-id-card fa-3x"></i>
+			<div class="info">
+				<h4>Licenses</h4>
+				<p>
+					<b>{{$licenses_count}}</b>
 				</p>
 			</div>
 		</div>

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\InstitutionUserRole;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class InstitutionUser extends BaseModel
@@ -11,7 +12,13 @@ class InstitutionUser extends BaseModel
     protected $casts = [
         'institution_id' => 'integer',
         'user_id' => 'integer',
+        'role' => InstitutionUserRole::class,
     ];
+
+    function isAdmin(): bool
+    {
+        return $this->role === InstitutionUserRole::Admin;
+    }
 
     function institution()
     {

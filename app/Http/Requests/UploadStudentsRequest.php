@@ -49,14 +49,17 @@ class UploadStudentsRequest extends FormRequest
    */
   public function rules(): array
   {
+    $gradeTitleRules = ['nullable'];
+    if (!$this->filled('grade_id')) {
+      $gradeTitleRules[] = new ValidateExistsRule(Grade::class, 'title');
+    }
+
     return [
       'file' => ['required', 'file', new ExcelRule($this->file('file'))],
+      'grade_id' => ['nullable', 'integer', new ValidateExistsRule(Grade::class)],
       'students' => ['required', 'array', 'min:1'],
       ...Student::ruleCreate('students.*.'),
-      'students.*.grade_title' => [
-        'nullable',
-        new ValidateExistsRule(Grade::class, 'title'),
-      ],
+      'students.*.grade_title' => $gradeTitleRules,
     ];
   }
 }

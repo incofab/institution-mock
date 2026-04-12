@@ -24,10 +24,11 @@
 				Thanks for signing up.
 				<br />
 				<br />
-				You need to to be assigned an institution to be able to access institutional previleges.  
+				Create your institution now to start adding classes, students, subjects, and exams.  
 			</div>
 			<br>
 			<div class="text-center">
+				<a class="btn btn-primary" href="{{route('users.institutions.create')}}">Create Institution</a>
 				<a class="btn btn-danger" href="{{route('logout')}}">Logout</a>
 			</div>
 			<br />

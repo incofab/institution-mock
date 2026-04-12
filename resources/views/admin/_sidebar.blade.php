@@ -50,6 +50,9 @@
 				<li><a class="treeview-item" href="{{route('admin.institutions.create')}}"><i
 						class="icon fa fa-plus"></i> Add Institution</a>
 				</li>
+				<li><a class="treeview-item" href="{{route('admin.fundings.index')}}"><i
+						class="icon fa fa-money"></i> Funding History</a>
+				</li>
 			</ul>
 		</li>
 		

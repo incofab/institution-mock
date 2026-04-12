@@ -12,8 +12,11 @@
 	<div class="login-box" style="min-height: 750px; margin-bottom: 30px;">
         <form method="POST" action="{{ route('register') }}" class="login-form">
 			<h3 class="login-head">
-				<i class="fa fa-lg fa-fw fa-user"></i>REGISTER
+				<i class="fa fa-lg fa-fw fa-user"></i>Create account
 			</h3>
+			<p class="text-center text-muted mb-3">
+				After this, you can create your institution and start setting up exams.
+			</p>
         	@include('common.message')
             @csrf
             <div class="form-group">
@@ -65,11 +68,11 @@
                 @enderror
 			</div>
 			<div class="semibold-text mb-2 text-right">
-				<a href="{{route('login')}}">Goto Login</a>
+				<a href="{{route('login')}}">I already have an account</a>
 			</div>
 			<div class="form-group btn-container">
 				<button class="btn btn-primary btn-block">
-					<i class="fa fa-sign-in fa-lg fa-fw"></i>Register
+					<i class="fa fa-sign-in fa-lg fa-fw"></i>Create account
 				</button>
 			</div>
         </form>

@@ -105,11 +105,16 @@ class StudentController extends Controller
   function uploadStore(Institution $institution, UploadStudentsRequest $request)
   {
     $data = $request->safe()->students;
-    $gradeKeys = Grade::query()->pluck('id', 'title');
+    $selectedGradeId = $request->safe()->grade_id ?: null;
+    $gradeKeys = $selectedGradeId
+      ? collect()
+      : Grade::query()->pluck('id', 'title');
+
     foreach ($data as $key => $student) {
       (new CreateStudent($institution))->run([
         ...collect($student)->except('grade_title')->toArray(),
-        'grade_id' => $gradeKeys[$student['grade_title'] ?? ''] ?? null,
+        'grade_id' =>
+          $selectedGradeId ?? ($gradeKeys[$student['grade_title'] ?? ''] ?? null),
         'institution_id' => $institution->id,
       ]);
     }

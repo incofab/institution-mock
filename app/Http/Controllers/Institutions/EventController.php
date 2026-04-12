@@ -18,7 +18,15 @@ class EventController extends Controller
     $query = $institution ? $institution->events() : Event::query();
     return view('institutions.events.index', [
       'allRecords' => paginateFromRequest(
-        $query->withCount('eventCourses')->latest('id'),
+        $query
+          ->withCount('eventCourses')
+          ->withCount('exams')
+          ->withCount([
+            'exams as activated_exams_count' => fn($query) => $query->whereNotNull(
+              'exam_activation_id',
+            ),
+          ])
+          ->latest('id'),
       ),
     ]);
   }
@@ -100,6 +108,20 @@ class EventController extends Controller
 
   function download(Institution $institution, Event $event)
   {
+    abort_if($event->institution_id !== $institution->id, 404);
+
+    $unactivatedExamCount = $event
+      ->exams()
+      ->whereNull('exam_activation_id')
+      ->count();
+
+    if ($unactivatedExamCount > 0) {
+      return back()->with(
+        'error',
+        'Results cannot be downloaded until all exams in this event have been activated.',
+      );
+    }
+
     $event->load('exams.student', 'exams.examCourses');
     $excelWriter = DownloadResult::run($event);
     $fileName = sanitizeFilename("{$event->title}-exams.xlsx");

@@ -66,6 +66,16 @@ $confirmMsg = 'Are you sure?';
 					</td>
 				</tr>
 			@endforeach
+			@if($allRecords->count() < 1)
+				<tr>
+					<td colspan="6" class="text-center py-4">
+						No students yet.
+						<a href="{{instRoute('students.create')}}">Add one student</a>
+						or
+						<a href="{{instRoute('students.upload.create')}}">upload many students</a>.
+					</td>
+				</tr>
+			@endif
 		</table>
 	</div>
 	<div class="tile-footer">

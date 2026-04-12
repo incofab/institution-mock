@@ -15,6 +15,7 @@ class Exam extends BaseModel
 
   protected $casts = [
     'event_id' => 'integer',
+    'exam_activation_id' => 'integer',
     'student_id' => 'integer',
     'num_of_questions' => 'integer',
     'score' => 'integer',
@@ -116,6 +117,20 @@ class Exam extends BaseModel
   {
     return $this->status === ExamStatus::Active ||
       $this->status === ExamStatus::Ended;
+  }
+
+  function isActivated()
+  {
+    if ($this->relationLoaded('activation')) {
+      return (bool) $this->activation;
+    }
+
+    return $this->activation()->exists();
+  }
+
+  function activation()
+  {
+    return $this->belongsTo(ExamActivation::class, 'exam_activation_id');
   }
 
   function examCourses()

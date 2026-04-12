@@ -42,7 +42,6 @@ namespace App\Models{
  * @property-read \App\Models\ExamContent|null $examContent
  * @property-read \App\Models\Institution|null $institution
  * @method static \Database\Factories\CourseFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|Course forInstitution($institution)
  * @method static \Illuminate\Database\Eloquent\Builder|Course newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Course newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Course query()
@@ -65,6 +64,7 @@ namespace App\Models{
 /**
  * 
  *
+ * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\Question> $questions
  * @property int $id
  * @property int $course_id
  * @property string $session
@@ -79,7 +79,6 @@ namespace App\Models{
  * @property-read int|null $instructions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Passage> $passages
  * @property-read int|null $passages_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Question> $questions
  * @property-read int|null $questions_count
  * @method static \Database\Factories\CourseSessionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|CourseSession newModelQuery()
@@ -102,6 +101,7 @@ namespace App\Models{
 /**
  * 
  *
+ * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\EventCourse> $eventCourses
  * @property int $id
  * @property int $institution_id
  * @property string $title
@@ -112,15 +112,15 @@ namespace App\Models{
  * @property string|null $external_event_courses
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\EventCourse> $eventCourses
  * @property-read int|null $event_courses_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ExamActivation> $examActivations
+ * @property-read int|null $exam_activations_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Exam> $exams
  * @property-read int|null $exams_count
  * @property-read \App\Models\ExternalContent|null $externalContent
  * @property-read \App\Models\Institution $institution
  * @method static \Illuminate\Database\Eloquent\Builder|Event active()
  * @method static \Database\Factories\EventFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|Event forInstitution($institution)
  * @method static \Illuminate\Database\Eloquent\Builder|Event newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Event newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Event query()
@@ -142,6 +142,7 @@ namespace App\Models{
 /**
  * 
  *
+ * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\CourseSession> $courseSession
  * @property int $id
  * @property int $event_id
  * @property int $course_session_id
@@ -149,7 +150,6 @@ namespace App\Models{
  * @property int|null $num_of_questions
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\CourseSession $courseSession
  * @property-read \App\Models\Event $event
  * @method static \Database\Factories\EventCourseFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|EventCourse newModelQuery()
@@ -173,6 +173,7 @@ namespace App\Models{
  * @property int $id
  * @property int $institution_id
  * @property int $event_id
+ * @property int|null $exam_activation_id
  * @property string $exam_no
  * @property int $student_id
  * @property float $time_remaining
@@ -182,8 +183,10 @@ namespace App\Models{
  * @property int|null $score
  * @property int|null $num_of_questions
  * @property \App\Enums\ExamStatus $status
+ * @property \ArrayObject|null $attempts
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\ExamActivation|null $activation
  * @property-read \App\Models\Event $event
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ExamCourse> $examCourses
  * @property-read int|null $exam_courses_count
@@ -193,9 +196,11 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Exam newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Exam newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Exam query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Exam whereAttempts($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Exam whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Exam whereEndTime($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Exam whereEventId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Exam whereExamActivationId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Exam whereExamNo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Exam whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Exam whereInstitutionId($value)
@@ -215,6 +220,44 @@ namespace App\Models{
 /**
  * 
  *
+ * @property int $id
+ * @property int $institution_id
+ * @property int $event_id
+ * @property int|null $activated_by_user_id
+ * @property int $num_of_exams
+ * @property int $licenses
+ * @property int $license_balance_before
+ * @property int $license_balance_after
+ * @property \Illuminate\Support\Carbon $activated_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User|null $activatedByUser
+ * @property-read \App\Models\Event $event
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Exam> $exams
+ * @property-read int|null $exams_count
+ * @property-read \App\Models\Institution $institution
+ * @method static \Illuminate\Database\Eloquent\Builder|ExamActivation newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ExamActivation newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ExamActivation query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ExamActivation whereActivatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ExamActivation whereActivatedByUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ExamActivation whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ExamActivation whereEventId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ExamActivation whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ExamActivation whereInstitutionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ExamActivation whereLicenseBalanceAfter($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ExamActivation whereLicenseBalanceBefore($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ExamActivation whereLicenses($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ExamActivation whereNumOfExams($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ExamActivation whereUpdatedAt($value)
+ */
+	class ExamActivation extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * 
+ *
  * @author Incofab
  * @property int $id
  * @property int|null $institution_id
@@ -227,7 +270,6 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Course> $courses
  * @property-read int|null $courses_count
  * @method static \Database\Factories\ExamContentFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|ExamContent forInstitution($institution)
  * @method static \Illuminate\Database\Eloquent\Builder|ExamContent newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ExamContent newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ExamContent query()
@@ -247,6 +289,7 @@ namespace App\Models{
 /**
  * 
  *
+ * @property \App\Models\CourseSession|null $courseSession
  * @property int $id
  * @property int $exam_id
  * @property int $course_session_id No foreign relationship because course_session_id could be coming from external source
@@ -257,7 +300,6 @@ namespace App\Models{
  * @property string|null $session
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\CourseSession|null $courseSession
  * @property-read \App\Models\Exam $exam
  * @method static \Database\Factories\ExamCourseFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|ExamCourse newModelQuery()
@@ -281,11 +323,11 @@ namespace App\Models{
 /**
  * 
  *
+ * @property Collection<int, \App\Models\ExamContent> $exam_content
  * @author Incofab
  * @property int $id
  * @property string $name
  * @property int $content_id
- * @property string $exam_content
  * @property \App\Enums\ContentSource $source
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -310,6 +352,90 @@ namespace App\Models{
  *
  * @property int $id
  * @property int $institution_id
+ * @property int $user_id
+ * @property float $amount
+ * @property float $license_cost
+ * @property int $num_of_licenses
+ * @property float $balance_amount
+ * @property int $license_balance_before
+ * @property int $license_balance_after
+ * @property string $source
+ * @property string|null $reference
+ * @property string|null $fundable_type
+ * @property int|null $fundable_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent|null $fundable
+ * @property-read \App\Models\Institution $institution
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|Funding newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Funding newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Funding query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Funding whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Funding whereBalanceAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Funding whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Funding whereFundableId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Funding whereFundableType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Funding whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Funding whereInstitutionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Funding whereLicenseBalanceAfter($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Funding whereLicenseBalanceBefore($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Funding whereLicenseCost($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Funding whereNumOfLicenses($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Funding whereReference($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Funding whereSource($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Funding whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Funding whereUserId($value)
+ */
+	class Funding extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * 
+ *
+ * @property int $id
+ * @property int $institution_id
+ * @property int $user_id
+ * @property string $gateway
+ * @property string $reference
+ * @property float $amount
+ * @property string $status
+ * @property array|null $gateway_payload
+ * @property \Illuminate\Support\Carbon|null $initialized_at
+ * @property \Illuminate\Support\Carbon|null $verified_at
+ * @property \Illuminate\Support\Carbon|null $failed_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Funding|null $funding
+ * @property-read \App\Models\Institution $institution
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|GatewayPayment newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|GatewayPayment newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|GatewayPayment query()
+ * @method static \Illuminate\Database\Eloquent\Builder|GatewayPayment whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GatewayPayment whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GatewayPayment whereFailedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GatewayPayment whereGateway($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GatewayPayment whereGatewayPayload($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GatewayPayment whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GatewayPayment whereInitializedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GatewayPayment whereInstitutionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GatewayPayment whereReference($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GatewayPayment whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GatewayPayment whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GatewayPayment whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GatewayPayment whereVerifiedAt($value)
+ */
+	class GatewayPayment extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * 
+ *
+ * @property int $id
+ * @property int $institution_id
  * @property string $title
  * @property string|null $description
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -318,7 +444,6 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Student> $students
  * @property-read int|null $students_count
  * @method static \Database\Factories\GradeFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|Grade forInstitution($institution)
  * @method static \Illuminate\Database\Eloquent\Builder|Grade newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Grade newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Grade query()
@@ -344,6 +469,8 @@ namespace App\Models{
  * @property string|null $phone
  * @property string|null $email
  * @property string $status
+ * @property int $licenses
+ * @property float $license_cost
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Course> $courses
@@ -352,6 +479,14 @@ namespace App\Models{
  * @property-read int|null $created_by_user_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Event> $events
  * @property-read int|null $events_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ExamActivation> $examActivations
+ * @property-read int|null $exam_activations_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ExamContent> $examContents
+ * @property-read int|null $exam_contents_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Funding> $fundings
+ * @property-read int|null $fundings_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GatewayPayment> $gatewayPayments
+ * @property-read int|null $gateway_payments_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Grade> $grades
  * @property-read int|null $grades_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\InstitutionUser> $institutionUsers
@@ -368,6 +503,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Institution whereCreatedByUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Institution whereEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Institution whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Institution whereLicenseCost($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Institution whereLicenses($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Institution whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Institution wherePhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Institution whereStatus($value)
@@ -510,7 +647,6 @@ namespace App\Models{
  * @property-read \App\Models\Institution $institution
  * @property-read mixed $name
  * @method static \Database\Factories\StudentFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|Student forInstitution($institution)
  * @method static \Illuminate\Database\Eloquent\Builder|Student newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Student newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Student query()

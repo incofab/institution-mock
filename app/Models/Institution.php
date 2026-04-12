@@ -8,18 +8,29 @@ class Institution extends BaseModel
 {
   use HasFactory;
 
+  public const DEFAULT_LICENSE_COST = 300;
+
   protected $casts = [
     'created_by_user_id' => 'integer',
+    'licenses' => 'integer',
+    'license_cost' => 'float',
   ];
   // protected $fillable = ['added_by', 'code', 'name', 'address', 'phone', 'email', 'status'];
-  static function ruleCreate()
+  static function ruleCreate(bool $canSetLicenseCost = true)
   {
-    return [
+    $rules = [
       'name' => ['required', 'string', 'max:255'],
       'address' => ['nullable', 'string', 'max:255'],
       'phone' => ['nullable', 'string', 'max:15'],
       'email' => ['nullable', 'email'],
     ];
+
+    if ($canSetLicenseCost) {
+      $rules['licenses'] = ['nullable', 'integer', 'min:0'];
+      $rules['license_cost'] = ['required', 'numeric', 'min:1'];
+    }
+
+    return $rules;
   }
   public function getRouteKeyName()
   {
@@ -78,6 +89,21 @@ class Institution extends BaseModel
   function events()
   {
     return $this->hasMany(Event::class);
+  }
+
+  function examActivations()
+  {
+    return $this->hasMany(ExamActivation::class);
+  }
+
+  function fundings()
+  {
+    return $this->hasMany(Funding::class);
+  }
+
+  function gatewayPayments()
+  {
+    return $this->hasMany(GatewayPayment::class);
   }
 
   function students()

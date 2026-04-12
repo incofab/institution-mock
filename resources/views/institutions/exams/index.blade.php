@@ -31,6 +31,13 @@ $confirmMsg = 'Are you sure?';
 			onclick="return confirm('This wil end all ongoing exams in this event. Do you want to continue?')">
 			<i class="fa fa-check"></i> Evaluate
 		</a>
+		<form action="{{instRoute('exams.events.activate', [$event])}}" method="post" class="d-inline-block float-right mr-2">
+			@csrf
+			<button type="submit" class="btn btn-success btn-sm"
+				onclick="return confirm('Activate all unactivated exams in this event?')">
+				<i class="fa fa-check-circle"></i> Activate All
+			</button>
+		</form>
     	{{-- <div class="form-group row float-right m-0">
 			<label for="select-grade" class="col-sm-5 col-form-label">Select Event</label>
 			<div class="col-sm-7">
@@ -50,6 +57,8 @@ $confirmMsg = 'Are you sure?';
 			<p><b>All Exams: </b> {{$allExamsCount}}</p>
 			<p><b>Conducted Exams: </b> {{$startedExamsCount}}</p>
 			<p><b>Pending Exams: </b> {{$pendingExamsCount}}</p>
+			<p><b>Activated Exams: </b> {{$activatedExamsCount}}</p>
+			<p><b>Licenses: </b> {{$institution->licenses}}</p>
 		</div>
     	<table class="table table-hover table-bordered" id="data-table" >
     		<thead>
@@ -59,6 +68,7 @@ $confirmMsg = 'Are you sure?';
     				{{-- <th>Event</th> --}}
      				<th>Subjects</th>
     				<th>Duration</th>
+				<th>Activation</th>
     				<th>Status</th>
     				<th><i class="fa fa-bars p-2"></i></th>
     			</tr>
@@ -81,6 +91,13 @@ $confirmMsg = 'Are you sure?';
 					<td><small>{{implode(', ', $record->examCourses->map(fn($item) => $item->course_code . ($record->isEnded() ? " = {$item->score}/{$item->num_of_questions}" : ''))->toArray())}}</small></td>
 					<td>{{$event['duration']}} mins</td>
 					<td class="text-center">
+						@if($record->isActivated())
+							<span class="badge badge-success">Activated</span>
+						@else
+							<span class="badge badge-secondary">Not Activated</span>
+						@endif
+					</td>
+					<td class="text-center">
 						@if($record->isActive() || $record->isPending())
 							<button class="btn btn-sm btn-success">{{$record->status}}</button>
 						@elseif($record->isEnded())
@@ -91,6 +108,15 @@ $confirmMsg = 'Are you sure?';
 						@endif
 					</td>
 					<td>
+						@if(!$record->isActivated())
+						<form action="{{instRoute('exams.activate', [$record->id])}}" method="post" class="d-inline-block">
+							@csrf
+							<button type="submit" class="btn btn-success btn-sm mt-2"
+								onclick="return confirm('Activate this exam?')">
+								<i class="fa fa-check-circle"></i> Activate
+							</button>
+						</form>
+						@endif
                         @if($record->canExtendTime())
                         <a href="{{instRoute('exams.extend-time', [$record->id])}}" class="btn btn-primary btn-sm mt-2">
                             <i class="fa fa-clock"></i> Extend Time

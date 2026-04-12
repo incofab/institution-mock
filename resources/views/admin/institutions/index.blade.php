@@ -31,6 +31,8 @@ $title = 'Admin - All Institutions'; ?>
     				<th>Name</th>
     				<th>Email</th>
     				<th>Phone</th>
+				<th>Licenses</th>
+				<th>License Cost</th>
     				<th><i class="fa fa-bars"></i></th>
     			</tr>
     		</thead>
@@ -40,9 +42,14 @@ $title = 'Admin - All Institutions'; ?>
 					<td>{{$record['name']}}</td>
 					<td>{{$record['email']}}</td>
 					<td>{{$record['phone']}}</td>
+					<td>{{$record->licenses}}</td>
+					<td>{{number_format($record->license_cost, 2)}}</td>
 					<td>
 						<a href='{{route('admin.institutions.assign-user', $record)}}' class='btn btn-link'>
 							<i class='fa fa-user'></i> Assign User
+						</a>
+						<a href='{{route('admin.institutions.fund', $record)}}' class='btn btn-link'>
+							<i class='fa fa-money'></i> Fund Licenses
 						</a>
 						<a href='{{route('institutions.dashboard', $record->code)}}' class='btn btn-link'>
 							<i class='fa fa-hand-point-right'></i> Goto Page

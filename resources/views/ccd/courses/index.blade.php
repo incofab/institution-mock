@@ -37,6 +37,14 @@
 					</td>
 				</tr>
 				@endforeach
+				@if($allRecords->count() < 1)
+				<tr>
+					<td colspan="4" class="text-center py-4">
+						No subjects yet.
+						<a href="{{instRoute('ccd.courses.create')}}">Create your first subject</a>.
+					</td>
+				</tr>
+				@endif
 			</table>
 		</div>
 	</div>

@@ -32,6 +32,13 @@ class ExamController extends BaseExamController
       );
     }
 
+    if (!$exam->isActivated()) {
+      return redirect(route('exams.view-result'))->with(
+        'error',
+        'This result has not been activated yet.',
+      );
+    }
+
     return view('exams.view-result', [
       'exam' => $exam,
     ]);
