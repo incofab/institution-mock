@@ -22,6 +22,8 @@ class CreditLicenseFunding
     string $source = 'manual',
     ?string $reference = null,
     ?Model $fundable = null,
+    int $bonusLicenses = 0,
+    ?string $comment = null,
   ): Funding {
     return DB::transaction(function () use (
       $institution,
@@ -33,6 +35,8 @@ class CreditLicenseFunding
       $source,
       $reference,
       $fundable,
+      $bonusLicenses,
+      $comment,
     ) {
       if ($fundable) {
         $existingFunding = Funding::query()
@@ -57,11 +61,13 @@ class CreditLicenseFunding
         'amount' => $amount,
         'license_cost' => $licenseCost,
         'num_of_licenses' => $numOfLicenses,
+        'bonus_licenses' => $bonusLicenses,
         'balance_amount' => $balanceAmount,
         'license_balance_before' => $licenseBalanceBefore,
         'license_balance_after' => $licenseBalanceAfter,
         'source' => $source,
         'reference' => $reference,
+        'comment' => $comment,
         'fundable_type' => $fundable?->getMorphClass(),
         'fundable_id' => $fundable?->id,
       ]);
@@ -79,6 +85,8 @@ class CreditLicenseFunding
     string $source = 'manual',
     ?string $reference = null,
     ?Model $fundable = null,
+    int $bonusLicenses = 0,
+    ?string $comment = null,
   ): Funding {
     return DB::transaction(function () use (
       $institution,
@@ -87,6 +95,8 @@ class CreditLicenseFunding
       $source,
       $reference,
       $fundable,
+      $bonusLicenses,
+      $comment,
     ) {
       $institution = Institution::query()
         ->lockForUpdate()
@@ -99,10 +109,11 @@ class CreditLicenseFunding
         ]);
       }
 
-      $numOfLicenses = (int) floor($amount / $licenseCost);
+      $paidLicenses = (int) floor($amount / $licenseCost);
+      $numOfLicenses = $paidLicenses + $bonusLicenses;
       if ($numOfLicenses < 1) {
         throw ValidationException::withMessages([
-          'amount' => "Amount must be enough to fund at least one license at {$licenseCost}.",
+          'amount' => "Amount must be enough to fund at least one license at {$licenseCost}, or include bonus licenses.",
         ]);
       }
 
@@ -112,10 +123,12 @@ class CreditLicenseFunding
         $amount,
         $licenseCost,
         $numOfLicenses,
-        round($amount - $numOfLicenses * $licenseCost, 2),
+        round($amount - $paidLicenses * $licenseCost, 2),
         $source,
         $reference,
         $fundable,
+        $bonusLicenses,
+        $comment,
       );
     });
   }

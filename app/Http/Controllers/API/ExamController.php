@@ -22,7 +22,7 @@ class ExamController extends Controller
     ) {
       return $this->apiFailRes(
         [],
-        'Exams in this event are not available until all exams have been activated.',
+        'Exams in this event are not available until all exams have been activated. Please contact admin',
       );
     }
 

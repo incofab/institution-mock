@@ -27,9 +27,11 @@ $title = 'Admin - Funding History';
 					<th>Amount</th>
 					<th>License Cost</th>
 					<th>Licenses</th>
+					<th>Bonus Licenses</th>
 					<th>Balance Amount</th>
 					<th>License Balance</th>
 					<th>Source</th>
+					<th>Comment</th>
 					<th>Funded By</th>
 					<th>Date</th>
 				</tr>
@@ -41,15 +43,17 @@ $title = 'Admin - Funding History';
 						<td>{{number_format($record->amount, 2)}}</td>
 						<td>{{number_format($record->license_cost, 2)}}</td>
 						<td>{{$record->num_of_licenses}}</td>
+						<td>{{$record->bonus_licenses}}</td>
 						<td>{{number_format($record->balance_amount, 2)}}</td>
 						<td>{{$record->license_balance_before}} / {{$record->license_balance_after}}</td>
 						<td>{{ucfirst($record->source)}}</td>
+						<td>{{$record->comment}}</td>
 						<td>{{$record->user?->name}}</td>
 						<td>{{$record->created_at}}</td>
 					</tr>
 				@empty
 					<tr>
-						<td colspan="9" class="text-center">No funding history</td>
+						<td colspan="11" class="text-center">No funding history</td>
 					</tr>
 				@endforelse
 			</tbody>

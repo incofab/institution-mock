@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Enums\ContentSource;
 use App\Enums\ExamStatus;
 use App\Enums\InstitutionUserRole;
+use App\Enums\UserRole;
 use App\Models\Course;
 use App\Models\CourseSession;
 use App\Models\Event;
@@ -96,6 +97,7 @@ class SeedDemoData extends Command
         'phone' => '09033229933',
         'email_verified_at' => now(),
         'password' => Hash::make('password'),
+        'role' => UserRole::Admin,
       ],
     );
   }

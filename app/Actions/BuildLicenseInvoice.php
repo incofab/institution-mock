@@ -9,8 +9,11 @@ use Illuminate\Support\Collection;
 
 class BuildLicenseInvoice
 {
-  function event(Institution $institution, Event $event): array
-  {
+  function event(
+    Institution $institution,
+    Event $event,
+    array $extraCharges = [],
+  ): array {
     abort_if($event->institution_id !== $institution->id, 404);
 
     $event->loadCount([
@@ -24,11 +27,14 @@ class BuildLicenseInvoice
       collect([$event]),
       "Event activation invoice - {$event->title}",
       "EVT-{$event->id}",
+      $extraCharges,
     );
   }
 
-  function institution(Institution $institution): array
-  {
+  function institution(
+    Institution $institution,
+    array $extraCharges = [],
+  ): array {
     $events = $institution
       ->events()
       ->withCount([
@@ -46,6 +52,7 @@ class BuildLicenseInvoice
       $events,
       'Institution activation invoice',
       'ALL',
+      $extraCharges,
     );
   }
 
@@ -54,12 +61,26 @@ class BuildLicenseInvoice
     Collection $events,
     string $title,
     string $scopeCode,
+    array $extraCharges,
   ): array {
     $licenseCost = (float) $institution->license_cost;
     $currentLicenses = (int) $institution->licenses;
     $requiredLicenses = (int) $events->sum('unactivated_exams_count');
     $licensesToBuy = max($requiredLicenses - $currentLicenses, 0);
-    $amountDue = $licensesToBuy * $licenseCost;
+    $licenseAmountDue = $licensesToBuy * $licenseCost;
+    $extraCharges = collect($extraCharges)
+      ->map(
+        fn(array $charge) => [
+          'label' => trim($charge['label'] ?? ''),
+          'amount' => (float) ($charge['amount'] ?? 0),
+        ],
+      )
+      ->filter(
+        fn(array $charge) => $charge['label'] !== '' && $charge['amount'] > 0,
+      )
+      ->values();
+    $extraChargesTotal = (float) $extraCharges->sum('amount');
+    $amountDue = $licenseAmountDue + $extraChargesTotal;
     $invoiceNo =
       'INV-' .
       $institution->code .
@@ -78,6 +99,9 @@ class BuildLicenseInvoice
         $currentLicenses,
         $requiredLicenses,
         $licensesToBuy,
+        $licenseAmountDue,
+        $extraCharges,
+        $extraChargesTotal,
         $amountDue,
       )
       as $page
@@ -100,6 +124,9 @@ class BuildLicenseInvoice
     int $currentLicenses,
     int $requiredLicenses,
     int $licensesToBuy,
+    float $licenseAmountDue,
+    Collection $extraCharges,
+    float $extraChargesTotal,
     float $amountDue,
   ): array {
     $tableLeft = 48;
@@ -116,12 +143,12 @@ class BuildLicenseInvoice
       $this->line('INVOICE', 48, 792, 24, true),
       $this->line(config('app.name'), 48, 764, 14, true),
       $this->line('Billing Department', 48, 746),
-      // $this->line('Address: [Company billing address]', 48, 731),
-      // $this->line(
-      //   'Email: [billing@example.com]  Phone: [company phone]',
-      //   48,
-      //   716,
-      // ),
+      $this->line(
+        'Email: [support@examscholars.com]  Phone: [07036098561]',
+        48,
+        731,
+      ),
+      // $this->line('Address: [Company billing address]', 48, 716),
       $this->line("Invoice No: {$invoiceNo}", 350, 764, 11, true),
       $this->line('Issue Date: ' . now()->format('M d, Y'), 350, 746),
       $this->line('Due Date: Due on receipt', 350, 731),
@@ -230,11 +257,60 @@ class BuildLicenseInvoice
       $y -= 28;
     }
 
+    foreach ($extraCharges as $charge) {
+      if ($y < 120) {
+        $pages[] = $lines;
+        $lines = [
+          $this->line('INVOICE CONTINUED', 48, 792, 18, true),
+          $this->line("Invoice No: {$invoiceNo}", 48, 766),
+          $this->line('Description', $descriptionX, 730, 10, true),
+          $this->line('Qty', $qtyX, 730, 10, true),
+          $this->line('Unit Price', $unitX, 730, 10, true),
+          $this->line('Amount', $amountX, 730, 10, true),
+          $this->hline($tableLeft, $tableRight, 745, 0.8),
+          $this->hline($tableLeft, $tableRight, 717, 0.8),
+          $this->vline($tableLeft, 717, 745, 0.8),
+          $this->vline($col1, 717, 745, 0.8),
+          $this->vline($col2, 717, 745, 0.8),
+          $this->vline($col3, 717, 745, 0.8),
+          $this->vline($tableRight, 717, 745, 0.8),
+        ];
+        $y = 699;
+      }
+
+      $rowTop = $y + 18;
+      $rowBottom = $y - 10;
+      $amount = (float) $charge['amount'];
+      $lines[] = $this->line(
+        $this->shortText($charge['label'], 58),
+        $descriptionX,
+        $y,
+      );
+      $lines[] = $this->line('1', $qtyX, $y);
+      $lines[] = $this->line($this->money($amount), $unitX, $y);
+      $lines[] = $this->line($this->money($amount), $amountX, $y);
+      $lines = array_merge(
+        $lines,
+        $this->tableRowLines(
+          $tableLeft,
+          $tableRight,
+          $col1,
+          $col2,
+          $col3,
+          $rowBottom,
+          $rowTop,
+        ),
+      );
+      $y -= 28;
+    }
+
     $y -= 8;
     $summaryLines = [
       ['Licenses needed', $requiredLicenses],
       ['Current licenses', $currentLicenses],
       ['Licenses to buy', $licensesToBuy],
+      ['License amount due', $this->money($licenseAmountDue)],
+      ['Extra charges', $this->money($extraChargesTotal)],
       ['Total amount due', $this->money($amountDue)],
     ];
 

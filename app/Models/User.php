@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\UserRole;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -13,6 +14,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property string $name
  * @property string $email
  * @property string $password
+ * @property \App\Enums\UserRole|null $role
  * @property string $phone
  * @property float $balance
  * @property int $pin_balance
@@ -24,6 +26,7 @@ class User extends Authenticatable
 
   protected $casts = [
     'email_verified_at' => 'datetime',
+    'role' => UserRole::class,
   ];
   protected $guarded = [];
 
@@ -60,7 +63,7 @@ class User extends Authenticatable
 
   function isAdmin()
   {
-    return $this->email === config('app.admin.email');
+    return $this->role?->hasGlobalAdminAccess() ?? false;
   }
 
   function institutionUsers()

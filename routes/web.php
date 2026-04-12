@@ -72,6 +72,8 @@ Route::group(['middleware' => ['auth', 'admin.user'], 'prefix' => 'admin/', 'as'
     Route::resource('institutions', Admin\InstitutionController::class);
     Route::get('institutions/{institution}/assign-user', [Admin\InstitutionController::class, 'assignUserView'])->name('institutions.assign-user');
     Route::post('institutions/{institution}/assign-user', [Admin\InstitutionController::class, 'assignUserStore'])->name('institutions.assign-user.store');
+    Route::get('institutions/{institution}/invoice', [Admin\InstitutionController::class, 'invoiceView'])->name('institutions.invoice');
+    Route::post('institutions/{institution}/invoice', [Admin\InstitutionController::class, 'invoice'])->name('institutions.invoice.store');
     Route::get('institutions/{institution}/fund', [Admin\InstitutionController::class, 'fundView'])->name('institutions.fund');
     Route::post('institutions/{institution}/fund', [Admin\InstitutionController::class, 'fundStore'])->name('institutions.fund.store');
 });

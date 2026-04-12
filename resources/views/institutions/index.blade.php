@@ -57,9 +57,9 @@
 						Your current license balance can cover them.
 					@endif
 				</div>
-				<a href="{{instRoute('invoices.unactivated-exams')}}" class="btn btn-sm btn-warning mt-2 mt-md-0">
+				<!-- <a href="{{instRoute('invoices.unactivated-exams')}}" class="btn btn-sm btn-warning mt-2 mt-md-0">
 					<i class="fa fa-file-invoice"></i> Download Invoice
-				</a>
+				</a> -->
 			</div>
 		@endif
 	</div>

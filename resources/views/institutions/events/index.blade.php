@@ -74,7 +74,7 @@ $confirmMsg = 'Are you sure?';
                             	<a href='{{instRoute('exams.index', $record)}}' class='btn btn-link'>Exams</a>
                             </small></div>
                             @if($record->unactivated_exams_count > 0)
-	                            <div><small><i class='fa fa-file-invoice'></i>
+	                            <div class='d-none'><small><i class='fa fa-file-invoice'></i>
 									<a href='{{instRoute('events.invoice', $record)}}' class='btn btn-link'>Download Invoice</a>
 	                            </small></div>
                             @endif

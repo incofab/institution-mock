@@ -149,23 +149,59 @@ test('global admin manually funds institution licenses', function () {
 
     $this->post(route('admin.institutions.fund.store', $institution), [
         'amount' => 550,
+        'bonus_licenses' => 3,
+        'comment' => 'Introductory bonus',
     ])
         ->assertRedirect(route('admin.institutions.index'))
         ->assertSessionHas('message', 'Institution licenses funded successfully');
 
     $this->assertDatabaseHas('institutions', [
         'id' => $institution->id,
-        'licenses' => 5,
+        'licenses' => 8,
     ]);
     $this->assertDatabaseHas('fundings', [
         'institution_id' => $institution->id,
         'amount' => 550,
         'license_cost' => 200,
-        'num_of_licenses' => 2,
+        'num_of_licenses' => 5,
+        'bonus_licenses' => 3,
         'balance_amount' => 150,
         'license_balance_before' => 3,
-        'license_balance_after' => 5,
+        'license_balance_after' => 8,
         'source' => 'manual',
+        'comment' => 'Introductory bonus',
+    ]);
+});
+
+test('global admin can give bonus licenses without funding amount', function () {
+    $institution = Institution::factory()->create([
+        'licenses' => 3,
+        'license_cost' => 200,
+    ]);
+
+    $this->post(route('admin.institutions.fund.store', $institution), [
+        'amount' => null,
+        'bonus_licenses' => 4,
+        'comment' => 'Support credit',
+    ])
+        ->assertRedirect(route('admin.institutions.index'))
+        ->assertSessionHas('message', 'Institution licenses funded successfully');
+
+    $this->assertDatabaseHas('institutions', [
+        'id' => $institution->id,
+        'licenses' => 7,
+    ]);
+    $this->assertDatabaseHas('fundings', [
+        'institution_id' => $institution->id,
+        'amount' => 0,
+        'license_cost' => 200,
+        'num_of_licenses' => 4,
+        'bonus_licenses' => 4,
+        'balance_amount' => 0,
+        'license_balance_before' => 3,
+        'license_balance_after' => 7,
+        'source' => 'manual',
+        'comment' => 'Support credit',
     ]);
 });
 
@@ -176,6 +212,44 @@ test('global admin can view the manual funding page', function () {
         ->assertOk()
         ->assertViewIs('admin.institutions.fund')
         ->assertViewHas('institution', $institution);
+});
+
+test('global admin can view the invoice generation page', function () {
+    $institution = Institution::factory()->create(['license_cost' => 200]);
+
+    $this->get(route('admin.institutions.invoice', $institution))
+        ->assertOk()
+        ->assertViewIs('admin.institutions.invoice')
+        ->assertViewHas('institution', $institution)
+        ->assertSee('Extra Charges')
+        ->assertSee('Generate Invoice');
+});
+
+test('global admin can generate an invoice with extra charges', function () {
+    $institution = Institution::factory()->create([
+        'licenses' => 0,
+        'license_cost' => 200,
+    ]);
+
+    $this->post(route('admin.institutions.invoice.store', $institution), [
+        'extra_charges' => [
+            ['label' => 'Setup fee', 'amount' => 500],
+        ],
+    ])
+        ->assertOk()
+        ->assertHeader('Content-Type', 'application/pdf')
+        ->assertSee('Setup fee')
+        ->assertSee('500.00');
+});
+
+test('invoice extra charge requires label and amount together', function () {
+    $institution = Institution::factory()->create(['license_cost' => 200]);
+
+    $this->post(route('admin.institutions.invoice.store', $institution), [
+        'extra_charges' => [
+            ['label' => 'Setup fee', 'amount' => null],
+        ],
+    ])->assertSessionHasErrors('extra_charges.0.amount');
 });
 
 test('global admin can view funding history', function () {
@@ -218,6 +292,17 @@ test('manual funding amount must cover at least one license', function () {
 
     $this->post(route('admin.institutions.fund.store', $institution), [
         'amount' => 199,
+    ])->assertSessionHasErrors('amount');
+
+    $this->assertDatabaseCount('fundings', 0);
+});
+
+test('manual funding requires amount or bonus licenses', function () {
+    $institution = Institution::factory()->create(['license_cost' => 200]);
+
+    $this->post(route('admin.institutions.fund.store', $institution), [
+        'amount' => null,
+        'bonus_licenses' => 0,
     ])->assertSessionHasErrors('amount');
 
     $this->assertDatabaseCount('fundings', 0);

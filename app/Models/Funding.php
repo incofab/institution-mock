@@ -14,6 +14,7 @@ class Funding extends BaseModel
     'amount' => 'float',
     'license_cost' => 'float',
     'num_of_licenses' => 'integer',
+    'bonus_licenses' => 'integer',
     'balance_amount' => 'float',
     'license_balance_before' => 'integer',
     'license_balance_after' => 'integer',

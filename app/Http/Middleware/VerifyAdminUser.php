@@ -25,6 +25,9 @@ class VerifyAdminUser
                 ? abort(403, $message)
                 : Redirect::guest(URL::route('login'))->with('error', $message);
         }
+        if (!$user->isAdmin()) {
+            abort(403, 'You are not authorized to access this page.');
+        }
         return $next($request);
     }
 }

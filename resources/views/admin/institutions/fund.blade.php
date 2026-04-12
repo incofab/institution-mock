@@ -31,7 +31,17 @@ $title = 'Admin - Fund Institution Licenses';
 			<div class="form-group">
 				<label class="control-label">Amount</label>
 				<input type="number" id="" name="amount" value="{{old('amount')}}"
-					min="0.01" step="0.01" placeholder="Funding amount" class="form-control" required>
+					min="0" step="0.01" placeholder="Funding amount" class="form-control">
+			</div>
+			<div class="form-group">
+				<label class="control-label">Bonus Licenses</label>
+				<input type="number" id="" name="bonus_licenses" value="{{old('bonus_licenses', 0)}}"
+					min="0" step="1" placeholder="Bonus licenses" class="form-control">
+			</div>
+			<div class="form-group">
+				<label class="control-label">Comment [optional]</label>
+				<textarea class="form-control" rows="3" name="comment"
+					placeholder="Funding comment">{{old('comment')}}</textarea>
 			</div>
 			<button class="btn btn-primary" type="submit">
 				<i class="fa fa-fw fa-lg fa-check-circle"></i> Fund Licenses
@@ -49,9 +59,11 @@ $title = 'Admin - Fund Institution Licenses';
 					<th>Amount</th>
 					<th>License Cost</th>
 					<th>Licenses</th>
+					<th>Bonus Licenses</th>
 					<th>Balance Amount</th>
 					<th>License Balance</th>
 					<th>Source</th>
+					<th>Comment</th>
 					<th>Funded By</th>
 					<th>Date</th>
 				</tr>
@@ -62,15 +74,17 @@ $title = 'Admin - Fund Institution Licenses';
 						<td>{{number_format($funding->amount, 2)}}</td>
 						<td>{{number_format($funding->license_cost, 2)}}</td>
 						<td>{{$funding->num_of_licenses}}</td>
+						<td>{{$funding->bonus_licenses}}</td>
 						<td>{{number_format($funding->balance_amount, 2)}}</td>
 						<td>{{$funding->license_balance_before}} / {{$funding->license_balance_after}}</td>
 						<td>{{ucfirst($funding->source)}}</td>
+						<td>{{$funding->comment}}</td>
 						<td>{{$funding->user?->name}}</td>
 						<td>{{$funding->created_at}}</td>
 					</tr>
 				@empty
 					<tr>
-						<td colspan="8" class="text-center">No funding record</td>
+						<td colspan="10" class="text-center">No funding record</td>
 					</tr>
 				@endforelse
 			</tbody>

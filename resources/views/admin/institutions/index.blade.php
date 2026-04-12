@@ -51,6 +51,9 @@ $title = 'Admin - All Institutions'; ?>
 						<a href='{{route('admin.institutions.fund', $record)}}' class='btn btn-link'>
 							<i class='fa fa-money'></i> Fund Licenses
 						</a>
+						<a href='{{route('admin.institutions.invoice', $record)}}' class='btn btn-link'>
+							<i class='fa fa-file-invoice'></i> Generate Invoice
+						</a>
 						<a href='{{route('institutions.dashboard', $record->code)}}' class='btn btn-link'>
 							<i class='fa fa-hand-point-right'></i> Goto Page
 						</a>
