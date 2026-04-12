@@ -22,6 +22,9 @@ $confirmMsg = 'Are you sure?';
 <div class="tile">
     <div class="tile-header clearfix mb-3">
     	<a href="{{instRoute('events.create')}}" class="btn btn-primary pull-right"><i class="fa fa-plus"></i> New</a>
+		<a href="{{instRoute('invoices.unactivated-exams')}}" class="btn btn-warning pull-right mr-2">
+			<i class="fa fa-file-invoice"></i> All Pending Invoice
+		</a>
     </div>
     <div class="tile-body">
     	<table class="table table-hover table-bordered" id="data-table" >
@@ -70,6 +73,11 @@ $confirmMsg = 'Are you sure?';
                             <div><small><i class='fa fa-graduation-cap'></i> 
                             	<a href='{{instRoute('exams.index', $record)}}' class='btn btn-link'>Exams</a>
                             </small></div>
+                            @if($record->unactivated_exams_count > 0)
+	                            <div><small><i class='fa fa-file-invoice'></i>
+									<a href='{{instRoute('events.invoice', $record)}}' class='btn btn-link'>Download Invoice</a>
+	                            </small></div>
+                            @endif
                             <div><small><i class='fa fa-users'></i> 
                             	<a href='{{instRoute('exams.events.grades.create', $record)}}' class='btn btn-link'>Register Students for Exam</a>
                             </small></div>

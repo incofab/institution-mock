@@ -125,6 +125,13 @@ class Event extends BaseModel
     return $this->hasMany(Exam::class);
   }
 
+  function hasUnactivatedExams(): bool
+  {
+    return $this->exams()
+      ->whereNull('exam_activation_id')
+      ->exists();
+  }
+
   function examActivations()
   {
     return $this->hasMany(ExamActivation::class);

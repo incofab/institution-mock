@@ -27,6 +27,11 @@ $confirmMsg = 'Are you sure?';
 			onclick="return confirm('Download result records')">
 			<i class="fa fa-download"></i> Download
 		</a>
+		@if($unactivatedExamsCount > 0)
+			<a href="{{instRoute('events.invoice', [$event])}}" class="btn btn-warning btn-sm float-left ml-2">
+				<i class="fa fa-file-invoice"></i> Invoice
+			</a>
+		@endif
 		<a href="{{instRoute('events.evaluate', [$event])}}" class="btn btn-danger btn-sm float-right"
 			onclick="return confirm('This wil end all ongoing exams in this event. Do you want to continue?')">
 			<i class="fa fa-check"></i> Evaluate
@@ -58,6 +63,7 @@ $confirmMsg = 'Are you sure?';
 			<p><b>Conducted Exams: </b> {{$startedExamsCount}}</p>
 			<p><b>Pending Exams: </b> {{$pendingExamsCount}}</p>
 			<p><b>Activated Exams: </b> {{$activatedExamsCount}}</p>
+			<p><b>Unactivated Exams: </b> {{$unactivatedExamsCount}}</p>
 			<p><b>Licenses: </b> {{$institution->licenses}}</p>
 		</div>
     	<table class="table table-hover table-bordered" id="data-table" >

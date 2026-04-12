@@ -20,6 +20,10 @@ class StartExam
 
   function getExamStartupData($start = true)
   {
+    if ($this->shouldRestrictUnactivatedExamAccess()) {
+      return failRes('This exam has not been activated yet.');
+    }
+
     if ($start && $this->canStartExam()) {
       $this->exam->markAsStarted();
     }
@@ -75,5 +79,11 @@ class StartExam
       ExamStatus::Pending,
       ExamStatus::Paused,
     ]);
+  }
+
+  private function shouldRestrictUnactivatedExamAccess(): bool
+  {
+    return config('exam.restrict_unactivated_exam_access_before_start') &&
+      !$this->exam->isActivated();
   }
 }

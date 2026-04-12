@@ -229,4 +229,11 @@ return [
   'admin' => [
     'email' => 'admin@email.com',
   ],
+  'bank-accounts' => [
+    [
+      'bank_name' => 'GT Bank',
+      'account_number' => '0657550955',
+      'account_name' => 'Examscholars Limited',
+    ],
+  ],
 ];

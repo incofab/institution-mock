@@ -39,6 +39,13 @@ class VerifyInstitutionUser
 
         if ($request->method() === 'GET') {
             View::share('institution', $institution);
+            View::share(
+                'institutionUsers',
+                InstitutionUser::query()
+                    ->where('user_id', $user->id)
+                    ->with('institution')
+                    ->get(),
+            );
         }
 
         $request->merge(['institution_id' => $institution->id]);

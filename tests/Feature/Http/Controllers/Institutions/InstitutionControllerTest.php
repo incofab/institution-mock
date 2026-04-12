@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Event;
+use App\Models\Exam;
 use App\Models\ExamActivation;
 use App\Models\Funding;
 use App\Models\GatewayPayment;
@@ -89,6 +90,57 @@ it('shows the online license funding form', function () {
     ->assertSee('Paystack')
     ->assertSee('Monnify')
     ->assertSee('Flutterwave');
+});
+
+it('downloads a pdf invoice for an event with unactivated exams', function () {
+  $institution = Institution::factory()
+    ->user()
+    ->create(['licenses' => 1, 'license_cost' => 250]);
+  $user = $institution->institutionUsers()->first()->user;
+  $event = Event::factory()
+    ->institution($institution)
+    ->create(['title' => 'Entrance Exam']);
+  Exam::factory(3)
+    ->event($event)
+    ->create();
+  actingAs($user);
+
+  $this->get(route('institutions.events.invoice', [$institution, $event]))
+    ->assertOk()
+    ->assertHeader('content-type', 'application/pdf')
+    ->assertHeader('content-disposition')
+    ->assertSee('%PDF-1.4', false)
+    ->assertSee('Entrance Exam', false)
+    ->assertSee('Licenses to buy', false)
+    ->assertSee('500.00', false);
+});
+
+it('downloads a pdf invoice for all unactivated institution exams', function () {
+  $institution = Institution::factory()
+    ->user()
+    ->create(['licenses' => 1, 'license_cost' => 300]);
+  $user = $institution->institutionUsers()->first()->user;
+  $firstEvent = Event::factory()
+    ->institution($institution)
+    ->create(['title' => 'Mock Exam']);
+  $secondEvent = Event::factory()
+    ->institution($institution)
+    ->create(['title' => 'Final Exam']);
+  Exam::factory(2)
+    ->event($firstEvent)
+    ->create();
+  Exam::factory()
+    ->event($secondEvent)
+    ->create();
+  actingAs($user);
+
+  $this->get(route('institutions.invoices.unactivated-exams', $institution))
+    ->assertOk()
+    ->assertHeader('content-type', 'application/pdf')
+    ->assertSee('%PDF-1.4', false)
+    ->assertSee('Mock Exam', false)
+    ->assertSee('Final Exam', false)
+    ->assertSee('600.00', false);
 });
 
 it('initializes online license funding with paystack', function () {

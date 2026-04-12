@@ -35,7 +35,7 @@
       <h2>Route Map</h2>
       <table>
         <tr><th>File</th><th>Prefix</th><th>Middleware</th><th>Purpose</th></tr>
-        <tr><td><code>routes/web.php</code></td><td><code>/</code>, <code>/admin</code></td><td><code>web</code>; admin also uses <code>auth</code> and <code>admin.user</code></td><td>Auth, home redirect, result view, admin dashboard, admin users, admin institutions.</td></tr>
+        <tr><td><code>routes/web.php</code></td><td><code>/</code>, <code>/admin</code></td><td><code>web</code>; admin also uses <code>auth</code> and <code>admin.user</code></td><td>Auth, home redirect, institution selection, result view, admin dashboard, admin users, admin institutions.</td></tr>
         <tr><td><code>routes/institution.php</code></td><td><code>/institutions/{institution}</code></td><td><code>web</code>, <code>auth</code>, <code>institution.user</code></td><td>Institution dashboard, events, event courses, exams, grades, and students.</td></tr>
         <tr><td><code>routes/ccd.php</code></td><td><code>/institutions/{institution}</code></td><td><code>web</code>, <code>auth</code>, <code>institution.user</code></td><td>Exam content, courses, sessions, instructions, passages, questions, image upload, content import/export.</td></tr>
         <tr><td><code>routes/api.php</code></td><td><code>/api</code></td><td><code>api</code></td><td>Exam start/end/pause/submit, event/exam sync, institution API reads, question creation API.</td></tr>
@@ -57,6 +57,7 @@
       <ul>
         <li><code>currentUser()</code> returns the authenticated user.</li>
         <li><code>currentInstitution()</code> returns the route-bound institution.</li>
+        <li><code>GET /institutions/select?selected_institution={code}</code> marks the current institution on the switch page; the active institution for operations remains the route-bound institution.</li>
         <li><code>instRoute()</code> builds institution-prefixed route names such as <code>institutions.exams.index</code>.</li>
         <li><code>paginateFromRequest()</code> applies request-driven pagination.</li>
         <li><code>successRes()</code> and <code>failRes()</code> wrap workflow results in <code>App\Support\Res</code>.</li>

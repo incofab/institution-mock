@@ -43,8 +43,23 @@
 		</div>
 		@if($licenses_count < 1)
 			<div class="alert alert-info mb-0">
-				You will need licenses before students can start activated exams.
+				You will need licenses before students can start exams.
 				<a href="{{instRoute('fund-licenses.create')}}">Fund licenses</a>
+			</div>
+		@endif
+		@if($unactivated_exams_count > 0)
+			<div class="alert alert-warning mt-3 mb-0 d-flex justify-content-between align-items-center flex-wrap">
+				<div>
+					<b>{{$unactivated_exams_count}}</b> exam(s) are awaiting activation.
+					@if($pending_licenses_count > 0)
+						You need <b>{{$pending_licenses_count}}</b> additional license(s).
+					@else
+						Your current license balance can cover them.
+					@endif
+				</div>
+				<a href="{{instRoute('invoices.unactivated-exams')}}" class="btn btn-sm btn-warning mt-2 mt-md-0">
+					<i class="fa fa-file-invoice"></i> Download Invoice
+				</a>
 			</div>
 		@endif
 	</div>

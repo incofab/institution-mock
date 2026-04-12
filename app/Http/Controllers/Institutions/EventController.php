@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Institutions;
 
 use App\Actions\DownloadResult;
 use App\Actions\EndExam;
+use App\Actions\BuildLicenseInvoice;
 use App\Models\Course;
 use App\Models\Event;
 use App\Http\Controllers\Controller;
@@ -23,6 +24,9 @@ class EventController extends Controller
           ->withCount('exams')
           ->withCount([
             'exams as activated_exams_count' => fn($query) => $query->whereNotNull(
+              'exam_activation_id',
+            ),
+            'exams as unactivated_exams_count' => fn($query) => $query->whereNull(
               'exam_activation_id',
             ),
           ])
@@ -132,6 +136,16 @@ class EventController extends Controller
     return Response::download($tempFilePath, $fileName)->deleteFileAfterSend(
       true,
     );
+  }
+
+  function invoice(Institution $institution, Event $event)
+  {
+    $invoice = (new BuildLicenseInvoice())->event($institution, $event);
+
+    return Response::make($invoice['content'], 200, [
+      'Content-Type' => 'application/pdf',
+      'Content-Disposition' => "attachment; filename=\"{$invoice['file_name']}\"",
+    ]);
   }
 
   function evaluateEvent(Institution $institution, Event $event)

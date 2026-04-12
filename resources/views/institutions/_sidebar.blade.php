@@ -36,6 +36,12 @@
 				class="app-menu__icon fa fa-tachometer-alt"></i><span
 				class="app-menu__label">Dashboard</span></a>
 		</li>
+		@if(isset($institutionUsers) && $institutionUsers->count() > 1)
+			<li><a class="app-menu__item" href="{{route('users.institutions.select', ['selected_institution' => $institution->code])}}"><i
+					class="app-menu__icon fa fa-exchange-alt"></i><span
+					class="app-menu__label">Switch Institution</span></a>
+			</li>
+		@endif
 		@if(currentUser()?->isAdmin() || currentInstitutionUser()?->isAdmin())
 			<li><a class="app-menu__item" href="{{instRoute('users.index')}}"><i
 					class="app-menu__icon fa fa-user"></i><span
@@ -55,6 +61,9 @@
 				</li>
 				<li><a class="treeview-item" href="{{instRoute('funding-history')}}"><i
 						class="icon fa fa-money"></i> Funding History</a>
+				</li>
+				<li><a class="treeview-item" href="{{instRoute('invoices.unactivated-exams')}}"><i
+						class="icon fa fa-file-invoice"></i> Activation Invoice</a>
 				</li>
 			</ul>
 		</li>

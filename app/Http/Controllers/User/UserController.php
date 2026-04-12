@@ -17,16 +17,72 @@ class UserController extends Controller
       return redirect(route('admin.dashboard'));
     }
 
-    $institutionUser = InstitutionUser::where('user_id', $user->id)
+    $institutionUsers = InstitutionUser::where('user_id', $user->id)
       ->with('institution')
-      ->first();
+      ->get();
 
-    if ($institutionUser) {
+    if ($institutionUsers->isEmpty()) {
+      return view('user.index', []);
+    }
+
+    if ($institutionUsers->count() === 1) {
       return redirect(
-        route('institutions.dashboard', $institutionUser->institution),
+        route(
+          'institutions.dashboard',
+          $institutionUsers->first()->institution,
+        ),
       );
     }
-    return view('user.index', []);
+
+    return redirect(route('users.institutions.select'));
+  }
+
+  function selectInstitution(Request $request)
+  {
+    $institutionUsers = currentUser()
+      ->institutionUsers()
+      ->with('institution')
+      ->get();
+
+    if ($institutionUsers->isEmpty()) {
+      return redirect(route('users.dashboard'));
+    }
+
+    if ($institutionUsers->count() === 1) {
+      return redirect(
+        route(
+          'institutions.dashboard',
+          $institutionUsers->first()->institution,
+        ),
+      );
+    }
+
+    return view('user.institution-select', [
+      'institutionUsers' => $institutionUsers,
+      'selectedInstitution' => $this->selectedInstitutionFromRequest(
+        $request,
+        $institutionUsers,
+      ),
+    ]);
+  }
+
+  function switchInstitution(Request $request)
+  {
+    $data = $request->validate([
+      'institution_id' => ['required', 'integer'],
+    ]);
+
+    $institutionUser = currentUser()
+      ->institutionUsers()
+      ->with('institution')
+      ->where('institution_id', $data['institution_id'])
+      ->first();
+
+    abort_unless($institutionUser, 403, 'Institution not found for this user');
+
+    return redirect(
+      route('institutions.dashboard', $institutionUser->institution),
+    )->with('message', "Switched to {$institutionUser->institution->name}");
   }
 
   function createInstitution()
@@ -55,5 +111,25 @@ class UserController extends Controller
       'message',
       'Institution created successfully',
     );
+  }
+
+  private function selectedInstitutionFromRequest(
+    Request $request,
+    $institutionUsers,
+  ): Institution|null {
+    $selectedInstitution = $request->query('selected_institution');
+
+    if (!$selectedInstitution) {
+      return null;
+    }
+
+    return $institutionUsers
+      ->map(
+        fn(InstitutionUser $institutionUser) => $institutionUser->institution,
+      )
+      ->first(
+        fn(Institution $institution) => $institution->code ==
+          $selectedInstitution || $institution->id == $selectedInstitution,
+      );
   }
 }

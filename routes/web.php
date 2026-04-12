@@ -50,8 +50,12 @@ Route::get('/exam/view-result', [\App\Http\Controllers\Exam\ExamController::clas
 
 Route::get('exams/view-result/{examNo?}', [Exam\ExamController::class, 'viewResult'])->name('exams.view-result');
 
-Route::get('/dashboard', [UserController::class, 'index'])->name('users.dashboard');
+Route::get('/dashboard', [UserController::class, 'index'])
+    ->middleware('auth')
+    ->name('users.dashboard');
 Route::middleware('auth')->group(function () {
+    Route::get('/institutions/select', [UserController::class, 'selectInstitution'])->name('users.institutions.select');
+    Route::post('/institutions/select', [UserController::class, 'switchInstitution'])->name('users.institutions.switch');
     Route::get('/institutions/create', [UserController::class, 'createInstitution'])->name('users.institutions.create');
     Route::post('/institutions', [UserController::class, 'storeInstitution'])->name('users.institutions.store');
 });

@@ -8,6 +8,8 @@ Route::get('/activation-history', [Inst\InstitutionController::class, 'activatio
 ->name('activation-history');
 Route::get('/funding-history', [Inst\InstitutionController::class, 'fundingHistory'])
 ->name('funding-history');
+Route::get('/invoices/unactivated-exams', [Inst\InstitutionController::class, 'invoice'])
+->name('invoices.unactivated-exams');
 Route::get('/fund-licenses', [Inst\InstitutionController::class, 'fundLicensesView'])
 ->name('fund-licenses.create');
 Route::post('/fund-licenses', [Inst\InstitutionController::class, 'fundLicensesStore'])
@@ -26,6 +28,8 @@ Route::get('/events/{event}/unsuspend', [Inst\EventController::class, 'unSuspend
 ->name('events.unsuspend');
 Route::get('/events/{event}/download', [Inst\EventController::class, 'download'])
 ->name('events.download');
+Route::get('/events/{event}/invoice', [Inst\EventController::class, 'invoice'])
+->name('events.invoice');
 Route::get('/events/{event}/evaluate', [Inst\EventController::class, 'evaluateEvent'])
 ->name('events.evaluate');
 Route::get('/events/{event}/delete', [Inst\EventController::class, 'destroy'])

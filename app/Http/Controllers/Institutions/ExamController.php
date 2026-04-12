@@ -41,6 +41,9 @@ class ExamController extends Controller
       'activatedExamsCount' => (clone $query)
         ->whereNotNull('exam_activation_id')
         ->count(),
+      'unactivatedExamsCount' => (clone $query)
+        ->whereNull('exam_activation_id')
+        ->count(),
     ]);
   }
 

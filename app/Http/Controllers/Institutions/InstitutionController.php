@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Institutions;
 
 use App\Actions\CreditLicenseFunding;
+use App\Actions\BuildLicenseInvoice;
 use App\Http\Controllers\Controller;
 use App\Models\GatewayPayment;
 use App\Models\Institution;
@@ -15,12 +16,23 @@ class InstitutionController extends Controller
 {
   function index(Institution $institution)
   {
+    $unactivatedExamsCount = $institution
+      ->events()
+      ->join('exams', 'events.id', '=', 'exams.event_id')
+      ->whereNull('exams.exam_activation_id')
+      ->count('exams.id');
+
     return view('institutions.index', [
       'students_count' => $institution->students()->count(),
       'events_count' => $institution->events()->count(),
       'grades_count' => $institution->grades()->count(),
       'courses_count' => $institution->courses()->count(),
       'licenses_count' => $institution->licenses,
+      'unactivated_exams_count' => $unactivatedExamsCount,
+      'pending_licenses_count' => max(
+        $unactivatedExamsCount - $institution->licenses,
+        0,
+      ),
     ]);
   }
 
@@ -45,12 +57,33 @@ class InstitutionController extends Controller
     ]);
   }
 
+  function invoice(Institution $institution)
+  {
+    $invoice = (new BuildLicenseInvoice())->institution($institution);
+
+    return response($invoice['content'], 200, [
+      'Content-Type' => 'application/pdf',
+      'Content-Disposition' => "attachment; filename=\"{$invoice['file_name']}\"",
+    ]);
+  }
+
   function fundLicensesView(
     Institution $institution,
     PaymentGatewayManager $gateways,
   ) {
+    $unactivatedExamsCount = $institution
+      ->events()
+      ->join('exams', 'events.id', '=', 'exams.event_id')
+      ->whereNull('exams.exam_activation_id')
+      ->count('exams.id');
+
     return view('institutions.fund-licenses', [
       'gateways' => $gateways->options(),
+      'unactivatedExamsCount' => $unactivatedExamsCount,
+      'pendingLicensesCount' => max(
+        $unactivatedExamsCount - $institution->licenses,
+        0,
+      ),
     ]);
   }
 

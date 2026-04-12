@@ -16,6 +16,16 @@ class ExamController extends Controller
 {
   function index(Institution $institution, Event $event)
   {
+    if (
+      config('exam.restrict_unactivated_exam_access_before_start') &&
+      $event->hasUnactivatedExams()
+    ) {
+      return $this->apiFailRes(
+        [],
+        'Exams in this event are not available until all exams have been activated.',
+      );
+    }
+
     $exams = $event
       ->exams()
       ->getQuery()

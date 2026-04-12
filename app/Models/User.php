@@ -62,4 +62,9 @@ class User extends Authenticatable
   {
     return $this->email === config('app.admin.email');
   }
+
+  function institutionUsers()
+  {
+    return $this->hasMany(InstitutionUser::class);
+  }
 }

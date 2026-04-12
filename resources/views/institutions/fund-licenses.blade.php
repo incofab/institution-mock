@@ -24,7 +24,17 @@ $title = 'Institution - Fund Licenses';
 		<div class="mb-3">
 			<p><b>Current Licenses: </b> {{$institution->licenses}}</p>
 			<p><b>License Cost: </b> {{number_format($institution->license_cost, 2)}}</p>
+			<p><b>Unactivated Exams: </b> {{$unactivatedExamsCount}}</p>
+			<p><b>Pending Licenses: </b> {{$pendingLicensesCount}}</p>
 		</div>
+		@if($unactivatedExamsCount > 0)
+			<div class="alert alert-warning d-flex justify-content-between align-items-center flex-wrap">
+				<div>Download an invoice for all unactivated exams before funding licenses.</div>
+				<a href="{{instRoute('invoices.unactivated-exams')}}" class="btn btn-sm btn-warning mt-2 mt-md-0">
+					<i class="fa fa-file-invoice"></i> Download Invoice
+				</a>
+			</div>
+		@endif
 		<form action="{{instRoute('fund-licenses.store')}}" method="post">
 			@csrf
 			<div class="form-group">
