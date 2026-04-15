@@ -39,6 +39,7 @@ $confirmMsg = 'Are you sure?';
     	<table class="table table-hover table-bordered" id="data-table" >
     		<thead>
     			<tr>
+    				<th>S/No</th>
     				<th>Student ID</th>
     				<th>Name</th>
     				<th>Class</th>
@@ -50,6 +51,7 @@ $confirmMsg = 'Are you sure?';
 			@foreach($allRecords as $record)
 				<?php $grade = $record->grade; ?>
 				<tr>
+					<td>{{$loop->iteration}}</td>
 					<td>{{$record['code']}}</td>
 					<td>{{$record['lastname']}} {{$record['firstname']}}</td>
 					<td>{{$record->grade?->title}}</td>

@@ -34,9 +34,10 @@ $confirmMsg = 'Are you sure?';
     				<th>Title</th>
     				<th>Description</th>
     				<th>Subjects</th>
-				<th>Exams</th>
-				<th>Activated</th>
+					<th>Exams</th>
+					<th>Activated</th>
     				<th>Duration(mins)</th>
+    				<th>Created At</th>
     				<th><i class="fa fa-bars p-2"></i></th>
     			</tr>
     		</thead>
@@ -49,6 +50,7 @@ $confirmMsg = 'Are you sure?';
 					<td>{{$record->exams_count}}</td>
 					<td>{{$record->activated_exams_count}} / {{$record->exams_count}}</td>
 					<td>{{$record->duration}}</td>
+					<td>{{$record->created_at->format('d-m-Y H:i:s')}}</td>
 					<td>
 						{{-- <a href='{{instRoute('event-courses.index', $record)}}' class='btn btn-link'>Subjects</a> 
 						<a href='{{instRoute('exams.index', $record)}}' class='btn btn-link'>Exams</a>

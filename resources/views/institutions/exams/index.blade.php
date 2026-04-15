@@ -69,6 +69,7 @@ $confirmMsg = 'Are you sure?';
     	<table class="table table-hover table-bordered" id="data-table" >
     		<thead>
     			<tr>
+    				<th>S/No</th>
     				<th>Student Name</th>
     				<th>Exam No</th>
     				{{-- <th>Event</th> --}}
@@ -88,6 +89,7 @@ $confirmMsg = 'Are you sure?';
    $student = $record['student'];
    ?>
 				<tr>
+					<td>{{$loop->iteration}}</td>
 					<td>{{$student?->name}}</td>
 					<td>{{$record['exam_no']}}</td>
 					{{-- <td>

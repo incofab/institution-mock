@@ -61,7 +61,7 @@ Route::post('/exams/events/{event}/multi-store-exam', [Inst\ExamController::clas
 ->name('exams.multi-store-exam');
 Route::post('/exams/events/{event}/activate', [Inst\ExamController::class, 'activateEvent'])
 ->name('exams.events.activate');
-Route::post('/exams/{exam}/activate', [Inst\ExamController::class, 'activateExam'])
+Route::any('/exams/{exam}/activate', [Inst\ExamController::class, 'activateExam'])
 ->name('exams.activate');
 Route::delete('/exams/{exam}/delete', [Inst\ExamController::class, 'destroy'])
 ->name('exams.destroy');
