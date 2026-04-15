@@ -37,7 +37,7 @@ $student = $exam->student;
     		<dd class="col-sm-9 mb-3">{{$exam->start_time->toDayDateTimeString()}}</dd>
     
     		<dt class="col-sm-3 mb-sm-3">Exam Duration</dt>
-    		<dd class="col-sm-9 mb-3">{{$exam->duration}} mins</dd>
+    		<dd class="col-sm-9 mb-3">{{$event->duration}} mins</dd>
 
     		<dt class="col-sm-3 mb-sm-3">Exam Score</dt>
     		<dd class="col-sm-9 mb-3">{{$exam->scorePercentSum()}}</dd>
@@ -52,7 +52,7 @@ $student = $exam->student;
     					<th>Subject</th>
     					{{-- <th>Session</th> --}}
     					<th>Score</th>
-    					<th>Score %</th>
+    					<!-- <th>Score %</th> -->
     				</tr>
     			</thead>
     			<tbody>
@@ -61,7 +61,7 @@ $student = $exam->student;
     					<td>{{$examCourse->course_code}}</td>
 						{{-- <td>{{$examCourse->session}}</td> --}}
     					<td>{{$examCourse->score}}/{{$examCourse->num_of_questions}}</td>
-    					<td>{{$examCourse->scorePercent()}}</td>
+    					<!-- <td>{{$examCourse->scorePercent()}}</td> -->
     				</tr>
     				@endforeach
 <?php $totalScorePercent = $exam->examCourses->sum(
@@ -73,16 +73,28 @@ $student = $exam->student;
 						<td></td>
     					<td>{{$exam->score}}/{{$exam->num_of_questions}}</td>
     					<td>{{$totalScorePercent}}/{{$exam->examCourses->count() * 100}}</td>
-    				</tr> --}}
-    				<tr class="font-weight-bold">
-    					<td colspan="{{!$exam->event ? 2 : 1}}"><b>Exam Score</b></td>
+    				</tr> 
+					--}}
+					{{-- 
+					<tr class="font-weight-bold">
+						<td colspan="{{!$exam->event ? 2 : 1}}"><b>Exam Score</b></td>
 						<td></td>
-    					<td></td>
-    					<td>{{$exam->scorePercentSum()}}</td>
-    				</tr>
+						<td></td>
+						<td>{{$exam->scorePercentSum()}}</td>
+					</tr>
+					--}}
     			</tbody>
     		</table>
+			<div class="text-center">
+				<div>For further studies, download examscholars app at</div>
+				<div>
+					<a class="mx-2 btn btn-outline-primary" href="https://play.google.com/store/apps/details?id=com.examscholar.app.utme"><i class="fab fa-android fa-2x"></i></a>
+					<a class="mx-2 btn btn-outline-primary" href="https://apps.apple.com/us/app/examscholars-utme-cbt-practice/id6738136424"><i class="fab fa-apple fa-2x"></i></a>
+					<a class="mx-2 btn btn-outline-primary" href="https://examscholars.com/products/download-jamb-utme-waec-neco-bece-cbt-practice-software"><i class="fab fa-windows fa-2x"></i></a>
+				</div>
+			</div>
     	</div>
+		<br>
     </section>
 </div>
 <div id="result-div-cover"></div>
