@@ -40,7 +40,7 @@ $student = $exam->student;
     		<dd class="col-sm-9 mb-3">{{$exam->duration}} mins</dd>
 
     		<dt class="col-sm-3 mb-sm-3">Exam Score</dt>
-    		<dd class="col-sm-9 mb-3">{{$exam->scorePercentSum()}}/{{$exam->examCourses->count() * 100}}</dd>
+    		<dd class="col-sm-9 mb-3">{{$exam->scorePercentSum()}}</dd>
     	</dl>
     </section>
     
@@ -67,11 +67,18 @@ $student = $exam->student;
 <?php $totalScorePercent = $exam->examCourses->sum(
   fn($item) => $item->scorePercent(),
 ); ?>
+					{{-- 
     				<tr class="font-weight-bold">
     					<td colspan="{{!$exam->event ? 2 : 1}}"><b>Total</b></td>
 						<td></td>
     					<td>{{$exam->score}}/{{$exam->num_of_questions}}</td>
-    					<td>{{round($totalScorePercent, 2)}}/{{$exam->examCourses->count() * 100}}</td>
+    					<td>{{$totalScorePercent}}/{{$exam->examCourses->count() * 100}}</td>
+    				</tr> --}}
+    				<tr class="font-weight-bold">
+    					<td colspan="{{!$exam->event ? 2 : 1}}"><b>Exam Score</b></td>
+						<td></td>
+    					<td></td>
+    					<td>{{$exam->scorePercentSum()}}</td>
     				</tr>
     			</tbody>
     		</table>

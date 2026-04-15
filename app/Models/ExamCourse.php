@@ -32,9 +32,11 @@ class ExamCourse extends BaseModel
 
   function scorePercent()
   {
-    return ($this->score /
-      ($this->num_of_questions == 0 ? 1 : $this->num_of_questions)) *
+    $scorePercent =
+      ($this->score /
+        ($this->num_of_questions == 0 ? 1 : $this->num_of_questions)) *
       100;
+    return floor($scorePercent);
   }
 
   function exam()

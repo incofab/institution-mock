@@ -37,9 +37,11 @@ class Exam extends BaseModel
 
   function scorePercent()
   {
-    return ($this->score /
-      ($this->num_of_questions == 0 ? 1 : $this->num_of_questions)) *
-      100;
+    return floor(
+      ($this->score /
+        ($this->num_of_questions == 0 ? 1 : $this->num_of_questions)) *
+        100,
+    );
   }
 
   function scorePercentSum()
