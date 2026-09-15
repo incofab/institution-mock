@@ -11,7 +11,14 @@ class UploadSessionQuestionsRequest extends FormRequest
 {
   protected function prepareForValidation()
   {
-    if ($this->file) {
+    validator(
+      ['file' => $this->file('file')],
+      [
+        'file' => ['required', 'file', new ExcelRule($this->file('file'))],
+      ],
+    )->validate();
+
+    if ($this->hasFile('file')) {
       $columnKeyMapping = [
         'A' => 'question_no',
         'B' => 'question',

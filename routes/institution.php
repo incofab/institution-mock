@@ -34,7 +34,7 @@ Route::get('/events/{event}/evaluate', [Inst\EventController::class, 'evaluateEv
 ->name('events.evaluate');
 Route::get('/events/{event}/delete', [Inst\EventController::class, 'destroy'])
 ->name('events.destroy');
-Route::resource('/events', Inst\EventController::class)->except('show', 'destroy');
+Route::resource('/events', Inst\EventController::class)->except('destroy');
 
 Route::get('/event-courses/events/{event}/index', [Inst\EventCourseController::class, 'index'])
 ->name('event-courses.index');

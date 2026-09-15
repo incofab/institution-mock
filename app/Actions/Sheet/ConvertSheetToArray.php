@@ -17,7 +17,14 @@ class ConvertSheetToArray
     private UploadedFile $file,
     private array $columnKeyMapping,
   ) {
-    $this->spreadsheet = IOFactory::load($this->file->getRealPath());
+    try {
+      $this->spreadsheet = IOFactory::load($this->file->getRealPath());
+    } catch (\PhpOffice\PhpSpreadsheet\Reader\Exception $exception) {
+      throw \Illuminate\Validation\ValidationException::withMessages([
+        'file' =>
+          'The spreadsheet could not be read. Upload a valid CSV, XLS or XLSX file.',
+      ]);
+    }
     $this->sheetData = $this->spreadsheet->getActiveSheet();
   }
 

@@ -110,6 +110,19 @@ class Event extends BaseModel
     }
   }
 
+  function loadExamContent($examCourses)
+  {
+    $this->loadContent();
+    foreach ($examCourses as $examCourse) {
+      $session = $this->findCourseSession($examCourse->course_session_id);
+      if (!$session || $session->questions->isEmpty()) {
+        throw \Illuminate\Validation\ValidationException::withMessages([
+          'content' => "Course session {$examCourse->course_session_id} is unavailable or has no questions.",
+        ]);
+      }
+    }
+  }
+
   function institution()
   {
     return $this->belongsTo(Institution::class);
@@ -127,9 +140,7 @@ class Event extends BaseModel
 
   function hasUnactivatedExams(): bool
   {
-    return $this->exams()
-      ->whereNull('exam_activation_id')
-      ->exists();
+    return $this->exams()->whereNull('exam_activation_id')->exists();
   }
 
   function examActivations()

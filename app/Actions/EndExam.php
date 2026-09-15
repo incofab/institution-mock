@@ -43,8 +43,9 @@ class EndExam
     }
 
     $event = $exam->event;
-    $event->loadContent();
+    $event->loadExamContent($examCourses);
 
+    $scores = [];
     $totalScore = 0;
     $totalNumOfQuestions = 0;
     /** @var \App\Models\ExamCourse $examCourse */
@@ -59,6 +60,13 @@ class EndExam
         $questions,
       );
 
+      if ($scoreDetail->isNotSuccessful()) {
+        return failRes($scoreDetail->getMessage());
+      }
+      $scores[] = [$examCourse, $scoreDetail];
+    }
+
+    foreach ($scores as [$examCourse, $scoreDetail]) {
       $score = $scoreDetail->getScore();
       $numOfQuestions = $scoreDetail->getNumOfQuestions();
       $examCourse
@@ -72,7 +80,7 @@ class EndExam
       $totalNumOfQuestions += $numOfQuestions;
     }
     $attempts =
-      $this->examHandler->getContent($exam->exam_no)->getExamTrack()[
+      $this->examHandler->getContent($exam->exam_no, false)->getExamTrack()[
         'attempts'
       ] ?? [];
     $exam->markAsEnded($totalScore, $totalNumOfQuestions, $attempts);

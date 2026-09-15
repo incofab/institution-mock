@@ -103,6 +103,7 @@ class EventController extends Controller
 
   function show(Institution $institution, Event $event)
   {
+    abort_if($event->institution_id !== $institution->id, 404);
     $event->load('eventCourses.courseSession.course');
     return view('institutions.events.show', [
       'event' => $event,

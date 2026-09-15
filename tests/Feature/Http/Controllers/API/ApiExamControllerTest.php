@@ -84,34 +84,44 @@ test('index returns a list of exams', function () {
     ]);
 });
 
-test('index blocks offline event exam download until all event exams are activated', function () {
-  getJson(
-    route('api.institutions.events.exams.index', [
-      $this->institution,
-      $this->event,
-    ]),
-  )
-    ->assertUnauthorized()
-    ->assertJson(
-      fn(AssertableJson $json) => $json
-        ->where('success', false)
-        ->where(
-          'message',
-          'Exams in this event are not available until all exams have been activated.',
-        )
-        ->etc(),
-    );
-});
+test(
+  'index blocks offline event exam download until all event exams are activated',
+  function () {
+    getJson(
+      route('api.institutions.events.exams.index', [
+        $this->institution,
+        $this->event,
+      ]),
+    )
+      ->assertUnauthorized()
+      ->assertJson(
+        fn(AssertableJson $json) => $json
+          ->where('success', false)
+          ->where(
+            'message',
+            'Exams in this event are not available until all exams have been activated. Please contact admin',
+          )
+          ->etc(),
+      );
+  },
+);
 
 test('startExam starts an exam and returns exam data', function () {
   ($this->activateExam)($this->exam);
 
   // Mock ExamHandler to avoid file system interaction
   $mockExamHandler = Mockery::mock(ExamHandler::class);
-  $mockExamHandler->shouldReceive('syncExamFile')->andReturn(successRes());
+  $mockExamHandler
+    ->shouldReceive('syncExamFile')
+    ->andReturn(\App\Support\ExamProcess::success());
   $mockExamHandler
     ->shouldReceive('getContent')
-    ->andReturn(successRes('', ['exam_track' => ['question1', 'question2']]));
+    ->andReturn(
+      \App\Support\ExamProcess::success()->examTrack([
+        'question1',
+        'question2',
+      ]),
+    );
   $this->app->instance(ExamHandler::class, $mockExamHandler);
 
   postJson(route('api.exam-start'), [
@@ -142,37 +152,50 @@ test('startExam starts an exam and returns exam data', function () {
   ]);
 });
 
-test('startExam blocks unactivated exams when configured to restrict before start', function () {
-  postJson(route('api.exam-start'), [
-    'exam_no' => $this->exam->exam_no,
-  ])
-    ->assertUnauthorized()
-    ->assertJson(
-      fn(AssertableJson $json) => $json
-        ->where('success', false)
-        ->where('message', 'This exam has not been activated yet.')
-        ->etc(),
-    );
-});
+test(
+  'startExam blocks unactivated exams when configured to restrict before start',
+  function () {
+    postJson(route('api.exam-start'), [
+      'exam_no' => $this->exam->exam_no,
+    ])
+      ->assertUnauthorized()
+      ->assertJson(
+        fn(AssertableJson $json) => $json
+          ->where('success', false)
+          ->where('message', 'This exam has not been activated yet.')
+          ->etc(),
+      );
+  },
+);
 
-test('startExam allows unactivated exams when before-start restriction is disabled', function () {
-  config(['exam.restrict_unactivated_exam_access_before_start' => false]);
+test(
+  'startExam allows unactivated exams when before-start restriction is disabled',
+  function () {
+    config(['exam.restrict_unactivated_exam_access_before_start' => false]);
 
-  $mockExamHandler = Mockery::mock(ExamHandler::class);
-  $mockExamHandler->shouldReceive('syncExamFile')->andReturn(successRes());
-  $mockExamHandler
-    ->shouldReceive('getContent')
-    ->andReturn(successRes('', ['exam_track' => ['question1', 'question2']]));
-  $this->app->instance(ExamHandler::class, $mockExamHandler);
+    $mockExamHandler = Mockery::mock(ExamHandler::class);
+    $mockExamHandler
+      ->shouldReceive('syncExamFile')
+      ->andReturn(\App\Support\ExamProcess::success());
+    $mockExamHandler
+      ->shouldReceive('getContent')
+      ->andReturn(
+        \App\Support\ExamProcess::success()->examTrack([
+          'question1',
+          'question2',
+        ]),
+      );
+    $this->app->instance(ExamHandler::class, $mockExamHandler);
 
-  postJson(route('api.exam-start'), [
-    'exam_no' => $this->exam->exam_no,
-  ])
-    ->assertOk()
-    ->assertJsonStructure([
-      'data' => ['exam_track', 'timeRemaining', 'baseUrl', 'exam'],
-    ]);
-});
+    postJson(route('api.exam-start'), [
+      'exam_no' => $this->exam->exam_no,
+    ])
+      ->assertOk()
+      ->assertJsonStructure([
+        'data' => ['exam_track', 'timeRemaining', 'baseUrl', 'exam'],
+      ]);
+  },
+);
 
 test('uploadEventResult updates exam and exam course records', function () {
   $examCourseData = [
@@ -229,6 +252,21 @@ test('uploadEventResult updates exam and exam course records', function () {
 });
 
 test('endExam ends an exam', function () {
+  $handler = Mockery::mock(ExamHandler::class);
+  $handler
+    ->shouldReceive('calculateScoreFromFile')
+    ->andReturn(
+      \App\Support\ExamProcess::success()->score(1)->numOfQuestions(2),
+    );
+  $handler
+    ->shouldReceive('getContent')
+    ->andReturn(
+      \App\Support\ExamProcess::success()->examTrack(['attempts' => []]),
+    );
+  $handler
+    ->shouldReceive('syncExamFile')
+    ->andReturn(\App\Support\ExamProcess::success());
+  $this->app->instance(ExamHandler::class, $handler);
   postJson(route('api.end-exam', [$this->exam->exam_no]))
     ->assertStatus(200)
     ->assertJson(

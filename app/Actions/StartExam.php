@@ -24,12 +24,14 @@ class StartExam
       return failRes('This exam has not been activated yet.');
     }
 
-    if ($start && $this->canStartExam()) {
-      $this->exam->markAsStarted();
-    }
-
     if ($this->exam->status === ExamStatus::Ended) {
       return failRes('Exam has already ended');
+    }
+
+    $this->exam->event->loadExamContent($this->exam->examCourses);
+
+    if ($start && $this->canStartExam()) {
+      $this->exam->markAsStarted();
     }
 
     $examHandler = ExamHandler::make();
@@ -40,8 +42,8 @@ class StartExam
 
     $ret = $examHandler->getContent($this->exam->exam_no);
 
-    if (empty($ret->getExamTrack())) {
-      $ret = failRes($ret->getMessage());
+    if ($ret->isNotSuccessful() || empty($ret->getExamTrack())) {
+      return failRes($ret->getMessage());
     }
     return successRes('', [
       'exam' => $this->prepareExam($this->exam),
@@ -52,7 +54,6 @@ class StartExam
   private function prepareExam(Exam $exam)
   {
     $event = $exam->event;
-    $event->loadContent();
     /** @var ExamCourse $examCourse */
     foreach ($exam->examCourses as $key => $examCourse) {
       $courseSession = $event->findCourseSession(
@@ -67,6 +68,7 @@ class StartExam
       );
       $examCourse->course_session = $courseSession;
     }
+    $event->external_event_courses = [];
     $event->event_courses = [];
     $event->eventCourses = [];
     // die(json_encode($event, JSON_PRETTY_PRINT));

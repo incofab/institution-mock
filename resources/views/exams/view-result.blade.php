@@ -34,7 +34,7 @@ $student = $exam->student;
     		<dd class="col-sm-9 mb-3">{{$exam->student->name ?? 'Guest'}}</dd>
     		
     		<dt class="col-sm-3 mb-sm-3">Exam Date</dt>
-    		<dd class="col-sm-9 mb-3">{{$exam->start_time->toDayDateTimeString()}}</dd>
+        <dd class="col-sm-9 mb-3">{{$exam->start_time?->toDayDateTimeString() ?? 'Not recorded'}}</dd>
     
     		<dt class="col-sm-3 mb-sm-3">Exam Duration</dt>
     		<dd class="col-sm-9 mb-3">{{$event->duration}} mins</dd>

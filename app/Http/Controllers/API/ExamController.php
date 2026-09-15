@@ -127,7 +127,10 @@ class ExamController extends Controller
   function endExam(Exam $exam)
   {
     // info("Exam exam called {$exam->exam_no}");
-    EndExam::make()->endExam($exam);
+    $result = EndExam::make()->endExam($exam);
+    if ($result->isNotSuccessful()) {
+      return $this->apiFailRes([], $result->getMessage());
+    }
     return $this->apiSuccessRes([], 'Exam ended successfully');
   }
 }
